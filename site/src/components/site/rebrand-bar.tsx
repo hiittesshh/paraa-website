@@ -1,6 +1,7 @@
 "use client";
 
-// §0.1 sitewide rebrand notice. Dismissible; the dismissal is remembered in localStorage.
+// §0.1 sitewide rebrand notice, on a soft gold-50 band so it reads as a notice, not an alert.
+// Dismissible; the dismissal is remembered in localStorage.
 // Storage can throw (private mode, blocked site data), so every access is wrapped and a
 // session-only flag keeps the bar closed for this visit even when storage is unavailable.
 // useSyncExternalStore (instead of setState in an effect) keeps server and client renders
@@ -47,9 +48,9 @@ export function RebrandBar() {
   if (dismissed) return null;
 
   return (
-    <div role="region" aria-label="Name change notice" className="border-b bg-card">
+    <div role="region" aria-label="Name change notice" className="border-b border-gold-200 bg-gold-50">
       <div className="container-page flex items-center gap-3 py-2">
-        <Badge tone="accent" className="hidden sm:inline-flex">
+        <Badge tone="accent" className="hidden bg-card sm:inline-flex">
           New name
         </Badge>
         <p className="min-w-0 flex-1 text-body-md text-muted-foreground">
@@ -64,9 +65,14 @@ export function RebrandBar() {
         </p>
         <button
           type="button"
-          onClick={dismiss}
+          onClick={(e) => {
+            // The button is about to unmount; without this, keyboard focus falls back to <body>.
+            // Hand it to the next stop in the tab order, the header's home link.
+            if (document.activeElement === e.currentTarget) document.querySelector<HTMLElement>("header a[href]")?.focus();
+            dismiss();
+          }}
           aria-label="Dismiss name change notice"
-          className="grid size-11 shrink-0 cursor-pointer place-items-center rounded-sm border text-muted-foreground transition-colors duration-150 hover:border-border-strong hover:text-foreground"
+          className="grid size-11 shrink-0 cursor-pointer place-items-center rounded-sm border border-gold-200 text-muted-foreground transition-colors duration-150 hover:border-gold-400 hover:bg-card hover:text-foreground"
         >
           <X aria-hidden className="size-4" />
         </button>

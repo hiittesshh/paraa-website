@@ -64,11 +64,10 @@ export type ReasonKey = `${QuestionId}:${"R" | "A"}`;
 export const REASONS: Readonly<Record<string, { text: string; illustrative?: boolean }>> = {
   "q1:R": { text: "Money you need within a year shouldn’t sit in something that can fall 15%." },
   "q1:A": {
-    text: "One to three years is short. Basket 1’s deepest fall took 14 months to recover.",
-    illustrative: true,
+    text: "One to three years is short. Investments can fall, and a fall can take more than a year to recover, so you may need the money before it does.",
   },
   "q2:R": { text: "If a 15% fall would make you sell, you would likely turn a temporary fall into a real loss." },
-  "q2:A": { text: "Worrying is normal. Read how often falls happen before you decide." },
+  "q2:A": { text: "Worrying is normal. Values can fall without warning and take time to recover, so be sure you could wait it out before you decide." },
   "q3:A": { text: "If you’ll spend this in rupees within 2 years, a stronger rupee could shrink it just when you need it." },
   "q4:R": { text: "Emergency money and borrowed money shouldn’t be in something that can fall." },
   "q5:A": { text: "You may already hold enough in dollars. Check the cheaper do-it-yourself routes before you add more." },

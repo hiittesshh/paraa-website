@@ -5,6 +5,8 @@
 // Changed for Paraa: real ARIA tabs (tablist / tab / tabpanel, aria-selected, roving
 // tabindex, arrow/Home/End keys), one focus stop per tab (the original had two), gold active
 // state, and the panels rendered here so content and tab can't drift apart.
+// Light theme: the active tab is Primary ink with a white label (same as the main button), and its
+// shine is a gold-200 glint so it shows on the dark fill; inactive tabs are white with a border.
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -70,8 +72,10 @@ export function DiscreteTabs({ tabs, label, defaultTab, labels = "active", class
               onClick={() => setActive(tab.id)}
               onKeyDown={(e) => onKey(e, i)}
               className={cn(
-                "flex h-12 cursor-pointer items-center rounded-full border px-4 transition-colors duration-300",
-                on ? "border-transparent bg-primary text-primary-foreground" : "border-border-strong bg-card text-foreground hover:border-muted-foreground",
+                "flex h-12 cursor-pointer items-center rounded-full border px-4 transition-[background-color,border-color,color,box-shadow] duration-300 ease-out-soft",
+                on
+                  ? "border-primary bg-primary text-primary-foreground shadow-card"
+                  : "border-border-strong bg-card text-muted-foreground hover:border-ink hover:bg-background-alt hover:text-foreground",
               )}
             >
               <span aria-hidden className="flex [&_svg]:size-5">{tab.icon}</span>
@@ -89,7 +93,7 @@ export function DiscreteTabs({ tabs, label, defaultTab, labels = "active", class
                       initial={{ left: "-120%" }}
                       animate={{ left: "120%" }}
                       transition={{ duration: 0.5, ease: "linear" }}
-                      className="absolute top-0 bottom-0 w-16 bg-linear-to-r from-transparent via-white/50 to-transparent"
+                      className="absolute top-0 bottom-0 w-16 bg-linear-to-r from-transparent via-gold-200/70 to-transparent"
                     />
                   )}
                 </AnimatePresence>

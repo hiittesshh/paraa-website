@@ -5,9 +5,9 @@ import type { ComponentProps, ReactNode } from "react";
 import type { VariantProps } from "class-variance-authority";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Reveal } from "./reveal";
+import { Reveal, RevealGroup, RevealItem } from "./reveal";
 
-export { Reveal };
+export { Reveal, RevealGroup, RevealItem };
 
 /** Page section with consistent vertical rhythm. `tone="alt"` gives the alternate background. */
 export function Section({
@@ -69,8 +69,8 @@ export function Card({ className, accent, ...props }: ComponentProps<"div"> & { 
   return (
     <div
       className={cn(
-        "rounded-lg border bg-card p-6",
-        accent && "border-gold-500/40 bg-[linear-gradient(180deg,var(--accent-soft),transparent_60%)] bg-card",
+        "rounded-lg border bg-card p-6 shadow-card",
+        accent && "border-gold-300 bg-[linear-gradient(180deg,var(--color-gold-50),var(--card)_60%)]",
         className,
       )}
       {...props}
@@ -84,8 +84,8 @@ export function Badge({ className, tone = "neutral", ...props }: ComponentProps<
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-body-sm font-bold whitespace-nowrap",
         tone === "neutral" && "border-border bg-muted text-muted-foreground",
-        tone === "accent" && "border-transparent bg-accent-soft text-accent",
-        tone === "pending" && "border-warning/40 text-warning",
+        tone === "accent" && "border-gold-200 bg-gold-50 text-accent",
+        tone === "pending" && "border-warning bg-warning/15 text-foreground",
         className,
       )}
       {...props}
@@ -107,7 +107,8 @@ export function ToConfirm({ children = "TO CONFIRM", className }: { children?: R
   return (
     <span
       className={cn(
-        "inline-block rounded-[4px] border border-current px-1.5 align-middle text-body-xs font-extrabold tracking-[0.06em] text-warning uppercase",
+        // Warning #FACC15 as a fill with Primary text: the yellow itself fails contrast as text on white.
+        "inline-block rounded-sm border border-warning bg-warning/25 px-1.5 align-middle text-body-xs font-extrabold tracking-[0.06em] text-ink uppercase",
         className,
       )}
     >

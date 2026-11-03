@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Building2, Calculator, UserRound, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { Reveal, Section, SectionHead, ToConfirm } from "@/components/paraa/primitives";
+import { RevealGroup, RevealItem, Section, SectionHead, ToConfirm } from "@/components/paraa/primitives";
 import { SoonTag } from "@/components/paraa/site-link";
 import { isLive } from "@/lib/routes";
 
@@ -46,12 +46,12 @@ export function Router() {
   return (
     <Section id="routes" tone="alt" size="sm" labelledBy="routes-title">
       <SectionHead id="routes-title" eyebrow="Routes for checkers" title="Checking us for someone else?" />
-      <ul className="grid gap-4 md:grid-cols-3">
-        {ROUTES.map(({ href, icon: Icon, title, body, cta }, i) => {
+      <RevealGroup as="ul" className="grid gap-4 md:grid-cols-3">
+        {ROUTES.map(({ href, icon: Icon, title, body, cta }) => {
           const live = isLive(href);
           const inner = (
             <>
-              <span aria-hidden className="grid size-11 place-items-center rounded-md border bg-muted">
+              <span aria-hidden className="grid size-11 place-items-center rounded-md border border-gold-200 bg-gold-50 text-ink">
                 <Icon className="size-5" strokeWidth={1.8} />
               </span>
               <h3 className="mt-5 type-h6">{title}</h3>
@@ -70,20 +70,20 @@ export function Router() {
               )}
             </>
           );
-          const card = "flex w-full flex-col rounded-lg border bg-card p-6 text-foreground no-underline";
+          const card = "flex w-full flex-col rounded-lg border bg-card p-6 text-foreground no-underline shadow-card";
           return (
-            <Reveal as="li" key={href} delay={i + 1} className="flex">
+            <RevealItem as="li" key={href} className="flex">
               {live ? (
-                <Link href={href} className={`group ${card} transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-border-strong`}>
+                <Link href={href} className={`group ${card} transition-[border-color,box-shadow,transform] duration-200 ease-out-soft hover:-translate-y-0.5 hover:border-border-strong hover:shadow-lift`}>
                   {inner}
                 </Link>
               ) : (
                 <div className={card}>{inner}</div>
               )}
-            </Reveal>
+            </RevealItem>
           );
         })}
-      </ul>
+      </RevealGroup>
     </Section>
   );
 }

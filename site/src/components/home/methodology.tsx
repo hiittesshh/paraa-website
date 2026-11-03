@@ -1,4 +1,5 @@
 // A5.9 Methodology: pre-empts "is this number real?". Five answers in the shared accordion.
+// Round 2: no published history or performance on the site, so these explain the process only.
 import { Accordion, type AccordionEntry } from "@/components/paraa/accordion";
 import { Reveal, Section, SectionHead, ToConfirm } from "@/components/paraa/primitives";
 
@@ -15,11 +16,11 @@ const ITEMS: AccordionEntry[] = [
   },
   {
     value: "returns",
-    title: "How returns are measured",
+    title: "How returns on your statement are measured",
     content: (
       <p>
         Time-weighted (<abbr title="time-weighted rate of return">TWRR</abbr>). It measures the basket, not the timing of
-        anyone&rsquo;s deposits. Net of the illustrative fees on the fee receipt. In US dollars unless labelled ₹.
+        anyone&rsquo;s deposits. After the fees shown on the fee receipt. In US dollars unless labelled ₹.
       </p>
     ),
   },
@@ -28,7 +29,7 @@ const ITEMS: AccordionEntry[] = [
     title: "Which exchange rate we use for ₹ figures",
     content: (
       <p>
-        [Source] reference rate on the NAV date <ToConfirm />. Shown on every statement.
+        [Source] reference rate on the valuation date <ToConfirm />. Shown on every statement.
       </p>
     ),
   },
@@ -37,14 +38,22 @@ const ITEMS: AccordionEntry[] = [
     title: "Who checks it",
     content: (
       <p>
-        Administrator <ToConfirm /> computes it. Auditor <ToConfirm /> reviews it annually. Report download <ToConfirm />.
+        Administrator <ToConfirm /> computes it. Auditor <ToConfirm /> reviews it annually. Audit report on request{" "}
+        <span className="whitespace-nowrap">
+          <ToConfirm />.
+        </span>
       </p>
     ),
   },
   {
     value: "never",
     title: "What we will never do",
-    content: <p>Remove a month from the history. Restart a track record. Show a period we chose because it looks good.</p>,
+    content: (
+      <p>
+        Show a number without saying where it comes from. Call an illustrative figure real. Change a unit price after the fact
+        without telling the people it affects.
+      </p>
+    ),
   },
 ];
 

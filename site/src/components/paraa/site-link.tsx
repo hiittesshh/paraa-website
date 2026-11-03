@@ -35,7 +35,7 @@ export function SiteLink({
 
 export function SoonTag() {
   return (
-    <span className="rounded-[4px] border border-border-strong px-1.5 text-body-xs font-bold tracking-[0.06em] text-faint uppercase">
+    <span className="rounded-sm border border-border-strong px-1.5 text-body-xs font-bold tracking-[0.06em] text-faint uppercase">
       Soon<span className="sr-only">: page coming soon</span>
     </span>
   );

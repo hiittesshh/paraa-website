@@ -15,6 +15,15 @@ function A({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
+/** TO CONFIRM glued to its full stop, so the stop never wraps onto a line of its own. */
+function Tc({ children }: { children?: ReactNode }) {
+  return (
+    <span className="whitespace-nowrap">
+      <ToConfirm>{children}</ToConfirm>.
+    </span>
+  );
+}
+
 const GROUPS: { id: string; label: string; icon: ReactNode; items: AccordionEntry[] }[] = [
   {
     id: "money",
@@ -26,7 +35,7 @@ const GROUPS: { id: string; label: string; icon: ReactNode; items: AccordionEntr
         title: "Who holds my money?",
         content: (
           <p>
-            [Custodian] <ToConfirm />. See every step on <A href="#how">How your money moves</A>.
+            [Custodian] <Tc /> See every step on <A href="#how">How your money moves</A>.
           </p>
         ),
       },
@@ -35,8 +44,8 @@ const GROUPS: { id: string; label: string; icon: ReactNode; items: AccordionEntr
         title: "What if Paraa shuts down?",
         content: (
           <p>
-            We will publish written closure commitments: when we would close a basket, and how you would get your money back
-            <ToConfirm className="ml-1" />. Legal ring-fencing of your assets: <ToConfirm />.
+            We will publish written closure commitments: when we would close a basket, and how you would get your money back{" "}
+            <Tc /> Legal ring-fencing of your assets: <Tc />
           </p>
         ),
       },
@@ -52,8 +61,8 @@ const GROUPS: { id: string; label: string; icon: ReactNode; items: AccordionEntr
         title: "Is there a fee I won't see?",
         content: (
           <p>
-            Every fee is on the <A href="#fees">receipt above</A>. The performance fee, if any, is <ToConfirm />. Tax collected at source (TCS) is not a fee, and is shown separately.
-            Performance fee: <ToConfirm />.
+            Every fee is on the <A href="#fees">receipt above</A>. The performance fee, if any, is <Tc /> Tax collected at source
+            (TCS) is not a fee, and is shown separately.
           </p>
         ),
       },
@@ -85,7 +94,7 @@ const GROUPS: { id: string; label: string; icon: ReactNode; items: AccordionEntr
         title: "How long do withdrawals take?",
         content: (
           <p>
-            [T+N] business days <ToConfirm />. Holidays in India and the US both count.
+            [T+N] business days <Tc /> Holidays in India and the US both count.
           </p>
         ),
       },
@@ -101,8 +110,8 @@ const GROUPS: { id: string; label: string; icon: ReactNode; items: AccordionEntr
         title: "Is this legal for a resident Indian?",
         content: (
           <p>
-            The legal route is being confirmed by counsel and will be named here, with the rule it relies on. <ToConfirm />.
-            We don&rsquo;t offer currency speculation <ToConfirm>TO CONFIRM with counsel</ToConfirm>.
+            The legal route is being confirmed by counsel and will be named here, with the rule it relies on. <ToConfirm />
+            We don&rsquo;t offer currency speculation <Tc>TO CONFIRM with counsel</Tc>
           </p>
         ),
       },
@@ -128,7 +137,7 @@ export function Faq() {
   }));
 
   return (
-    <Section id="faq" labelledBy="faq-title">
+    <Section id="faq" tone="alt" labelledBy="faq-title">
       <div className="mx-auto max-w-[820px]">
         <SectionHead
           id="faq-title"
