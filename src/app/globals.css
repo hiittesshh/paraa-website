@@ -1,0 +1,188 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* ---------------------------------------------------------------------------
+   Paraa design system, light theme. Every colour below is taken from the design
+   file (docs/design-tokens.md). Labelled swatches are exact; the unlabelled
+   ramps ("Colors Generator", "Additional Colors") are eyedropped approximations.
+
+   Layer 1: primitives (named after the file).  Layer 2: semantic roles, mapped
+   onto shadcn's variable names so shadcn + Watermelon components pick them up.
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-heading: var(--font-manrope), system-ui, sans-serif;
+  --font-mono: var(--font-manrope), system-ui, sans-serif;
+
+  /* Main: the three gold swatches at the top of the file */
+  --color-main-1: #FFB000;
+  --color-main-2: #F2A900;
+  --color-main-3: #C68C0A;
+
+  /* Secondary #FDC037 and its "Colors Generator" tints (toward white) */
+  --color-gold-500: #FDC037;
+  --color-gold-400: #FDCB5E;
+  --color-gold-300: #FDD685;
+  --color-gold-200: #FEE2AC;
+  --color-gold-100: #FEEDD3;
+  --color-gold-50: #FFF8EA;
+  /* "Additional Colors" gold 600 → 900 */
+  --color-gold-600: #E5A823;
+  --color-gold-700: #BB861A;
+  --color-gold-800: #8E6414;
+  --color-gold-900: #5E450F;
+
+  /* Primary #272A33 and its ramp (Primary swatch + Additional dark 400 → 900) */
+  --color-ink: #272A33;
+  --color-ink-2: #3D4049;
+  --color-ink-3: #53565E;
+  --color-ink-4: #6A6C73;
+  --color-ink-5: #7F8187;
+  --color-ink-800: #1F2027;
+  --color-ink-900: #131416;
+
+  /* Light swatch */
+  --color-paper: #F2F2F2;
+
+  /* Greyscale 50 → 900 (exact) */
+  --color-grey-50: #F8F9FD;
+  --color-grey-100: #F1F5F9;
+  --color-grey-200: #E2E8F0;
+  --color-grey-300: #CBD5E1;
+  --color-grey-400: #94A3B8;
+  --color-grey-500: #64748B;
+  --color-grey-600: #475569;
+  --color-grey-700: #334155;
+  --color-grey-800: #1E293B;
+  --color-grey-900: #0F172A;
+
+  /* Alerts (exact). Used as fills, icons and borders, never as small text on white. */
+  --color-success: #10B981;
+  --color-warning: #FACC15;
+  --color-error: #EF4444;
+
+  /* semantic roles */
+  --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-destructive: var(--destructive);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* radius: the file's swatches and cards use soft 8 / 12 / 16 / 24 corners */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+
+  /* Body sizes from the file: XLarge 18 · Large 16 · Medium 14 · Small 12 · XSmall 10 */
+  --text-body-xl: 18px;
+  --text-body-xl--line-height: 1.6;
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 1.6;
+  --text-body-md: 14px;
+  --text-body-md--line-height: 1.6;
+  --text-body-sm: 12px;
+  --text-body-sm--line-height: 1.5;
+  --text-body-xs: 10px;
+  --text-body-xs--line-height: 1.4;
+
+  /* vignette: Greyscale 900 at low opacity, so the darkening stays in-palette */
+  --color-vignette: rgb(15 23 42 / 0.07);
+  --color-vignette-strong: rgb(15 23 42 / 0.12);
+
+  /* elevation, tinted with Greyscale 900 so shadows stay in-palette */
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.05);
+  --shadow-lift: 0 2px 4px rgb(15 23 42 / 0.05), 0 16px 40px rgb(15 23 42 / 0.10);
+
+  /* motion */
+  --ease-out-soft: cubic-bezier(.2, .7, .2, 1);
+  --ease-spring: cubic-bezier(.34, 1.36, .64, 1);
+}
+
+:root {
+  --background: #FFFFFF;
+  --background-alt: #F8F9FD;     /* Greyscale 50 */
+  --foreground: #0F172A;         /* Greyscale 900: headings, key numbers */
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --primary: #272A33;            /* "Primary" in the file: main buttons */
+  --primary-hover: #3D4049;
+  --primary-foreground: #FFFFFF;
+  --secondary: #FDC037;          /* "Secondary" in the file: gold buttons, highlights */
+  --secondary-hover: #FFB000;    /* Main 1 */
+  --secondary-foreground: #272A33;
+  --muted: #F1F5F9;              /* Greyscale 100 */
+  --muted-foreground: #475569;   /* Greyscale 600: body text, 7.6:1 on white */
+  --faint: #64748B;              /* Greyscale 500: captions, 4.8:1 on white */
+  --accent: #8E6414;             /* gold-800: the only gold allowed as text on white (5.6:1) */
+  --accent-foreground: #272A33;
+  --accent-soft: #FFF8EA;        /* gold-50 tint */
+  --destructive: #EF4444;
+  --positive: #10B981;
+  --negative: #EF4444;
+  --border: #E2E8F0;             /* Greyscale 200 */
+  --border-strong: #CBD5E1;      /* Greyscale 300 */
+  --input: #CBD5E1;
+  --ring: #272A33;               /* gold fails 3:1 against white, so focus is Primary */
+  --chart-1: #C68C0A;            /* Main 3: the darkest gold, 3:1 as a line on white */
+  --chart-2: #272A33;
+  --chart-3: #10B981;
+  --chart-4: #EF4444;
+  --chart-5: #94A3B8;
+  --radius: 12px;
+}
+
+/* ---- Heading scale. Desktop = the file (48/40/32/24/20/18, Bold). On phones each level
+   steps down to the next size *in the same scale*, so no off-system size is introduced. ---- */
+@utility type-h1 { font-size: 40px; line-height: 1.1; font-weight: 700; letter-spacing: -0.025em; @media (width >= 48rem) { font-size: 48px; } }
+@utility type-h2 { font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; @media (width >= 48rem) { font-size: 40px; } }
+@utility type-h3 { font-size: 24px; line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; @media (width >= 48rem) { font-size: 32px; } }
+@utility type-h4 { font-size: 20px; line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; @media (width >= 48rem) { font-size: 24px; } }
+@utility type-h5 { font-size: 18px; line-height: 1.3; font-weight: 700; @media (width >= 48rem) { font-size: 20px; } }
+@utility type-h6 { font-size: 18px; line-height: 1.3; font-weight: 700; }
+/* Eyebrow = Body Small / Extrabold, gold-800 */
+@utility eyebrow { display: inline-block; font-size: 12px; line-height: 1.5; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+@utility num { font-variant-numeric: tabular-nums; }
+@utility container-page { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: 16px; @media (width >= 40rem) { padding-inline: 24px; } }
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { @apply font-sans; scroll-behavior: smooth; scroll-padding-top: 88px; }
+  body { @apply bg-background text-foreground; font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 4px; }
+  ::selection { background: #FEE2AC; color: #0F172A; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
