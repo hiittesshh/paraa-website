@@ -15,7 +15,7 @@ npm run dev        # http://localhost:3000 (hot reload)
 npm run build && npm start   # production build, the same as a deploy
 npm run typecheck  # tsc --noEmit
 npm run lint       # eslint
-npm test           # node --test: basket what-if, tax, CA request, rupee, quiz, formatting, routes, cn
+npm test           # node --test: basket what-if, tax, CA request, rupee, formatting, routes, cn
 ```
 
 The "Ask a CA" form needs `ADVISOR_REQUEST_WEBHOOK_URL` (copy `.env.example` to `.env.local`).
@@ -28,7 +28,7 @@ src/
                     globals.css (every design token)
   components/
     home/           homepage sections, one per file
-    site/           header, footer, rebrand bar, brand mark
+    site/           header, footer, brand mark
     paraa/          shared primitives: Section, Card, Reveal, Money, Accordion, SiteLink
     ui/             shadcn source (Button)
     watermelon/     adapted Watermelon UI components
@@ -61,12 +61,14 @@ system; the brief said "may use".
 | **Round 3:** why invest in USD | `components/home/rupee-dollar.tsx` (chart + live birth-year calculator) + `lib/rupee.ts` |
 | **Round 3:** how tax works | `components/home/tax.tsx` + `tax-estimator.tsx` + `lib/tax.ts` |
 | **Round 3:** CA advisors, and a way to send a question | `components/home/advisors.tsx` + `ask-form.tsx`, `app/api/advisor-request/route.ts`, `lib/advisor-request.ts` |
-| **Round 3:** link to the blog | `components/home/learn.tsx`, header and footer; the URL is `lib/links.ts` |
+| **Round 3:** link to the blog | `components/home/learn.tsx`, header and footer; the URL is `lib/links.ts`. **Round 5:** hidden (`BLOG_URL = null`) until the Paraa blog has an address |
+| **Round 5:** no Grade Capital anywhere | Name-change bar and "Formerly Grade Capital" removed; see ROUND 5 in `docs/build-brief.md` |
+| **Round 5:** the official logo | `components/site/brand.tsx` (`src/assets/paraa-logo.png`), `src/app/icon.png`, `apple-icon.png` |
 | **Round 3:** no "crypto" anywhere | Site copy is clean; the only occurrence is the ASCI line in the footer legal block, by decision |
 | **Round 2:** light theme, following the design file strictly | `src/app/globals.css` holds every token; see ROUND 2 in `docs/build-brief.md` |
 | **Round 2:** remove all basket NAV data | Deleted; in git history at commit `2194970`. |
+| **Round 4:** simpler navbar, less text, no placeholder tags, plain words | Every section; rules in ROUND 4 of `docs/build-brief.md` |
 | Rupee and dollar movement graph from B | `src/components/home/rupee-dollar.tsx` + `src/lib/rupee.ts` |
-| Questionnaire from D | `src/components/home/fit-quiz.tsx` + `src/lib/quiz.ts` |
 
 Sections removed in round 3 (fee receipt, methodology, partner card and others) are in git
 history; see `docs/build-brief.md`, ROUND 3.
@@ -95,5 +97,5 @@ accessibility gaps. As the shadcn model intends, the copied source was adapted:
   are fills, icons and borders, with dark text on top. The only gold text is `text-accent` (gold-800).
 - **3D needs an unclipped path.** In the hero deck, nothing between the stage and a card may use
   `overflow: hidden`, because that flattens the 3D (and breaks the sticky pin).
-- **Compliance labels:** `<Illustrative/>` marks every dummy number and `<ToConfirm/>` marks every
-  unconfirmed fact. The copy rulebook is `docs/content-rules.md` §0.3.
+- **No placeholder tags on the page (round 4).** Unconfirmed facts are left out, and example numbers
+  say so in plain words. The copy rulebook is `docs/content-rules.md` §0.3.

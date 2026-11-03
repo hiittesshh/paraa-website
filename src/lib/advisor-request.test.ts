@@ -5,8 +5,6 @@ import { normalisePhone, validateRequest } from "./advisor-request.ts";
 const good = {
   name: "Asha Rao",
   phone: "+91 98765 43210",
-  email: "",
-  topic: "tax",
   question: "How is the income from the basket taxed if I also have a salary?",
   consent: true,
 };
@@ -28,19 +26,13 @@ test("a complete request passes, trimmed and normalised", () => {
   }
 });
 
-test("email is optional, but checked when given", () => {
-  assert.ok(validateRequest({ ...good, email: "asha@example.in" }).ok);
-  const r = validateRequest({ ...good, email: "asha@" });
-  assert.ok(!r.ok && r.errors.email);
-});
-
 test("every missing field gets its own message", () => {
   const r = validateRequest({});
   assert.ok(!r.ok);
-  if (!r.ok) assert.deepEqual(Object.keys(r.errors).sort(), ["consent", "name", "phone", "question", "topic"]);
+  if (!r.ok) assert.deepEqual(Object.keys(r.errors).sort(), ["consent", "name", "phone", "question"]);
 });
 
-test("unknown topics and unticked consent are refused", () => {
-  const r = validateRequest({ ...good, topic: "stocks", consent: "yes" });
-  assert.ok(!r.ok && r.errors.topic && r.errors.consent);
+test("consent must be a real tick, not a truthy string", () => {
+  const r = validateRequest({ ...good, consent: "yes" });
+  assert.ok(!r.ok && r.errors.consent);
 });

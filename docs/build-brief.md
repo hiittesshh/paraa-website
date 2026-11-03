@@ -1,6 +1,30 @@
 # Build brief: Paraa Capital site (Next.js 16 + Tailwind 4 + shadcn + Watermelon UI)
 
-## ROUND 3 (2026-11-03): this section overrides anything below it
+## ROUND 5 (2026-11-03): no Grade Capital anywhere, overrides anything below it
+- **The site never mentions Grade Capital.** The name-change bar (`rebrand-bar.tsx`) and the footer's
+  "Formerly Grade Capital." are gone; this replaces `content-rules.md` §0.1's rebrand bar and the
+  "Formerly" part of §0.2's bottom line. Don't link to any grade.capital address either.
+- **Blog hidden until it has a Paraa address.** `BLOG_URL` in `src/lib/links.ts` is `null`, which hides
+  the header and footer Blog links and the Learn box. Set it and all three come back.
+- **Logo:** the official wordmark (`src/assets/paraa-logo.png`) and app icon (`src/app/icon.png`,
+  `apple-icon.png`). A brand guide is coming; it will set colours and type.
+
+## ROUND 4 (2026-11-03): user-friendly pass, overrides anything below it
+The user found the site too wordy, the navbar unclear and the placeholders unfriendly. Rules now:
+- **No placeholder tags on the public page.** No "TO CONFIRM", "Illustrative" badges or "Soon" links.
+  If a fact isn't confirmed, leave it out rather than tagging it (this replaces rulebook R6's visible
+  marking). Example numbers are labelled in plain words ("Example allocation, for illustration").
+- **Short and plain.** One-line card text, simple words, no jargon ("pts", "NAV", "sleeve").
+- **Navbar:** Basket · Why USD · How it works · Tax · CA Advisors · Blog, plus "Talk to a CA".
+- **Removed:** the readiness quiz, the birth-year calculator, the rupee help/hurt cards, the "never do"
+  box, FAQ tabs, and the footer's empty registration / company / grievance / legal-link blocks.
+  Those footer blocks must come back, filled in, before launch (`content-rules.md` §0.2).
+- **Form:** name, mobile, question, consent. Nothing else.
+
+Homepage order: Hero → Basket → Try it (#what-if) → Why USD → How it works → Tax → CA Advisors (#ask)
+→ Blog → FAQ → Closing CTA.
+
+## ROUND 3 (2026-11-03)
 The site now sells **one international basket**: tokenized US stocks, gold and crude oil, held through
 derivative contracts, priced daily (NAV) in US dollars. The user's decisions:
 - **The word "crypto" appears nowhere in site copy.** The single exception is the ASCI disclaimer, verbatim,

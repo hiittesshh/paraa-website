@@ -17,15 +17,14 @@ import { cn } from "@/lib/utils";
 import { Brand } from "./brand";
 
 // Section anchors from docs/build-brief.md (prefixed with "/" so they work from any future page).
-// The blog is the one external link; it opens in a new tab and says so.
+// The blog is the one external link (shown only once BLOG_URL is set); it opens in a new tab and says so.
 const MENU_LINKS: readonly { href: string; label: string; external?: boolean }[] = [
-  { href: "/#basket", label: "The basket" },
-  { href: "/#why-usd", label: "Why dollars" },
+  { href: "/#basket", label: "Basket" },
+  { href: "/#why-usd", label: "Why USD" },
   { href: "/#how", label: "How it works" },
   { href: "/#tax", label: "Tax" },
-  { href: "/#advisors", label: "Your CA" },
-  { href: "/#faq", label: "FAQ" },
-  { href: BLOG_URL, label: "Blog", external: true },
+  { href: "/#advisors", label: "CA Advisors" },
+  ...(BLOG_URL ? [{ href: BLOG_URL, label: "Blog", external: true }] : []),
 ];
 
 const external = { target: "_blank", rel: "noopener noreferrer" } as const;
@@ -98,7 +97,7 @@ export function SiteHeader() {
           {/* Outline, not primary: the hero already carries the one primary action in view.
               Under ~440px the hero CTA is on screen, so the header CTA is dropped (prototype A8). */}
           <ButtonLink href="/#ask" variant="outline" className="hidden min-[440px]:inline-flex">
-            Ask a CA
+            Talk to a CA
           </ButtonLink>
           <button
             ref={toggleRef}
@@ -145,7 +144,7 @@ export function SiteHeader() {
                 ))}
               </ul>
               <ButtonLink href="/#ask" onClick={close} size="lg" className="mt-4 mb-2 w-full">
-                Ask a CA a question
+                Talk to a CA
               </ButtonLink>
             </nav>
           </motion.div>

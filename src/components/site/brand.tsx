@@ -1,7 +1,10 @@
-// Brand lock-up used by the header and the footer: a Primary "P" tile + "Paraa Capital".
-// Weights stay on the design file's scale (Extrabold is only used at 12/10px, so Bold here).
+// Brand lock-up used by the header and the footer: the official Paraa Capital wordmark
+// (src/assets/paraa-logo.png, 235×92, transparent). The browser-tab and home-screen icons are
+// src/app/icon.png and apple-icon.png (Next.js file conventions).
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/paraa-logo.png";
 
 export function Brand({ className, onClick }: { className?: string; onClick?: () => void }) {
   return (
@@ -9,17 +12,9 @@ export function Brand({ className, onClick }: { className?: string; onClick?: ()
       href="/"
       onClick={onClick}
       aria-label="Paraa Capital, home"
-      className={cn("inline-flex min-h-11 shrink-0 items-center gap-2.5 rounded-sm text-foreground no-underline", className)}
+      className={cn("inline-flex min-h-11 shrink-0 items-center rounded-sm no-underline", className)}
     >
-      <span
-        aria-hidden
-        className="grid size-8 place-items-center rounded-sm bg-primary text-body-lg leading-none font-bold text-primary-foreground shadow-card"
-      >
-        P
-      </span>
-      <span aria-hidden className="text-body-lg tracking-tight">
-        <span className="font-medium">Paraa</span> <b className="font-bold">Capital</b>
-      </span>
+      <Image src={logo} alt="" priority className="h-10 w-auto" />
     </Link>
   );
 }

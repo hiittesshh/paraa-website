@@ -1,4 +1,4 @@
-// "Learn before you invest": the door to the blog (lib/links BLOG_URL). The page's one dark panel
+// "Learn before you invest": the door to the blog (lib/links BLOG_URL; not rendered while it's unset). The page's one dark panel
 // (Primary #272A33, white text), so it reads as a way out of the page rather than another section.
 // No article titles or topic lists: the blog's own titles would bring words onto this page that
 // the site's copy rules keep off it, and a topic list would promise articles that may not exist. Gold appears only as fills (the top rule, the button); the focus
@@ -10,6 +10,7 @@ import { BLOG_URL } from "@/lib/links";
 import { cn } from "@/lib/utils";
 
 export function Learn() {
+  if (!BLOG_URL) return null;
   return (
     <Section id="learn" size="sm" labelledBy="learn-title">
       <Reveal>
@@ -24,9 +25,7 @@ export function Learn() {
               <h2 id="learn-title" className="mt-4 type-h3 text-balance text-primary-foreground">
                 Learn before you invest
               </h2>
-              <p className="mt-3 max-w-[52ch] text-body-lg text-grey-300">
-                Articles on investing, tax and the markets, written for Indian investors and the CAs who advise them.
-              </p>
+              <p className="mt-3 max-w-[52ch] text-body-lg text-grey-300">Simple guides on investing, tax and the markets.</p>
             </div>
             <a
               href={BLOG_URL}

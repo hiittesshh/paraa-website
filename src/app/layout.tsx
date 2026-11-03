@@ -15,11 +15,11 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL("https://paraacapital.com"),
   title: {
-    default: "Paraa Capital: US stocks, crude oil and gold in one basket, from India",
+    default: "Paraa Capital: invest in US stocks, gold and crude oil from India",
     template: "%s · Paraa Capital",
   },
   description:
-    "One international basket of tokenized US stocks, gold and crude oil, priced daily in US dollars. Invest in rupees, with a chartered accountant assigned to you when you join.",
+    "One international basket of US stocks, gold and crude oil, bought in rupees. No tax when you invest, and a chartered accountant for every investor.",
   openGraph: { siteName: "Paraa Capital", locale: "en_IN", type: "website" },
 };
 

@@ -1,27 +1,17 @@
-// The "Ask a CA" request: one validator shared by the form (instant feedback) and the API route
-// (the check that counts). Pure, so `npm test` covers it.
-
-export const TOPICS = [
-  { id: "investing", label: "How much to invest" },
-  { id: "tax", label: "Tax on my income" },
-  { id: "account", label: "Opening an account" },
-  { id: "other", label: "Something else" },
-] as const;
-
-export type TopicId = (typeof TOPICS)[number]["id"];
+// The "Talk to a CA" request: one validator shared by the form (instant feedback) and the API
+// route (the check that counts). Kept to three fields so asking takes seconds. Pure, so
+// `npm test` covers it.
 
 export interface AdvisorRequest {
   name: string;
   phone: string; // 10 digits, no +91
-  email: string; // optional: "" when not given
-  topic: TopicId;
   question: string;
   consent: boolean;
 }
 
 export type FieldErrors = Partial<Record<keyof AdvisorRequest, string>>;
 
-export const LIMITS = { name: 80, email: 120, question: 1000, questionMin: 10 } as const;
+export const LIMITS = { name: 80, question: 1000, questionMin: 10 } as const;
 
 /** "+91 98765-43210" → "9876543210". Indian mobile numbers only (10 digits, starting 6–9). */
 export function normalisePhone(raw: string): string | null {
@@ -39,24 +29,18 @@ export function validateRequest(input: unknown): { ok: true; value: AdvisorReque
   const errors: FieldErrors = {};
 
   const name = str(o.name);
-  if (name.length < 2) errors.name = "Tell us your name.";
-  else if (name.length > LIMITS.name) errors.name = `Keep your name under ${LIMITS.name} characters.`;
+  if (name.length < 2) errors.name = "Please enter your name.";
+  else if (name.length > LIMITS.name) errors.name = `Please keep your name under ${LIMITS.name} characters.`;
 
   const phone = normalisePhone(str(o.phone));
-  if (!phone) errors.phone = "Enter a 10-digit Indian mobile number.";
-
-  const email = str(o.email);
-  if (email && (email.length > LIMITS.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) errors.email = "Check the email address, or leave it blank.";
-
-  const topic = TOPICS.find((t) => t.id === o.topic)?.id;
-  if (!topic) errors.topic = "Pick what your question is about.";
+  if (!phone) errors.phone = "Please enter a valid 10-digit mobile number.";
 
   const question = str(o.question);
-  if (question.length < LIMITS.questionMin) errors.question = "Write your question in a sentence or two.";
-  else if (question.length > LIMITS.question) errors.question = `Keep it under ${LIMITS.question} characters.`;
+  if (question.length < LIMITS.questionMin) errors.question = "Please write your question.";
+  else if (question.length > LIMITS.question) errors.question = `Please keep it under ${LIMITS.question} characters.`;
 
-  if (o.consent !== true) errors.consent = "We need your permission to contact you about this question.";
+  if (o.consent !== true) errors.consent = "Please tick this so we can contact you.";
 
   if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { name, phone: phone!, email, topic: topic!, question, consent: true } };
+  return { ok: true, value: { name, phone: phone!, question, consent: true } };
 }

@@ -1,46 +1,30 @@
-// §0.2 shared footer + legal block, ported from concept-a/index.html.
-// Order of the legal block is fixed by the spec: registrations → company details → risk
-// disclosure → (hidden) SEBI line → grievances → bottom line. Round 3 adds the ASCI line after
-// the risk disclosure: the only place on the site where its regulator-mandated wording appears.
+// Site footer: brand, links to the homepage sections and the blog, the risk note, the ASCI line
+// and the bottom line. Registrations, company details, grievances and legal pages come back here
+// once they're confirmed and built (docs/content-rules.md §0.2); empty placeholders are not shown.
+// The ASCI line is the one place on the site its regulator-mandated wording appears (rulebook R14).
 import Link from "next/link";
 import { cacheLife } from "next/cache";
-import { Disclosure, ToConfirm } from "@/components/paraa/primitives";
-import { SiteLink } from "@/components/paraa/site-link";
+import { Disclosure } from "@/components/paraa/primitives";
 import { BLOG_URL } from "@/lib/links";
 import { Brand } from "./brand";
 
-// Homepage sections, the blog, and the pages from the site map (docs/content-rules.md §0.1).
-// Unbuilt pages show as "Soon" (lib/routes.ts).
-const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
+const COLUMNS: { title: string; links: { href: string; label: string; external?: boolean }[] }[] = [
   {
-    title: "The basket",
+    title: "Explore",
     links: [
-      { href: "/#basket", label: "What's inside" },
-      { href: "/#what-if", label: "Move the markets" },
-      { href: "/#why-usd", label: "Why dollars" },
+      { href: "/#basket", label: "The basket" },
+      { href: "/#why-usd", label: "Why USD" },
       { href: "/#how", label: "How it works" },
-      { href: "/#fit", label: "Is it right for you?" },
+      { href: "/#tax", label: "Tax" },
     ],
   },
   {
-    title: "Tax & advice",
+    title: "Help",
     links: [
-      { href: "/#tax", label: "How the income is taxed" },
-      { href: "/#advisors", label: "Your CA" },
-      { href: "/#ask", label: "Ask a CA a question" },
-      { href: BLOG_URL, label: "Blog" },
+      { href: "/#advisors", label: "CA Advisors" },
+      { href: "/#ask", label: "Talk to a CA" },
       { href: "/#faq", label: "FAQ" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { href: "/grade-is-now-paraa", label: "Grade is now Paraa" },
-      { href: "/grievances", label: "Complaints & grievances" },
-      { href: "/legal/privacy", label: "Privacy" },
-      { href: "/legal/terms", label: "Terms" },
-      { href: "/legal/investor-agreement", label: "Investor agreement" },
-      { href: "/legal/risk-disclosure", label: "Full risk disclosure" },
+      ...(BLOG_URL ? [{ href: BLOG_URL, label: "Blog", external: true }] : []),
     ],
   },
 ];
@@ -48,28 +32,17 @@ const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
 const linkCls =
   "inline-flex min-h-11 items-center text-body-md text-muted-foreground no-underline underline-offset-4 transition-colors duration-150 hover:text-foreground hover:underline";
 const headCls = "mb-3 text-body-sm font-extrabold tracking-[0.1em] text-foreground uppercase";
-const inlineLink = "font-semibold text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:decoration-foreground";
 
-/** R15: the global risk disclosure, rendered from one place. */
+/** R15: the risk note, rendered from one place. */
 export function GlobalRiskDisclosure() {
   return (
-    <Disclosure id="global-risk-v2" className="bg-card p-5 text-body-md leading-relaxed md:p-6">
+    <Disclosure id="global-risk-v3" className="bg-card p-5 text-body-md leading-relaxed md:p-6">
       <p>
-        <strong>Investing involves risk, including loss of the money you put in.</strong> The basket gets its exposure to US
-        stocks, gold and crude oil through derivative contracts, and is valued in US dollars. If the rupee weakens against the
-        dollar, the rupee value of your investment rises; if the rupee strengthens, it falls. Both can happen in the same
-        period as a fall in the investment itself. Money is locked in until maturity. Past performance, including any
-        simulation, does not predict future results. Figures marked <em>Illustrative</em> are examples, not records or
-        forecasts. Where the basket&rsquo;s contracts are held is <ToConfirm /> and is described on{" "}
-        <Link href="/#basket" className={inlineLink}>
-          What&rsquo;s inside
-        </Link>
-        . Tax descriptions are general and depend on your own situation; confirm yours with your CA. Nothing on this site is
-        personal investment advice. Read the{" "}
-        <SiteLink href="/legal/risk-disclosure" className={inlineLink} pendingClassName="inline-flex items-center gap-1.5 font-semibold text-foreground">
-          full risk disclosure
-        </SiteLink>{" "}
-        before investing.
+        <strong>Investing involves risk, including the loss of money you invest.</strong> The basket invests in US stocks, gold
+        and crude oil through derivative contracts and is valued in US dollars, so changes in the rupee affect its value in
+        both directions. Past performance doesn&rsquo;t predict future results; examples on this site are for illustration
+        only. Tax information is general; your CA will confirm your own. Your CA may be paid by Paraa Capital. Nothing on this
+        site is personal investment advice.
       </p>
     </Disclosure>
   );
@@ -88,33 +61,15 @@ export function SiteFooter() {
       <div className="container-page pt-16 pb-10 md:pt-20">
         <h2 className="sr-only">Site information</h2>
 
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-10">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr] lg:gap-10">
           <div className="max-w-sm sm:col-span-2 lg:col-span-1">
             <Brand />
             <p className="mt-3 text-body-md text-muted-foreground">
-              One international basket of US stocks, gold and crude oil, for residents of India, with a chartered accountant
-              for every investor.
+              US stocks, gold and crude oil in one basket, with a chartered accountant for every investor.
             </p>
-            <h3 id="official-channels" className={`${headCls} mt-8`}>
-              Official channels
-            </h3>
-            <ul className="space-y-2 text-body-md text-muted-foreground">
-              <li>
-                Website: <span className="font-semibold text-foreground">paraacapital.com</span>
-              </li>
-              <li>
-                App: <span className="text-foreground">App Store</span> · <span className="text-foreground">Google Play</span>{" "}
-                <ToConfirm />
-              </li>
-              <li>
-                Support email: <ToConfirm />
-              </li>
-              <li>
-                <span className="font-semibold text-foreground">
-                  We never ask for your OTP, PIN or money over WhatsApp or personal accounts.
-                </span>
-              </li>
-            </ul>
+            <p className="mt-4 text-body-md font-semibold text-foreground">
+              We never ask for your OTP or PIN, or for payment to a personal account.
+            </p>
           </div>
 
           {COLUMNS.map((col) => (
@@ -123,9 +78,14 @@ export function SiteFooter() {
               <ul>
                 {col.links.map((l) => (
                   <li key={l.href}>
-                    <SiteLink href={l.href} className={linkCls} pendingClassName={`${linkCls} text-faint`}>
+                    <Link
+                      href={l.href}
+                      className={linkCls}
+                      {...(l.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    >
                       {l.label}
-                    </SiteLink>
+                      {l.external && <span className="sr-only"> (opens in a new tab)</span>}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -133,127 +93,20 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <div className="mt-14 space-y-10 border-t border-border-strong pt-10">
-          {/* §0.2.1 Registrations. Production rule: a row ships only when all five cells are real
-              and the link opens the regulator's own lookup. Never a regulator's logo. */}
-          <div id="registrations">
-            <h3 className="type-h6 text-foreground">Registrations</h3>
-            <div className="mt-4 overflow-x-auto rounded-lg border bg-card shadow-card">
-              <table className="w-full min-w-[640px] text-left text-body-md">
-                <caption className="sr-only">Registrations of Paraa Capital entities. All details to be confirmed.</caption>
-                <thead className="border-b bg-background-alt text-body-sm tracking-[0.06em] text-faint uppercase">
-                  <tr>
-                    {["Entity", "Regulator", "Activity", "Number", "Check it"].map((h) => (
-                      <th key={h} scope="col" className="px-4 py-3 font-bold">
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="text-muted-foreground">
-                  <tr>
-                    <td className="px-4 py-4">
-                      <span className="text-foreground">Paraa Capital [legal name]</span> <ToConfirm />
-                    </td>
-                    <td className="px-4 py-4">
-                      <ToConfirm />
-                    </td>
-                    <td className="px-4 py-4">
-                      <ToConfirm />
-                    </td>
-                    <td className="px-4 py-4">
-                      <ToConfirm />
-                    </td>
-                    <td className="px-4 py-4">
-                      Lookup link <ToConfirm />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="grid gap-10 lg:grid-cols-2">
-            {/* §0.2.2 Company details. A foreign entity always gets its jurisdiction and role. */}
-            <div>
-              <h3 className="type-h6">Company details</h3>
-              <dl className="mt-4 divide-y divide-border rounded-lg border bg-card text-body-md shadow-card">
-                {(
-                  [
-                    ["Registered name", <ToConfirm key="n" />],
-                    [
-                      <abbr key="c" title="Corporate Identification Number">
-                        CIN
-                      </abbr>,
-                      <>
-                        <ToConfirm /> ·{" "}
-                        <Link href="https://www.mca.gov.in/" className={inlineLink} rel="noopener noreferrer">
-                          MCA lookup
-                        </Link>
-                      </>,
-                    ],
-                    ["Registered office", <ToConfirm key="r" />],
-                    ["Operations office", <ToConfirm key="o" />],
-                    [
-                      "Foreign entities",
-                      <>
-                        [Entity], [country]: holds the fund&rsquo;s assets <ToConfirm />
-                      </>,
-                    ],
-                  ] as const
-                ).map(([dt, dd], i) => (
-                  <div key={i} className="grid gap-1 px-4 py-3 sm:grid-cols-[180px_1fr] sm:gap-4">
-                    <dt className="font-semibold text-foreground">{dt}</dt>
-                    <dd className="text-muted-foreground">{dd}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-
-            {/* §0.2.5 Grievance slot */}
-            <div>
-              <h3 className="type-h6">Grievances</h3>
-              <p className="mt-4 text-body-md text-muted-foreground">
-                Grievance officer: [Name] <ToConfirm /> · [email] <ToConfirm /> · [phone] <ToConfirm /> · We reply within [N]
-                working days <ToConfirm />. Not satisfied? [Escalation route: regulator portal / ODR] <ToConfirm />.
-              </p>
-              <p className="mt-2">
-                <SiteLink href="/grievances" className="inline-flex min-h-11 items-center text-body-md font-bold text-muted-foreground">
-                  Complaint statistics
-                </SiteLink>
-              </p>
-            </div>
-          </div>
-
-          {/* §0.2.3 Risk disclosure */}
+        <div className="mt-12 space-y-4 border-t border-border-strong pt-10">
           <GlobalRiskDisclosure />
-
-          {/* ASCI's mandated disclaimer, verbatim (rulebook R14). Footer only, by decision on 2026-11-03:
-              it is the single place its wording appears, and it is never paraphrased or styled down. */}
+          {/* ASCI's mandated disclaimer, verbatim (rulebook R14). Footer only, by decision on 2026-11-03. */}
           <Disclosure id="asci-vda-v1" className="bg-card p-5 text-body-md md:p-6">
             <p>
               Crypto products and NFTs are unregulated and can be highly risky. There may be no regulatory recourse for any
               loss from such transactions.
             </p>
           </Disclosure>
-
-          {/* §0.2.4 Conditional SEBI line: stays hidden until Compliance confirms a SEBI-registered
-              entity offers the service. Its regulator-mandated verbatim text is inserted then. */}
-          <p data-disclosure-id="sebi-mandated-v1" hidden />
         </div>
 
-        {/* §0.2.6 Bottom line */}
-        <div className="mt-10 flex flex-col gap-3 border-t border-border-strong pt-6 text-body-sm text-faint md:flex-row md:items-center md:justify-between">
-          <p>
-            © <CurrentYear /> Paraa Capital [legal name <ToConfirm />]. Formerly Grade Capital.
-          </p>
-          <p id="rbi-alert" className="flex flex-wrap items-center gap-2">
-            <Link href="https://rbi.org.in/" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-muted-foreground no-underline transition-colors duration-150 hover:text-foreground">
-              Check whether any platform is authorised: RBI Alert List →
-            </Link>
-            <ToConfirm>URL TO CONFIRM</ToConfirm>
-          </p>
-        </div>
+        <p className="mt-10 border-t border-border-strong pt-6 text-body-sm text-faint">
+          © <CurrentYear /> Paraa Capital.
+        </p>
       </div>
     </footer>
   );

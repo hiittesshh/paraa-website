@@ -1,40 +1,39 @@
 "use client";
 
-// "Why US dollars" (round 3; built on Concept B, B5.2 + B3), on the light theme: Main 3 gold line,
-// error-tinted bands for the years the rupee got stronger, Greyscale 500/600 axis text at 12px or more.
-// The case for dollars is made with the rupee's own record, both directions at the same size (R2).
+// "Why USD" (built on Concept B, B5.2), on the light theme: Main 3 gold line, error-tinted bands
+// for the years the rupee got stronger, Greyscale 500/600 axis text at 12px or more.
+// Three short reasons, then the rupee's own record, with both directions stated at the same size
+// directly under the chart (R2).
 // Client component because the chart measures its own width (so labels stay a real 12px on a
-// 375px phone, audit B3), has a hover / keyboard readout, and the birth-year calculator is live.
-// Data and maths: @/lib/rupee.
+// 375px phone, audit B3) and has a hover / keyboard readout. Data and maths: @/lib/rupee.
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { CalendarClock, TrendingDown, TrendingUp } from "lucide-react";
-import { Card, Illustrative, Reveal, RevealGroup, RevealItem, Section, SectionHead, ToConfirm } from "@/components/paraa/primitives";
-import { Stepper } from "@/components/watermelon/stepper";
-import { formatINR, formatPct, formatUSD, roundHalfUp } from "@/lib/format";
-import { FIRST_YEAR, birthYearResult, seriesWindow } from "@/lib/rupee";
-import { cn } from "@/lib/utils";
+import { Globe, Plane, TrendingUp } from "lucide-react";
+import { Reveal, RevealGroup, RevealItem, Section, SectionHead } from "@/components/paraa/primitives";
+import { formatPct, roundHalfUp } from "@/lib/format";
+import { seriesWindow } from "@/lib/rupee";
 
 const FROM = 2006;
 const TO = 2026;
 const ROWS = seriesWindow(FROM, TO);
 const STRONG = ROWS.filter((r) => r.stronger).map((r) => r.year);
-const AMOUNT = 100000;
-const MOVE = 0.05;
-// Average yearly change in ₹ per US$ across the chart window: the "long slide", derived not typed.
+// Average yearly change in ₹ per US$ across the chart window: derived, not typed.
 const SLIDE = (ROWS[ROWS.length - 1].rate / ROWS[0].rate) ** (1 / (TO - FROM)) - 1;
 
 const REASONS = [
   {
-    title: "The long slide",
-    body: `Across these ${TO - FROM} years the rupee lost about ${formatPct(SLIDE, { signed: false })} a year against the dollar, on average. Dollar assets gained that on top of whatever they earned.`,
+    icon: TrendingUp,
+    title: "The rupee usually weakens",
+    body: `On average it lost about ${formatPct(SLIDE, { digits: 0, signed: false })} a year against the dollar over the last ${TO - FROM} years.`,
   },
   {
-    title: "Costs that are in dollars",
-    body: "Studying abroad, foreign travel and much of what India imports, oil included, are priced in dollars. Some savings in dollars keep pace with them.",
+    icon: Plane,
+    title: "Big costs are in dollars",
+    body: "Studying abroad, foreign travel and imports like oil are all priced in dollars.",
   },
   {
-    title: "Not everything in one country",
-    body: "If all your savings are in India, one bad year for India is a bad year for all of them. Money held abroad moves on different news.",
+    icon: Globe,
+    title: "Don't keep it all in India",
+    body: "Money held abroad isn't tied to how one country's economy does.",
   },
 ];
 
@@ -57,27 +56,20 @@ export function RupeeDollar() {
     <Section id="why-usd" labelledBy="rupee-title">
       <SectionHead
         id="rupee-title"
-        eyebrow="Why US dollars"
-        title="The rupee has mostly lost ground. Not every year."
-        lede={
-          <>
-            Since {FROM}, a dollar has gone from about ₹{Math.round(ROWS[0].rate)} to ₹
-            {Math.round(ROWS[ROWS.length - 1].rate)}.
-            Holding dollars has usually meant more rupees later. But the rupee strengthened in {listYears(STRONG)}, and in
-            those years it worked the other way.
-          </>
-        }
+        eyebrow="Why USD"
+        title="Why invest in US dollars?"
+        lede={`In ${FROM}, one dollar cost about ₹${Math.round(ROWS[0].rate)}. Today it costs about ₹${Math.round(ROWS[ROWS.length - 1].rate)}.`}
       />
 
-      <RevealGroup as="ol" className="mb-10 grid gap-x-8 gap-y-6 border-y py-8 md:grid-cols-3">
-        {REASONS.map((r, i) => (
-          <RevealItem as="li" key={r.title} className="flex gap-4">
-            <span aria-hidden className="type-h3 leading-none text-accent num">
-              {i + 1}
+      <RevealGroup as="ul" className="mb-10 grid gap-4 md:grid-cols-3">
+        {REASONS.map(({ icon: Icon, title, body }) => (
+          <RevealItem as="li" key={title} className="flex gap-4 rounded-lg border bg-card p-5 shadow-card">
+            <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-full bg-gold-50 text-ink">
+              <Icon className="size-5" />
             </span>
             <span>
-              <span className="block type-h6">{r.title}</span>
-              <span className="mt-1.5 block text-body-md text-muted-foreground">{r.body}</span>
+              <span className="block type-h6">{title}</span>
+              <span className="mt-1 block text-body-md text-muted-foreground">{body}</span>
             </span>
           </RevealItem>
         ))}
@@ -85,136 +77,25 @@ export function RupeeDollar() {
 
       <Reveal>
         <figure className="m-0 rounded-lg border bg-card p-4 shadow-card sm:p-6">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <h3 className="type-h6">
-              Rupees per US dollar, annual average, {FROM}&ndash;{TO}
-            </h3>
-            <Illustrative />
-          </div>
+          <h3 className="type-h6">
+            Rupees for one US dollar, {FROM}&ndash;{TO}
+          </h3>
           <RupeeChart />
-          <figcaption className="mt-4 space-y-2 text-body-sm text-muted-foreground">
-            <span className="flex items-center gap-2">
-              <span aria-hidden className="inline-block size-4 shrink-0 rounded-xs border border-error/40 bg-error/10" />
-              Shaded: a year the rupee got stronger (fewer rupees per dollar). Unshaded: a year it got weaker.
+          <figcaption className="mt-4 space-y-3 text-body-md text-muted-foreground">
+            <span className="flex items-start gap-2">
+              <span aria-hidden className="mt-1 inline-block size-4 shrink-0 rounded-xs border border-error/40 bg-error/10" />
+              <span>
+                Shaded years: the rupee got stronger ({listYears(STRONG)}). In those years, dollars bought fewer rupees.
+              </span>
             </span>
-            <span className="block text-faint">
-              Illustrative annual averages · live: RBI/FBIL reference rate <ToConfirm /> · past movements don&rsquo;t predict
-              future ones.
+            <span className="block rounded-md bg-background-alt p-3 text-foreground">
+              When the rupee weakens, your investment is worth more in rupees. When it strengthens, it&rsquo;s worth less.
             </span>
+            <span className="block text-body-sm text-faint">Approximate yearly averages. Past moves don&rsquo;t predict future ones.</span>
           </figcaption>
         </figure>
       </Reveal>
-
-      <RevealGroup className="mt-6 grid gap-4 md:grid-cols-2">
-        <RevealItem className="h-full">
-          <Card className="h-full border-l-4 border-l-success">
-            <p className="flex items-center gap-3 text-body-md font-bold text-foreground">
-              <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-success/15 text-ink">
-                <TrendingUp className="size-5" />
-              </span>
-              When it helps
-              <Illustrative className="ml-auto" />
-            </p>
-            <p className="mt-3 text-body-lg text-muted-foreground">
-              If you invest {formatINR(AMOUNT)} and the rupee weakens {formatPct(MOVE, { digits: 0, signed: false })}, your
-              holding is worth about <strong className="num text-foreground">{formatINR(AMOUNT * (1 + MOVE))}</strong> before
-              any investment gain or loss.
-            </p>
-          </Card>
-        </RevealItem>
-        <RevealItem className="h-full">
-          <Card className="h-full border-l-4 border-l-error">
-            <p className="flex items-center gap-3 text-body-md font-bold text-foreground">
-              <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-error/10 text-ink">
-                <TrendingDown className="size-5" />
-              </span>
-              When it hurts
-              <Illustrative className="ml-auto" />
-            </p>
-            <p className="mt-3 text-body-lg text-muted-foreground">
-              If the rupee strengthens {formatPct(MOVE, { digits: 0, signed: false })}, the same holding is worth about{" "}
-              <strong className="num text-foreground">{formatINR(AMOUNT * (1 - MOVE))}</strong>, even if the investment
-              didn&rsquo;t move.
-            </p>
-          </Card>
-        </RevealItem>
-      </RevealGroup>
-
-      <Reveal className="mt-4">
-        <BirthYear />
-      </Reveal>
     </Section>
-  );
-}
-
-/* ------------------------------------------------------------------------------------------ */
-
-const LAST_PICKABLE = 2024; // later years are too recent for the comparison to mean anything
-const YEAR_PICKS = [1985, 1995, 2005, 2015];
-
-/** B3: what ₹1,000 in your birth year (or any year) is worth in dollar terms today, and the years the rupee won. */
-function BirthYear() {
-  const [year, setYear] = useState(1995);
-  const r = birthYearResult(year);
-
-  return (
-    <div className="grid gap-6 rounded-lg border bg-card p-5 shadow-card sm:p-6 md:grid-cols-[auto_minmax(0,1fr)] md:gap-10">
-      <div>
-        <p className="flex items-center gap-3 text-body-lg font-bold">
-          <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground">
-            <CalendarClock className="size-5" />
-          </span>
-          What has the rupee done since you were born?
-        </p>
-        <Stepper label="Year you were born" value={year} min={FIRST_YEAR} max={LAST_PICKABLE} onChange={setYear} className="mt-5" />
-        <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Quick years">
-          {YEAR_PICKS.map((y) => (
-            <button
-              key={y}
-              type="button"
-              aria-pressed={year === y}
-              onClick={() => setYear(y)}
-              className={cn(
-                "inline-flex min-h-11 cursor-pointer items-center rounded-full border px-4 text-body-md font-semibold num transition-colors duration-200 ease-out-soft",
-                year === y ? "border-ink bg-ink text-primary-foreground" : "border-border-strong bg-card hover:border-ink",
-              )}
-            >
-              {y}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="min-w-0 space-y-3 md:border-l md:pl-10" aria-live="polite" aria-atomic="true">
-        <p className="text-body-lg text-muted-foreground">
-          In {year}, {formatINR(1000)} bought{" "}
-          <strong className="num text-foreground">{formatUSD(r.usdThen, { cents: true })}</strong>. Those same dollars buy{" "}
-          <strong className="num text-foreground">{formatINR(r.inrToday)}</strong> today.
-        </p>
-        <p className="text-body-lg text-muted-foreground">
-          {r.worstYr !== null ? (
-            <>
-              But in{" "}
-              <strong className="text-foreground">
-                {r.strongYrs} of the {r.yearsSince} years
-              </strong>{" "}
-              since, the rupee got stronger. The worst was{" "}
-              <strong className="num text-foreground">
-                {r.worstYr}: {formatPct(r.worstPct!)}
-              </strong>{" "}
-              for anyone holding dollars.
-            </>
-          ) : (
-            <>The rupee didn&rsquo;t strengthen in any year since. That won&rsquo;t always hold.</>
-          )}
-        </p>
-        <p className="flex flex-wrap items-center gap-2 text-body-sm text-faint">
-          This is the currency alone, not an investment. Part of the rupee&rsquo;s fall reflects India&rsquo;s higher
-          inflation, so prices here rose too.
-          <Illustrative />
-        </p>
-      </div>
-    </div>
   );
 }
 
@@ -427,7 +308,7 @@ function RupeeChart() {
       {/* Visually hidden data table for screen readers (docs/build-brief.md accessibility rule). */}
       <div className="sr-only"><table>
         <caption>
-          Illustrative annual average rupees per US dollar, {FROM} to {TO}, and the direction of each year&rsquo;s move
+          Approximate yearly average rupees per US dollar, {FROM} to {TO}, and the direction of each year&rsquo;s move
         </caption>
         <thead>
           <tr>

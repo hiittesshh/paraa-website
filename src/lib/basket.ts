@@ -57,10 +57,10 @@ export interface Preset {
 // Calendar-year benchmark moves, rounded to the nearest 1%: S&P 500, gold spot, Brent crude, and
 // the rupee's year-end rate against the dollar. They are not the basket's past returns.
 export const PRESETS: readonly Preset[] = [
-  { id: "2020", label: "A year like 2020", note: "Pandemic year", moves: { us: 0.16, gold: 0.25, oil: -0.22 }, rupee: 0.02 },
-  { id: "2022", label: "A year like 2022", note: "US stocks fell", moves: { us: -0.19, gold: 0, oil: 0.11 }, rupee: 0.11 },
-  { id: "2023", label: "A year like 2023", note: "Oil fell", moves: { us: 0.24, gold: 0.13, oil: -0.1 }, rupee: 0.01 },
-  { id: "hard", label: "A hard year", note: "Made up, to show the downside", moves: { us: -0.25, gold: -0.05, oil: -0.4 }, rupee: -0.05 },
+  { id: "2020", label: "2020", note: "Pandemic year", moves: { us: 0.16, gold: 0.25, oil: -0.22 }, rupee: 0.02 },
+  { id: "2022", label: "2022", note: "Stocks fell", moves: { us: -0.19, gold: 0, oil: 0.11 }, rupee: 0.11 },
+  { id: "2023", label: "2023", note: "Oil fell", moves: { us: 0.24, gold: 0.13, oil: -0.1 }, rupee: 0.01 },
+  { id: "hard", label: "A bad year", note: "Made-up example", moves: { us: -0.25, gold: -0.05, oil: -0.4 }, rupee: -0.05 },
 ];
 
 export const NO_MOVES: Moves = { us: 0, gold: 0, oil: 0 };

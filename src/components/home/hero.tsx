@@ -29,7 +29,7 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { ArrowLink, Illustrative, Reveal, ToConfirm } from "@/components/paraa/primitives";
+import { ArrowLink, Reveal } from "@/components/paraa/primitives";
 import { SLEEVES, type Sleeve } from "@/lib/basket";
 import { formatPct } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -198,7 +198,7 @@ function HeroDeck({ wide, narrow }: { wide: MotionValue<number>; narrow: MotionV
   return (
     <figure aria-labelledby="hero-deck-title" className="relative mx-auto w-full max-w-[520px] lg:mx-0">
       <p id="hero-deck-title" className="sr-only">
-        What the basket holds, illustrative weights:{" "}
+        What the basket holds, example allocation:{" "}
         {SLEEVES.map((s) => `${s.name} ${formatPct(s.weight, { digits: 0, signed: false })}`).join(", ")}
       </p>
 
@@ -228,12 +228,7 @@ function HeroDeck({ wide, narrow }: { wide: MotionValue<number>; narrow: MotionV
       </div>
 
       <figcaption className="mt-6">
-        <p className="flex items-center gap-2 text-body-sm text-faint">
-          Weights <Illustrative /> <ToConfirm />
-        </p>
-        <p className="mt-1.5 text-body-sm text-faint">
-          All three are priced in US dollars: a weaker rupee raises your rupee value; a stronger one lowers it.
-        </p>
+        <p className="text-body-sm text-faint">Example allocation, for illustration.</p>
         <ArrowLink href="#basket">What each part does</ArrowLink>
       </figcaption>
     </figure>
