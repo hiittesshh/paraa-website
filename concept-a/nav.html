@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en-IN" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NAV &amp; performance: Paraa Capital (Concept A prototype)</title>
+  <meta name="description" content="Every published NAV for every basket, since day one. Download it, check it, quote it back to us.">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="../shared/components.css">
+  <link rel="stylesheet" href="../shared/motion.css">
+  <link rel="stylesheet" href="concept.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- §0.1 Sitewide rebrand bar (dismissible) -->
+  <div class="rebrand-bar" data-rebrand-bar role="region" aria-label="Name change notice">
+    <div class="container">
+      <span class="badge badge-accent">New name</span>
+      <p><strong>Grade Capital is now Paraa Capital.</strong> Before you log in or pay, check you're on an official channel.
+        <a class="link-arrow" href="#">How to verify us</a></p>
+      <button class="rebrand-close" type="button" data-rebrand-close aria-label="Dismiss name change notice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Global header / nav (§0.1) -->
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main">
+      <a class="brand" href="index.html" aria-label="Paraa Capital, home">
+        <span class="brand-mark" aria-hidden="true">P</span>
+        <span>Paraa <b>Capital</b></span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html#custody">How it works</a></li>
+        <li><a href="#">Baskets</a></li>
+        <li><a href="nav.html" aria-current="page">NAV</a></li>
+        <li><a href="index.html#receipt">Fees</a></li>
+        <li><a href="#">Risks</a></li>
+        <li>
+          <details class="nav-menu">
+            <summary>For partners
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <ul>
+              <li><a href="#">Advisors</a></li>
+              <li><a href="#">Chartered accountants</a></li>
+              <li><a href="#">Institutions</a></li>
+            </ul>
+          </details>
+        </li>
+      </ul>
+      <div class="nav-actions">
+        <a class="btn btn-secondary" href="#explorer">See every number</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu"><span></span></button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- A6.1 Header -->
+    <section class="page-head" aria-labelledby="page-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <span class="eyebrow">NAV &amp; performance centre</span>
+          <h1 class="h1" id="page-title">NAV &amp; performance</h1>
+          <p class="body-xl muted">Every published <abbr title="net asset value">NAV</abbr> (the price of one unit of a basket) for every basket, since day one. Download it, check it, quote it back to us.</p>
+          <div class="head-row">
+            <span class="badge">Last updated 31 Oct 2026</span>
+            <span class="badge badge-accent">Illustrative</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- A6.2 Basket comparison table -->
+    <section class="section-sm section-alt" aria-labelledby="compare-table-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <h2 class="h3" id="compare-table-title">All baskets, the same columns</h2>
+        </div>
+        <div class="table-wrap" data-reveal>
+          <table class="table">
+            <caption class="sr-only">Basket comparison, as of 31 Oct 2026, in US dollars, net of fees. Illustrative.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Basket</th>
+                <th scope="col">Currency</th>
+                <th scope="col" class="r">NAV</th>
+                <th scope="col" class="r" data-perf-col>Since inception</th>
+                <th scope="col" class="r" data-perf-col>Annualised</th>
+                <th scope="col" class="r">Max <abbr title="the largest fall from a previous high">drawdown</abbr></th>
+                <th scope="col" class="r">Weakest month</th>
+                <th scope="col">Min. amount</th>
+                <th scope="col" class="r">Fee/yr</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Basket 1 — USD Core <span class="placeholder-tag">name TO CONFIRM</span> <span class="badge badge-accent">Illustrative</span></th>
+                <td>US$</td>
+                <td class="r" data-calc="latestNav">$11.06</td>
+                <td class="r" data-calc="sinceInception" data-perf-col>+10.6%</td>
+                <td class="r" data-calc="annualised" data-perf-col>+4.6%</td>
+                <td class="r" data-calc="maxDrawdown">−11.8%</td>
+                <td class="r" data-calc="weakest">−6.3%</td>
+                <td><span class="placeholder-tag">TO CONFIRM</span></td>
+                <td class="r">1.50% <span class="placeholder-tag">TO CONFIRM</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Basket 2 — USD Balanced <span class="placeholder-tag">name TO CONFIRM</span></th>
+                <td>US$</td>
+                <td colspan="5" class="muted" data-perf-span>In preparation</td>
+                <td><span class="placeholder-tag">TO CONFIRM</span></td>
+                <td class="r muted">In preparation</td>
+              </tr>
+              <tr>
+                <th scope="row">Basket 3 — USD Growth <span class="placeholder-tag">name TO CONFIRM</span></th>
+                <td>US$</td>
+                <td colspan="5" class="muted" data-perf-span>In preparation</td>
+                <td><span class="placeholder-tag">TO CONFIRM</span></td>
+                <td class="r muted">In preparation</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="stat-source mt-3">as of 31 Oct 2026 · since 1 Jul 2024 · in USD · net of fees · time-weighted · vs USD cash <span class="placeholder-tag">TO CONFIRM</span> · source: fund administrator <span class="placeholder-tag">TO CONFIRM</span> · Illustrative</p>
+      </div>
+    </section>
+
+    <!-- A6.3 Full NAV explorer, with date-range presets -->
+    <section class="section" id="explorer" aria-labelledby="explorer-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <h2 class="h2" id="explorer-title">The whole history. No flattering window.</h2>
+          <p class="body-xl muted">The chart opens on <em>since inception</em>. Pick any start and end month. The weakest stretch stays shaded whatever range you choose.</p>
+        </div>
+
+        <div class="tabs" data-reveal>
+          <div role="tablist" aria-label="Choose a basket">
+            <button role="tab" id="bk1-tab" aria-controls="bk1-panel" aria-selected="true">Basket 1</button>
+            <button role="tab" id="bk2-tab" aria-controls="bk2-panel" aria-selected="false">Basket 2</button>
+            <button role="tab" id="bk3-tab" aria-controls="bk3-panel" aria-selected="false">Basket 3</button>
+          </div>
+
+          <div role="tabpanel" id="bk1-panel" aria-labelledby="bk1-tab" tabindex="0">
+            <div class="card card-lg" data-nav-explorer data-preset-name="nav-preset">
+              <div class="head-row">
+                <h3 class="h5">Basket 1 — USD Core</h3>
+                <span class="placeholder-tag">name TO CONFIRM</span>
+                <span class="badge badge-accent">Illustrative</span>
+              </div>
+
+              <fieldset class="presets">
+                <legend>Date range</legend>
+                <div class="row">
+                  <label class="preset"><input type="radio" name="nav-preset" value="inception" checked><span>Since inception</span></label>
+                  <label class="preset"><input type="radio" name="nav-preset" value="years"><span>Calendar years</span></label>
+                  <label class="preset"><input type="radio" name="nav-preset" value="custom"><span>Custom</span></label>
+                </div>
+              </fieldset>
+              <div class="field year-field" data-year-field hidden>
+                <label for="nv-year">Year</label>
+                <select class="select" id="nv-year" data-year></select>
+              </div>
+
+              <div class="explorer-controls">
+                <div class="field">
+                  <label for="nv-from">From</label>
+                  <select class="select" id="nv-from" data-from></select>
+                </div>
+                <div class="field">
+                  <label for="nv-to">To</label>
+                  <select class="select" id="nv-to" data-to></select>
+                </div>
+                <div class="row">
+                  <button class="btn btn-secondary" type="button" data-download-csv>Download CSV</button>
+                </div>
+              </div>
+
+              <figure class="nav-chart-card fig-flush">
+                <div class="nav-chart" data-chart>
+                  <p class="muted body-md">The interactive chart needs JavaScript. The monthly grid below shows every month.</p>
+                </div>
+                <figcaption class="nc-readout" data-readout>Focus or hover a point to read its value.</figcaption>
+              </figure>
+
+              <div class="grid grid-4 explorer-stats" aria-live="polite" aria-atomic="true">
+                <div class="stat">
+                  <span class="stat-label">Return over range</span>
+                  <span class="stat-value" data-stat="ret">+10.6%</span>
+                  <span class="stat-source"><span data-stat="since">since 1 Jul 2024</span> · in USD · net of fees · vs USD cash <span class="placeholder-tag">TO CONFIRM</span> · Illustrative</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Annualised</span>
+                  <span class="stat-value" data-stat="ann">+4.6%</span>
+                  <span class="stat-source"><span data-stat="since">since 1 Jul 2024</span> · in USD · net of fees · vs USD cash <span class="placeholder-tag">TO CONFIRM</span> · Illustrative</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Max drawdown in range</span>
+                  <span class="stat-value" data-stat="dd">−11.8%</span>
+                  <span class="stat-source">largest fall from a high · Illustrative</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Negative months in range</span>
+                  <span class="stat-value" data-stat="neg">10 of 27</span>
+                  <span class="stat-source" data-stat="range">Jul 2024 to Oct 2026, 27 months</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div role="tabpanel" id="bk2-panel" aria-labelledby="bk2-tab" tabindex="0">
+            <div class="card card-lg prep-panel">
+              <h3 class="h5">Basket 2 — USD Balanced <span class="placeholder-tag">name TO CONFIRM</span></h3>
+              <span class="placeholder-tag">Data in preparation</span>
+            </div>
+          </div>
+          <div role="tabpanel" id="bk3-panel" aria-labelledby="bk3-tab" tabindex="0">
+            <div class="card card-lg prep-panel">
+              <h3 class="h5">Basket 3 — USD Growth <span class="placeholder-tag">name TO CONFIRM</span></h3>
+              <span class="placeholder-tag">Data in preparation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- A6.4 Monthly returns grid (month-grid) -->
+    <section class="section-sm section-alt" aria-labelledby="grid-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <h2 class="h3" id="grid-title">Every month, every year</h2>
+          <p class="muted">Basket 1, monthly return in USD, net of fees. The year total compounds the months shown. <span class="badge badge-accent">Illustrative</span></p>
+        </div>
+        <div class="table-wrap month-grid" data-reveal>
+          <table class="table">
+            <caption class="sr-only">Basket 1 monthly returns by calendar year, with the year total. Plus and minus signs mark gains and losses. Illustrative.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Year</th>
+                <th scope="col" class="r">Jan</th><th scope="col" class="r">Feb</th><th scope="col" class="r">Mar</th>
+                <th scope="col" class="r">Apr</th><th scope="col" class="r">May</th><th scope="col" class="r">Jun</th>
+                <th scope="col" class="r">Jul</th><th scope="col" class="r">Aug</th><th scope="col" class="r">Sep</th>
+                <th scope="col" class="r">Oct</th><th scope="col" class="r">Nov</th><th scope="col" class="r">Dec</th>
+                <th scope="col" class="r">Year total</th>
+              </tr>
+            </thead>
+            <!-- A6.4 Static rows = the no-JS fallback; concept.js rebuilds them from calendarYears() -->
+              <tbody data-month-grid>
+                <tr><th scope="row">2024</th><td class="r faint" aria-label="No data">–</td><td class="r faint" aria-label="No data">–</td><td class="r faint" aria-label="No data">–</td><td class="r faint" aria-label="No data">–</td><td class="r faint" aria-label="No data">–</td><td class="r faint" aria-label="No data">–</td><td class="r faint">Start</td><td class="r pos">+1.2%</td><td class="r pos">+1.9%</td><td class="r neg">−1.3%</td><td class="r pos">+2.2%</td><td class="r pos">+1.2%</td><td class="r mg-total pos">+5.2% (5 mo)</td></tr>
+                <tr><th scope="row">2025</th><td class="r pos">+0.9%</td><td class="r neg">−1.3%</td><td class="r pos">+3.1%</td><td class="r neg">−6.3%</td><td class="r neg">−2.3%</td><td class="r neg">−3.6%</td><td class="r pos">+2.0%</td><td class="r pos">+2.8%</td><td class="r pos">+4.1%</td><td class="r neg">−0.9%</td><td class="r pos">+1.7%</td><td class="r pos">+1.1%</td><td class="r mg-total pos">+0.6%</td></tr>
+                <tr><th scope="row">2026</th><td class="r neg">−1.3%</td><td class="r pos">+1.7%</td><td class="r pos">+0.8%</td><td class="r neg">−0.5%</td><td class="r pos">+1.5%</td><td class="r pos">+1.2%</td><td class="r neg">−0.6%</td><td class="r pos">+1.3%</td><td class="r neg">−0.5%</td><td class="r pos">+0.8%</td><td class="r faint" aria-label="No data">–</td><td class="r faint" aria-label="No data">–</td><td class="r mg-total pos">+4.5% (10 mo)</td></tr>
+              </tbody>
+          </table>
+        </div>
+        <p class="stat-source mt-3">“Start” = inception month (1 Jul 2024, US$10.00). Part years show how many months the total covers.</p>
+      </div>
+    </section>
+
+    <!-- A6.5 Changelog (full diff-row timeline) -->
+    <section class="section" id="changelog" aria-labelledby="changelog-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <h2 class="h2" id="changelog-title">When we change a number, we say so</h2>
+          <p class="body-xl muted">Software teams publish changelogs. We publish one for the NAV. Every revision, why it happened, and who signed it.</p>
+          <p><span class="badge badge-accent">Illustrative</span></p>
+        </div>
+        <ol class="timeline diff-row">
+          <li data-reveal data-reveal-delay="1">
+            <div class="diff-meta"><time datetime="2026-09-12">12 Sep 2026</time><span class="badge badge-pending">Revised</span></div>
+            <p class="diff-change">Basket 1, NAV for 31 Aug 2026: <del aria-label="was 11.04">11.04</del> → <ins aria-label="now 11.02">11.02</ins></p>
+            <p class="muted">A price for one holding came in late and was lower than the estimate we used.</p>
+            <p class="diff-sign">Signed: Administrator <span class="placeholder-tag">TO CONFIRM</span> · Reviewed: Risk officer <span class="placeholder-tag">TO CONFIRM</span></p>
+          </li>
+          <li data-reveal data-reveal-delay="2">
+            <div class="diff-meta"><time datetime="2026-02-03">3 Feb 2026</time><span class="badge">Methodology</span></div>
+            <p class="muted">We now value holdings at the 4 pm New York close instead of the last available price. No past NAV changed.</p>
+            <p class="diff-sign">Signed: Valuation committee <span class="placeholder-tag">TO CONFIRM</span></p>
+          </li>
+          <li data-reveal data-reveal-delay="3">
+            <div class="diff-meta"><time datetime="2024-07-01">1 Jul 2024</time><span class="badge">Launch</span></div>
+            <p class="muted">Basket 1 opened at US$10.00 per unit.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- A6.6 Download -->
+    <section class="section-sm section-alt" aria-labelledby="download-title">
+      <div class="container">
+        <div class="card card-lg" data-reveal>
+          <h2 class="h3" id="download-title">Download the full history</h2>
+          <p class="muted">One row per month-end, nothing removed. Columns:</p>
+          <p><code class="body-md">date, basket, nav_usd, monthly_return, revised, revision_note, signed_by</code></p>
+          <p class="stat-source">Generated in your browser from the prototype dataset · Illustrative</p>
+          <div class="row"><button class="btn btn-secondary" type="button" data-download-csv>Download NAV history (CSV)</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- A6.7 Methodology (A5.9 accordion, expanded by default) -->
+    <section class="section" aria-labelledby="method-title">
+      <div class="container-narrow">
+        <div class="section-head" data-reveal>
+          <h2 class="h2" id="method-title">How we calculate what you see</h2>
+        </div>
+        <div class="accordion" data-reveal>
+          <details open>
+            <summary>What NAV means</summary>
+            <div class="acc-body">NAV (net asset value) is the value of everything in the basket, minus what it owes, divided by the number of units. It's the price of one unit.</div>
+          </details>
+          <details open>
+            <summary>How returns are measured</summary>
+            <div class="acc-body">Time-weighted (<abbr title="time-weighted rate of return">TWRR</abbr>). It measures the basket, not the timing of anyone's deposits. Net of management fees. In US dollars unless labelled ₹.</div>
+          </details>
+          <details open>
+            <summary>Which exchange rate we use for ₹ figures</summary>
+            <div class="acc-body">[Source] reference rate on the NAV date <span class="placeholder-tag">TO CONFIRM</span>. Shown on every statement.</div>
+          </details>
+          <details open>
+            <summary>Who checks it</summary>
+            <div class="acc-body">Administrator <span class="placeholder-tag">TO CONFIRM</span> computes it. Auditor <span class="placeholder-tag">TO CONFIRM</span> reviews it annually. Report download <span class="placeholder-tag">TO CONFIRM</span>.</div>
+          </details>
+          <details open>
+            <summary>What we will never do</summary>
+            <div class="acc-body">Remove a month from the history. Restart a track record. Show a period we chose because it looks good.</div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- A6.8 Comparisons: overlay toggle Basket 1 / USD cash (benchmark TO CONFIRM) -->
+    <section class="section-sm section-alt" aria-labelledby="vs-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <h2 class="h2" id="vs-title">Compared with what?</h2>
+          <p class="body-xl muted">If plain dollars in a deposit would have done as well, you should know that. Benchmark: <span class="placeholder-tag">TO CONFIRM</span>.</p>
+        </div>
+        <div class="card card-lg" data-compare data-reveal>
+          <div class="compare-toggle" role="group" aria-label="Lines on the chart">
+            <button type="button" data-series="basket" aria-pressed="true"><span class="swatch" aria-hidden="true"></span>Basket 1 (always shown)</button>
+            <button type="button" data-series="cash" aria-pressed="false"><span class="swatch swatch-bench" aria-hidden="true"></span>USD cash index <span class="placeholder-tag">TO CONFIRM</span></button>
+          </div>
+          <p class="callout callout-warn" data-compare-status hidden role="status">No benchmark line is drawn yet. The USD cash index is <span class="placeholder-tag">TO CONFIRM</span>, and we won't draw a line we can't source.</p>
+          <figure class="nav-chart-card fig-flush">
+            <div class="nav-chart" data-chart>
+              <p class="muted body-md">The chart needs JavaScript.</p>
+            </div>
+            <figcaption class="nc-readout" data-readout>Basket 1, since inception · in USD · net of fees · Illustrative</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- A6.9 Disclosure nav-centre-v1 -->
+    <section class="section-sm" aria-label="Disclosure for this page">
+      <div class="container">
+        <p class="disclosure" data-disclosure-id="nav-centre-v1">Illustrative prototype data. Returns in US dollars, net of the illustrative fees, time-weighted. Rupee returns differ: a weaker rupee raises your rupee value; a stronger rupee lowers it. Past performance, including any simulation, does not predict future results. Final wording for this page <span class="placeholder-tag">TO CONFIRM</span>.</p>
+      </div>
+    </section>
+
+  </main>
+
+<!-- §0.2 Shared footer / legal block -->
+  <footer class="site-footer">
+    <div class="container">
+      <h2 class="sr-only">Site information</h2>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">P</span><span>Paraa <b>Capital</b></span></a>
+          <p>USD-denominated investing for residents of India. Every number dated, every intermediary named.</p>
+          <h3>Official channels</h3>
+          <ul>
+            <li>Website: paraa.capital <span class="placeholder-tag">TO CONFIRM</span></li>
+            <li>App: <a href="#">App Store</a> · <a href="#">Google Play</a> <span class="placeholder-tag">TO CONFIRM</span></li>
+            <li>Support email: <span class="placeholder-tag">TO CONFIRM</span></li>
+            <li><a href="#">We never ask for your OTP, PIN or money over WhatsApp or personal accounts.</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Invest</h3>
+          <ul>
+            <li><a href="#">How your money moves</a></li>
+            <li><a href="#">Baskets</a></li>
+            <li><a href="nav.html">NAV &amp; performance</a></li>
+            <li><a href="#">Fees</a></li>
+            <li><a href="#">What could go wrong</a></li>
+            <li><a href="#">Getting your money out</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Check us</h3>
+          <ul>
+            <li><a href="#">Who we are legally</a></li>
+            <li><a href="#">Team &amp; governance</a></li>
+            <li><a href="#">Transparency log</a></li>
+            <li><a href="#">Letters</a></li>
+            <li><a href="#">Complaints &amp; grievances</a></li>
+            <li><a href="#">Grade is now Paraa</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Partners &amp; legal</h3>
+          <ul>
+            <li><a href="#">For advisors</a></li>
+            <li><a href="#">For CAs</a></li>
+            <li><a href="#">For institutions</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Investor agreement</a></li>
+            <li><a href="#">AML policy</a></li>
+            <li><a href="#">Full risk disclosure</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-legal">
+        <!-- §0.2.1 Registrations: production rule = a row ships only when all five cells are real -->
+        <div id="registrations">
+          <h3>Registrations</h3>
+          <div class="table-wrap">
+            <table class="table">
+              <caption class="sr-only">Registrations of Paraa Capital entities. All details to be confirmed.</caption>
+              <thead>
+                <tr><th scope="col">Entity</th><th scope="col">Regulator</th><th scope="col">Activity</th><th scope="col">Number</th><th scope="col">Check it</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Paraa Capital [legal name] <span class="placeholder-tag">TO CONFIRM</span></td>
+                  <td><span class="placeholder-tag">TO CONFIRM</span></td>
+                  <td><span class="placeholder-tag">TO CONFIRM</span></td>
+                  <td><span class="placeholder-tag">TO CONFIRM</span></td>
+                  <td>Lookup link <span class="placeholder-tag">TO CONFIRM</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- §0.2.2 Company details -->
+        <div>
+          <h3>Company details</h3>
+          <dl>
+            <dt>Registered name</dt><dd><span class="placeholder-tag">TO CONFIRM</span></dd>
+            <dt><abbr title="Corporate Identification Number">CIN</abbr></dt><dd><span class="placeholder-tag">TO CONFIRM</span> · <a href="#">MCA lookup</a></dd>
+            <dt>Registered office</dt><dd><span class="placeholder-tag">TO CONFIRM</span></dd>
+            <dt>Operations office</dt><dd><span class="placeholder-tag">TO CONFIRM</span></dd>
+            <dt>Foreign entities</dt><dd>[Entity], [country]: holds the fund's assets <span class="placeholder-tag">TO CONFIRM</span></dd>
+          </dl>
+        </div>
+
+        <!-- §0.2.3 Risk disclosure -->
+        <div class="disclosure" data-disclosure-id="global-risk-v1">
+          <p><strong>Investing involves risk, including loss of the money you put in.</strong> Your investment is held and valued in US dollars. If the rupee weakens against the dollar, the rupee value of your investment rises; if the rupee strengthens, it falls. Both can happen in the same period as a fall in the investment itself. Past performance, including any simulation, does not predict future results. Figures marked <em>Illustrative</em> are examples, not records or forecasts. How your money is legally routed and held is <span class="placeholder-tag">TO CONFIRM</span> and is described on <a href="index.html#custody">How your money moves</a>. Nothing on this site is personal investment advice. Read the <a href="#">full risk disclosure</a> before investing.</p>
+        </div>
+
+        <!-- §0.2.4 Conditional SEBI line: stays hidden until Compliance confirms a SEBI-registered entity offers the service.
+             Its regulator-mandated verbatim text (brief §3.2) is inserted then; R1 exempts that quote. -->
+        <p class="disclosure" data-disclosure-id="sebi-mandated-v1" hidden></p>
+
+        <!-- §0.2.5 Grievance slot -->
+        <div>
+          <h3>Grievances</h3>
+          <p class="muted">Grievance officer: [Name] <span class="placeholder-tag">TO CONFIRM</span> · [email] <span class="placeholder-tag">TO CONFIRM</span> · [phone] <span class="placeholder-tag">TO CONFIRM</span> · We reply within [N] working days <span class="placeholder-tag">TO CONFIRM</span>. Not satisfied? [Escalation route: regulator portal / ODR] <span class="placeholder-tag">TO CONFIRM</span>.</p>
+          <a class="link-arrow" href="#">Complaint statistics</a>
+        </div>
+      </div>
+
+      <!-- §0.2.6 Bottom line -->
+      <div class="footer-bottom">
+        <p>© <span data-year-now>2026</span> Paraa Capital [legal name <span class="placeholder-tag">TO CONFIRM</span>]. Formerly Grade Capital.</p>
+        <p id="rbi-alert"><a href="#">Check whether any platform is authorised: RBI Alert List →</a> <span class="placeholder-tag">URL TO CONFIRM</span></p>
+      </div>
+    </div>
+  </footer>
+
+  <nav class="proto-bar" aria-label="Prototype concepts">
+    <a href="../index.html">All</a>
+    <a href="../concept-a/index.html" aria-current="page">A</a>
+    <a href="../concept-b/index.html">B</a>
+    <a href="../concept-c/index.html">C</a>
+    <a href="../concept-d/index.html">D</a>
+  </nav>
+
+  <script src="../shared/motion.js" defer></script>
+<script src="../shared/disclosures.js" defer></script>
+  <script src="concept.js" defer></script>
+</body>
+</html>

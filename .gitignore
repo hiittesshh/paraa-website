@@ -1,0 +1,15 @@
+# dependencies and build output (site/ has its own .gitignore too)
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+
+# local env and secrets
+.env*
+!.env.example
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log

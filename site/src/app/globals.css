@@ -1,0 +1,148 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* The site is dark-only (design file + screenshot tone). <html class="dark"> is always set,
+   so shadcn/Watermelon `dark:` variants resolve to our palette. */
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Layer 1: design-file primitives (see ../../00-design-tokens.md)
+   Layer 2: semantic roles, mapped onto shadcn's variable names so every
+            shadcn / Watermelon component picks up the Paraa palette for free.
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-heading: var(--font-manrope), system-ui, sans-serif;
+  --font-mono: var(--font-manrope), system-ui, sans-serif;
+
+  /* brand primitives (usable as bg-gold-500, text-ink-400 …) */
+  --color-gold-400: #FDD060;
+  --color-gold-500: #FDC037;
+  --color-gold-main-1: #FFB000;
+  --color-gold-main-2: #F2A900;
+  --color-gold-600: #E5A823;
+  --color-gold-700: #BB861A;
+  --color-gold-800: #8E6414;
+  --color-gold-900: #5E450F;
+  --color-ink-400: #888A90;
+  --color-ink-500: #62646C;
+  --color-ink-600: #484B55;
+  --color-ink-700: #32353F;
+  --color-ink-750: #272A33;
+  --color-ink-800: #1F2027;
+  --color-ink-900: #131416;
+
+  /* semantic roles */
+  --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-destructive: var(--destructive);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* radius: 8 / 12 / 16 / 24 from the token doc */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 28px;
+
+  /* body sizes from the design file (Body XLarge → XSmall) */
+  --text-body-xl: 18px;
+  --text-body-xl--line-height: 1.6;
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 1.6;
+  --text-body-md: 14px;
+  --text-body-md--line-height: 1.6;
+  --text-body-sm: 12px;
+  --text-body-sm--line-height: 1.5;
+  --text-body-xs: 10px;
+  --text-body-xs--line-height: 1.4;
+
+  --ease-out-soft: cubic-bezier(.2, .7, .2, 1);
+}
+
+:root,
+.dark {
+  --background: #131416;
+  --background-alt: #17181B;
+  --foreground: #F5F5F6;
+  --card: #1F2027;
+  --card-foreground: #F5F5F6;
+  --popover: #1F2027;
+  --popover-foreground: #F5F5F6;
+  --primary: #FDC037;          /* gold, the single accent */
+  --primary-hover: #FFB000;
+  --primary-foreground: #131416;
+  --secondary: #272A33;
+  --secondary-foreground: #F5F5F6;
+  --muted: #272A33;
+  --muted-foreground: #94A3B8;  /* ~7:1 on background */
+  --faint: #888A90;
+  --accent: #FDC037;            /* gold used as text on dark: ~10:1 */
+  --accent-foreground: #131416;
+  --accent-soft: rgb(253 192 55 / 0.10);
+  --destructive: #EF4444;
+  --positive: #10B981;
+  --negative: #F36969;          /* #EF4444 lightened: ≥4.5:1 on cards */
+  --warning: #FACC15;
+  --border: #272A33;
+  --border-strong: #484B55;
+  --input: #484B55;
+  --ring: #FDC037;
+  --chart-1: #FDC037;
+  --chart-2: #94A3B8;
+  --chart-3: #10B981;
+  --chart-4: #F36969;
+  --chart-5: #888A90;
+  --radius: 12px;
+}
+
+/* ---- Heading scale (design file: 48/40/32/24/20/18 desktop; our mobile step-down) ---- */
+@utility type-h1 { font-size: 34px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; @media (width >= 48rem) { font-size: 48px; } }
+@utility type-h2 { font-size: 30px; line-height: 1.15; font-weight: 700; letter-spacing: -0.015em; @media (width >= 48rem) { font-size: 40px; } }
+@utility type-h3 { font-size: 26px; line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; @media (width >= 48rem) { font-size: 32px; } }
+@utility type-h4 { font-size: 21px; line-height: 1.25; font-weight: 700; @media (width >= 48rem) { font-size: 24px; } }
+@utility type-h5 { font-size: 19px; line-height: 1.25; font-weight: 700; @media (width >= 48rem) { font-size: 20px; } }
+@utility type-h6 { font-size: 17px; line-height: 1.25; font-weight: 700; @media (width >= 48rem) { font-size: 18px; } }
+@utility eyebrow { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+@utility num { font-variant-numeric: tabular-nums; }
+@utility container-page { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: 16px; @media (width >= 40rem) { padding-inline: 24px; } }
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { @apply font-sans; scroll-behavior: smooth; scroll-padding-top: 88px; }
+  body { @apply bg-background text-foreground; font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; border-radius: 4px; }
+  ::selection { background: rgb(253 192 55 / 0.3); }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}

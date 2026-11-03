@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en-IN" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Here's how you could lose money: Paraa Capital (Concept D prototype)</title>
+  <meta name="description" content="USD-denominated investing for residents of India. Before anything else, see how you could lose money, then read the 2-minute risk brief.">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="../shared/components.css">
+  <link rel="stylesheet" href="../shared/motion.css">
+  <link rel="stylesheet" href="concept.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- §0.1 Sitewide rebrand bar (dismissible) -->
+<div class="rebrand-bar" data-rebrand-bar role="region" aria-label="Name change notice">
+  <div class="container rebrand-inner">
+    <span class="badge badge-accent">New name</span>
+    <p><strong>Grade Capital is now Paraa Capital.</strong> Before you log in or pay, check you're on an official channel.</p>
+    <a class="link-arrow" href="#">How to verify us</a>
+    <button class="rebrand-close" type="button" data-rebrand-close aria-label="Dismiss the rebrand notice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+</div>
+
+<header class="site-header">
+  <nav class="nav container" aria-label="Main">
+    <a class="brand" href="index.html" aria-label="Paraa Capital, home"><span class="brand-mark" aria-hidden="true">P</span><span>Paraa <b>Capital</b></span></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#">How it works</a></li>
+      <li><a href="#">Baskets</a></li>
+      <li><a href="#">NAV</a></li>
+      <li><a href="#">Fees</a></li>
+      <li><a href="risks.html">Risks</a></li>
+      <li>
+        <details class="nav-partners">
+          <summary>For partners</summary>
+          <ul>
+            <li><a href="#">Advisors</a></li>
+            <li><a href="#">CAs</a></li>
+            <li><a href="#">Institutions</a></li>
+          </ul>
+        </details>
+      </li>
+    </ul>
+    <div class="nav-actions">
+      <a class="btn btn-ghost" href="#app">Get the app</a>
+      <a class="btn btn-primary nav-cta" href="risks.html#brief">Read the risk brief</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu"><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- D5.1 Hero: loss-sim-hero (D3) -->
+  <section class="loss-sim-hero" aria-labelledby="hero-title">
+    <div class="container split">
+      <div class="hero-copy">
+        <span class="eyebrow" data-reveal>Read this before you invest</span>
+        <h1 class="h1" id="hero-title" data-reveal data-reveal-delay="1">Here's how you could lose money with us.</h1>
+        <p class="body-xl w-regular muted hero-sub" data-reveal data-reveal-delay="2">Three things push your rupee value down: the investment falls, the rupee strengthens, or both. Two minutes on the risks, then the app.</p>
+        <div class="row" data-reveal data-reveal-delay="3">
+          <a class="btn btn-primary btn-lg" href="risks.html#brief">Read the 2-minute risk brief</a>
+          <a class="btn btn-ghost" href="#app">I've read it: get the app</a>
+        </div>
+      </div>
+
+      <!-- "What could go wrong" simulator. Opens on the loss case: ₹1,00,000 → ₹78,731 -->
+      <div class="card card-lg sim-card" data-sim data-reveal data-reveal-delay="2" role="group" aria-labelledby="sim-title">
+        <div class="sim-head">
+          <h2 class="h5" id="sim-title">What could go wrong</h2>
+          <span class="badge badge-accent">Illustrative</span>
+        </div>
+
+        <div class="sim-inputs">
+          <div class="field">
+            <label for="sim-amount">Amount you put in</label>
+            <div class="input-prefix">
+              <span aria-hidden="true">₹</span>
+              <input class="input" id="sim-amount" data-role="amount" type="text" inputmode="numeric" autocomplete="off" value="1,00,000" aria-describedby="sim-amount-hint">
+            </div>
+            <span class="hint" id="sim-amount-hint">In rupees.</span>
+          </div>
+
+          <div class="field">
+            <div class="range-head">
+              <label for="sim-asset">The investment, in US$</label>
+              <output class="range-value" data-role="asset-out" for="sim-asset">−15%</output>
+            </div>
+            <input id="sim-asset" data-role="asset" type="range" min="-30" max="30" step="1" value="-15">
+            <div class="range-ends" aria-hidden="true"><span>−30% falls</span><span>rises +30%</span></div>
+          </div>
+
+          <div class="field">
+            <div class="range-head">
+              <label for="sim-fx">The rupee</label>
+              <output class="range-value" data-role="fx-out" for="sim-fx">−5% · rupee stronger</output>
+            </div>
+            <input id="sim-fx" data-role="fx" type="range" min="-15" max="15" step="1" value="-5" aria-describedby="sim-fx-hint">
+            <div class="range-ends" aria-hidden="true"><span>stronger ←</span><span>→ weaker</span></div>
+            <span class="hint" id="sim-fx-hint">A weaker rupee raises your rupee value. A stronger rupee lowers it.</span>
+          </div>
+
+          <p class="body-md muted">Fee drag: fixed at 2.5% a year <span class="badge">Illustrative</span></p>
+
+          <div>
+            <p class="body-sm w-bold muted" id="preset-label">Try a year like this</p>
+            <div class="preset-row" role="group" aria-labelledby="preset-label">
+              <button class="badge preset" type="button" data-preset="-15,0" aria-pressed="false">Investment falls</button>
+              <button class="badge preset" type="button" data-preset="0,-5" aria-pressed="false">Rupee strengthens</button>
+              <button class="badge preset" type="button" data-preset="-15,-5" aria-pressed="true">Both</button>
+              <button class="badge preset" type="button" data-preset="10,5" aria-pressed="false">Both go your way</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sim-output">
+          <div aria-live="polite" aria-atomic="true">
+            <p class="body-sm muted">After one year, you'd have</p>
+            <p class="output-big" data-role="end">₹78,731</p>
+            <p class="body-lg" data-role="summary">You'd have lost <strong>₹21,269</strong> in a year like this.</p>
+          </div>
+          <ul class="waterfall" aria-label="Where the change came from">
+            <li class="wf-row">
+              <span>Investment</span>
+              <div class="bar" aria-hidden="true"><span data-role="bar-asset" class="is-neg" style="width:50%"></span></div>
+              <span class="wf-value" data-role="val-asset">−₹15,000 loss</span>
+            </li>
+            <li class="wf-row">
+              <span>Currency</span>
+              <div class="bar" aria-hidden="true"><span data-role="bar-fx" class="is-neg" style="width:14%"></span></div>
+              <span class="wf-value" data-role="val-fx">−₹4,250 loss</span>
+            </li>
+            <li class="wf-row">
+              <span>Fees</span>
+              <div class="bar" aria-hidden="true"><span data-role="bar-fee" class="is-neg" style="width:7%"></span></div>
+              <span class="wf-value" data-role="val-fee">−₹2,019 loss</span>
+            </li>
+          </ul>
+          <p class="sim-note"><span class="badge badge-accent">Illustrative</span><span>Illustrative. A bad year can be worse than this. These sliders stop at −30% only to stay readable.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- D5.2 Five ways this goes wrong (risk cards) -->
+  <section class="section section-alt" id="risks" aria-labelledby="risks-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <h2 class="h2" id="risks-title">Five ways you could lose money, in order of how often they bite</h2>
+      </div>
+      <div class="grid grid-3">
+        <article class="card risk-card" data-reveal>
+          <div class="risk-card-top">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-3-3"/><path d="M20 16H6l3 3"/></svg></span>
+            <h3 class="h5">Currency</h3>
+          </div>
+          <div class="meter-row">
+            <div class="meter" role="img" aria-label="How often it matters: 4 of 5 (our judgement, Illustrative)"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+            <span>4/5</span>
+          </div>
+          <dl>
+            <dt>What it looks like</dt>
+            <dd>The rupee strengthens 5% in a year. Your basket is flat in dollars; you're down 5% in rupees.</dd>
+            <dt>What we do about it</dt>
+            <dd>We can't control it. We show it on every statement.</dd>
+          </dl>
+        </article>
+
+        <article class="card risk-card" data-reveal data-reveal-delay="1">
+          <div class="risk-card-top">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l6 6 4-4 8 8"/><path d="M21 11v6h-6"/></svg></span>
+            <h3 class="h5">Market</h3>
+          </div>
+          <div class="meter-row">
+            <div class="meter" role="img" aria-label="How often it matters: 4 of 5 (our judgement, Illustrative)"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+            <span>4/5</span>
+          </div>
+          <dl>
+            <dt>What it looks like</dt>
+            <dd>The basket's holdings fall. Our weakest month so far was <span class="num" data-nav="weakest">−6.3%</span> <span class="badge">Illustrative</span></dd>
+            <dt>What we do about it</dt>
+            <dd>Published limits on what a basket may hold <span class="placeholder-tag">TO CONFIRM</span></dd>
+          </dl>
+        </article>
+
+        <article class="card risk-card" data-reveal data-reveal-delay="2">
+          <div class="risk-card-top">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <h3 class="h5">Getting out</h3>
+          </div>
+          <div class="meter-row">
+            <div class="meter" role="img" aria-label="How often it matters: 2 of 5 (our judgement, Illustrative)"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+            <span>2/5</span>
+          </div>
+          <dl>
+            <dt>What it looks like</dt>
+            <dd>You need money in a week, but withdrawals take [N] business days <span class="placeholder-tag">TO CONFIRM</span>, longer around holidays.</dd>
+            <dt>What we do about it</dt>
+            <dd>Exit estimator below. Holiday calendars for both countries.</dd>
+          </dl>
+        </article>
+
+        <article class="card risk-card" data-reveal>
+          <div class="risk-card-top">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14l-2.5 2.5a3 3 0 0 1-4-4L6 10"/><path d="M14 10l2.5-2.5a3 3 0 0 1 4 4L18 14"/><path d="M8 3v2M3 8h2M16 21v-2M21 16h-2"/></svg></span>
+            <h3 class="h5">A company in the chain fails</h3>
+          </div>
+          <div class="meter-row">
+            <div class="meter" role="img" aria-label="How often it matters: 1 of 5 (our judgement, Illustrative)"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+            <span>1/5</span>
+          </div>
+          <dl>
+            <dt>What it looks like</dt>
+            <dd>A bank, administrator or custodian has a problem.</dd>
+            <dt>What we do about it</dt>
+            <dd>Every party named; what happens is on <a href="#">How your money moves</a> <span class="placeholder-tag">TO CONFIRM</span></dd>
+          </dl>
+        </article>
+
+        <article class="card risk-card" data-reveal data-reveal-delay="1">
+          <div class="risk-card-top">
+            <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/></svg></span>
+            <h3 class="h5">Rules change</h3>
+          </div>
+          <div class="meter-row">
+            <div class="meter" role="img" aria-label="How often it matters: 2 of 5 (our judgement, Illustrative)"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+            <span>2/5</span>
+          </div>
+          <dl>
+            <dt>What it looks like</dt>
+            <dd>Indian rules on sending money abroad, or its tax, change.</dd>
+            <dt>What we do about it</dt>
+            <dd>We follow the rule changes and tell you in the log. We can't promise rules stay the same.</dd>
+          </dl>
+        </article>
+      </div>
+      <p class="legend-line" data-reveal><span class="badge">Illustrative</span> Meters show how often each risk matters, out of 5. They are our judgement, not a measurement. <a class="link-arrow" href="risks.html">Each risk in depth</a></p>
+    </div>
+  </section>
+
+  <!-- D5.3 Am I a fit? (quiz that can say no) -->
+  <section class="section" id="fit" aria-labelledby="fit-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <h2 class="h2" id="fit-title">This might not be for you. Let's find out.</h2>
+        <p class="body-lg muted">Five questions. Your answers stay on this page: nothing is stored or sent.</p>
+      </div>
+      <div class="quiz-layout">
+        <form class="card card-lg quiz" data-quiz action="#fit" novalidate data-reveal aria-label="Fit quiz">
+          <p class="quiz-progress" data-quiz-progress aria-live="polite">Question 1 of 5</p>
+          <div class="quiz-questions">
+            <fieldset class="field quiz-q" data-q="q1">
+              <legend class="h6">1. When might you need this money?</legend>
+              <div class="quiz-options">
+                <label class="quiz-option"><input type="radio" name="q1" value="R"> Within 1 year</label>
+                <label class="quiz-option"><input type="radio" name="q1" value="A"> 1–3 years</label>
+                <label class="quiz-option"><input type="radio" name="q1" value="G"> Over 3 years</label>
+              </div>
+            </fieldset>
+            <fieldset class="field quiz-q" data-q="q2">
+              <legend class="h6">2. If it fell 15%, what would you do?</legend>
+              <div class="quiz-options">
+                <label class="quiz-option"><input type="radio" name="q2" value="R"> Sell</label>
+                <label class="quiz-option"><input type="radio" name="q2" value="A"> Worry, but wait</label>
+                <label class="quiz-option"><input type="radio" name="q2" value="G"> Wait, or add more</label>
+              </div>
+            </fieldset>
+            <fieldset class="field quiz-q" data-q="q3">
+              <legend class="h6">3. Will you spend this money in rupees soon (a home, a wedding)?</legend>
+              <div class="quiz-options">
+                <label class="quiz-option"><input type="radio" name="q3" value="A"> Yes, within 2 years</label>
+                <label class="quiz-option"><input type="radio" name="q3" value="G"> No</label>
+              </div>
+            </fieldset>
+            <fieldset class="field quiz-q" data-q="q4">
+              <legend class="h6">4. Is this your emergency fund, or borrowed money?</legend>
+              <div class="quiz-options">
+                <label class="quiz-option"><input type="radio" name="q4" value="R"> Yes</label>
+                <label class="quiz-option"><input type="radio" name="q4" value="G"> No</label>
+              </div>
+            </fieldset>
+            <fieldset class="field quiz-q" data-q="q5">
+              <legend class="h6">5. Do you already hold US-dollar assets?</legend>
+              <div class="quiz-options">
+                <label class="quiz-option"><input type="radio" name="q5" value="A"> A lot</label>
+                <label class="quiz-option"><input type="radio" name="q5" value="G"> Some or none</label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" type="button" data-quiz-back>Back</button>
+            <button class="btn btn-secondary" type="button" data-quiz-next>Next question</button>
+            <button class="btn btn-secondary" type="submit" data-quiz-submit>See my result</button>
+          </div>
+        </form>
+
+        <div class="card card-lg quiz-result" data-quiz-result aria-live="polite" data-reveal data-reveal-delay="1">
+          <h3 class="h5">Your result shows here</h3>
+          <p class="body-md muted">A red answer means "not for you right now", and we won't show you the app. Your answers stay on this page.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- D5.4 Stress-test archive (UNIQUE N10). Behind the stress flag, default on (D10) -->
+  <section class="section section-alt" id="stress" data-flag="stress" aria-labelledby="stress-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <h2 class="h2" id="stress-title">How Basket 1 might have done in years that hurt</h2>
+        <p class="body-lg muted">Basket 1 didn't exist then. These are simulations: today's rules applied to old prices. A simulation isn't a track record.</p>
+      </div>
+      <div class="table-wrap" data-reveal>
+        <table class="table">
+          <caption>Simulated · Illustrative. Basket 1 (name <span class="placeholder-tag">TO CONFIRM</span>). ₹ column = <code>(1 + basket) × (1 + USD/INR change) − 1</code>. + = rupee weaker (USD/INR up), the same as the simulator.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Episode</th>
+              <th scope="col">Dates</th>
+              <th scope="col">Rupee move</th>
+              <th scope="col" class="r">Simulated basket (US$)</th>
+              <th scope="col" class="r">Simulated in ₹ (not a track record)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-stress-row data-basket="-0.14" data-usdinr="0.18">
+              <th scope="row">Global financial crisis</th>
+              <td>Sep 2008–Mar 2009</td>
+              <td>+18% (rupee weaker)</td>
+              <td class="r">−14.0% (simulated loss)</td>
+              <td class="r" data-stress-inr>+1.5% (simulated gain)</td>
+            </tr>
+            <tr data-stress-row data-basket="-0.04" data-usdinr="0.19">
+              <th scope="row">Taper tantrum (rupee crash)</th>
+              <td>May–Aug 2013</td>
+              <td>+19% (rupee weaker)</td>
+              <td class="r">−4.0% (simulated loss)</td>
+              <td class="r" data-stress-inr>+14.2% (simulated gain)</td>
+            </tr>
+            <tr data-stress-row data-basket="-0.09" data-usdinr="0.06">
+              <th scope="row">Covid crash</th>
+              <td>Feb–Mar 2020</td>
+              <td>+6% (rupee weaker)</td>
+              <td class="r">−9.0% (simulated loss)</td>
+              <td class="r" data-stress-inr>−3.5% (simulated loss)</td>
+            </tr>
+            <tr data-stress-row data-basket="0.03" data-usdinr="-0.06">
+              <th scope="row">Calm year, strong rupee</th>
+              <td>Jan–Jul 2017</td>
+              <td>−6% (rupee stronger)</td>
+              <td class="r">+3.0% (simulated gain)</td>
+              <td class="r" data-stress-inr>−3.2% (simulated loss)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="key-line" data-reveal>Notice the last row: you can lose money in rupees in a year when nothing went wrong.</p>
+      <p class="disclosure stack-gap" data-disclosure-id="stress-v1"><strong>Simulated, Illustrative.</strong> Method: [description] <span class="placeholder-tag">TO CONFIRM</span>. Simulations use hindsight and can't capture costs or decisions we would really have made.</p>
+    </div>
+  </section>
+
+  <!-- D5.5 And what can go right (balance section, R8) -->
+  <section class="section" id="balance" aria-labelledby="balance-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <h2 class="h2" id="balance-title">The other side, at the same size</h2>
+      </div>
+      <div class="grid grid-2 balance">
+        <div class="callout" data-reveal>
+          <p class="balance-tag">Both go your way <span class="badge">Illustrative</span></p>
+          <p class="body-lg">If the rupee weakens and the investment rises, both help: +10% and +5% make about +15.5% in rupees, before fees.</p>
+        </div>
+        <div class="callout callout-warn" data-reveal data-reveal-delay="1">
+          <p class="balance-tag">Both go against you <span class="badge">Illustrative</span></p>
+          <p class="body-lg">The same two numbers in reverse, −10% and −5%, make about −14.5%.</p>
+        </div>
+      </div>
+      <p class="body-lg w-semibold stack-gap" data-reveal>We can't tell you which one you'll get. Nobody honest can.</p>
+    </div>
+  </section>
+
+  <!-- D5.6 Kill-switch commitments (UNIQUE N12) -->
+  <section class="section section-alt" id="commitments" aria-labelledby="ks-title">
+    <div class="container-narrow">
+      <div class="section-head" data-reveal>
+        <h2 class="h2" id="ks-title">When we'd close a basket, written before we need to</h2>
+        <p class="body-lg muted">Most funds decide this in a crisis. We've decided now, and we'll log any change to this list.</p>
+        <p class="callout callout-warn">Draft commitments. Not in force until Legal confirms each threshold <span class="placeholder-tag">TO CONFIRM</span>.</p>
+      </div>
+      <ol class="timeline">
+        <li data-reveal>
+          <p><strong>If a basket's assets stay below US$[X] <span class="placeholder-tag">TO CONFIRM</span> for 3 months</strong>: it stops taking new money. Within [30] <span class="placeholder-tag">TO CONFIRM</span> days we return your money at <abbr title="Net asset value">NAV</abbr> (the price of one unit of the basket), with no exit fee.</p>
+        </li>
+        <li data-reveal data-reveal-delay="1">
+          <p><strong>If we lose our custodian and can't appoint another within [60] <span class="placeholder-tag">TO CONFIRM</span> days</strong>: we stop new money at once, and return assets at NAV.</p>
+        </li>
+        <li data-reveal data-reveal-delay="2">
+          <p><strong>If a rule change makes the basket impossible to run as described</strong>: we tell you within [5] <span class="placeholder-tag">TO CONFIRM</span> business days, then follow the regulator's instruction.</p>
+        </li>
+        <li data-reveal data-reveal-delay="3">
+          <p><strong>If we decide to shut down the company</strong>: [N] <span class="placeholder-tag">TO CONFIRM</span> days' notice, all baskets returned at NAV, statements kept available for [8] <span class="placeholder-tag">TO CONFIRM</span> years.</p>
+        </li>
+      </ol>
+      <a class="link-arrow" href="#">Change history for this list</a>
+    </div>
+  </section>
+
+  <!-- D5.7 Exit timeline estimator -->
+  <section class="section" id="exit" aria-labelledby="exit-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <h2 class="h2" id="exit-title">When would my money reach my bank?</h2>
+      </div>
+      <div class="exit-grid">
+        <form class="card card-lg stack" data-exit data-reveal aria-label="Exit timeline estimator">
+          <div class="exit-fields">
+            <div class="field">
+              <label for="exit-date">Day you ask to withdraw</label>
+              <input class="input" id="exit-date" data-role="exit-date" type="date" value="2026-11-02">
+            </div>
+            <div class="field">
+              <label for="exit-time">Time (IST)</label>
+              <input class="input" id="exit-time" data-role="exit-time" type="time" value="15:30">
+            </div>
+          </div>
+          <p class="body-sm muted">Cut-off 3 pm IST <span class="placeholder-tag">TO CONFIRM</span>. After it, or on a non-business day, your request rolls to the next business day.</p>
+          <p class="body-sm muted">Sample 2026 holidays used: India 26 Jan, 4 Mar, 2 Oct, 25 Dec · US 1 Jan, 3 Jul, 26 Nov, 25 Dec <span class="badge">Illustrative</span></p>
+        </form>
+        <div data-reveal data-reveal-delay="1">
+          <ol class="steps exit-steps" aria-live="polite">
+            <li>Request counted on <strong data-exit-out="counted">Tue 3 Nov 2026</strong></li>
+            <li>Priced at that day's NAV</li>
+            <li>Dollars settle by <strong data-exit-out="usd">Thu 5 Nov</strong></li>
+            <li>Rupees in your bank by <strong data-exit-out="inr">Mon 9 Nov</strong></li>
+          </ol>
+          <p class="body-md muted stack-gap">Exit fee: 1% if you've held under 12 months, otherwise none <span class="badge">Illustrative</span></p>
+          <p class="body-sm faint">Timings are prototype values <span class="placeholder-tag">TO CONFIRM</span>: US$ settle 2 US business days after the NAV date, then 2 Indian business days to your bank.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- D5.8 Monthly letter, with what we got wrong (UNIQUE N4) -->
+  <section class="section section-alt" id="letter" aria-labelledby="letter-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <h2 class="h2" id="letter-title">Every letter has to include our mistakes</h2>
+      </div>
+      <article class="card card-lg letter prose" data-reveal aria-label="Letter excerpt, October 2026">
+        <div class="letter-meta">
+          <span class="body-sm w-bold muted">Monthly letter · Oct 2026 · excerpt</span>
+          <span class="badge">Illustrative</span>
+        </div>
+        <p class="body-lg">Basket 1 rose 0.8% in dollars in October, but fell 0.4% in rupees as the rupee firmed. Three things we got wrong this month:</p>
+        <ul class="x-list">
+          <li>We held too much cash into a rally, which cost about 0.3%.</li>
+          <li>Our September letter said rupee weakness would continue. It didn't.</li>
+          <li>In September, 38 withdrawal requests were delayed a day by a US holiday our timeline missed (now fixed; see log).</li>
+        </ul>
+        <div class="signature">
+          <span class="monogram" aria-hidden="true">A.</span>
+          <span class="body-md">Initials A., Portfolio manager <span class="muted">(name <span class="placeholder-tag">TO CONFIRM</span>)</span></span>
+        </div>
+      </article>
+      <p class="body-md muted stack-gap" data-reveal>If a letter ever has fewer than three, it says why. <a class="link-arrow" href="#">Read all letters</a></p>
+    </div>
+  </section>
+
+  <!-- D5.9 Get the app: app-flow-rail -->
+  <section class="section" id="app" aria-labelledby="app-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <h2 class="h2" id="app-title">What the app asks you, in order, and what it never will</h2>
+        <p class="body-lg muted">Each step lists what we will never ask for there. If anyone asks you for one of these, in the app, by call, SMS or WhatsApp, it isn't us. Stop and report it.</p>
+      </div>
+      <ol class="app-flow-rail" tabindex="0" aria-label="App sign-up steps, scroll sideways on small screens">
+        <li class="card flow-frame" data-reveal>
+          <div class="screen" aria-hidden="true">
+            <span class="wf w-60"></span><span class="wf tall"></span>
+            <span class="wf w-40"></span><span class="wf-otp"><span class="wf"></span><span class="wf"></span><span class="wf"></span><span class="wf"></span></span>
+            <span class="wf btn-shape"></span>
+          </div>
+          <span class="flow-step">Step 1</span>
+          <h3 class="h6">Phone number + OTP</h3>
+          <p>We'll never ask for this OTP anywhere else.</p>
+          <p class="never-ask"><strong>Never asked here:</strong> your UPI PIN, card details or bank password.</p>
+        </li>
+        <li class="card flow-frame" data-reveal data-reveal-delay="1">
+          <div class="screen" aria-hidden="true">
+            <span class="wf w-60"></span><span class="wf tall"></span><span class="wf w-40"></span><span class="wf tall"></span>
+            <span class="wf w-80"></span><span class="wf btn-shape"></span>
+          </div>
+          <span class="flow-step">Step 2</span>
+          <h3 class="h6">PAN &amp; KYC</h3>
+          <p>Your PAN and identity checks, inside the app.</p>
+          <p class="never-ask"><strong>Never asked here:</strong> a fee to "speed up" KYC, or photos of your documents sent over WhatsApp or email.</p>
+        </li>
+        <li class="card card-accent flow-frame" data-reveal data-reveal-delay="2">
+          <div class="screen" aria-hidden="true">
+            <span class="wf w-80"></span><span class="wf-dots"><span class="wf"></span><span class="wf"></span><span class="wf"></span><span class="wf"></span><span class="wf"></span></span>
+            <span class="wf tall"></span><span class="wf tall"></span><span class="wf tall"></span>
+            <span class="wf btn-shape"></span>
+          </div>
+          <span class="flow-step">Step 3</span>
+          <h3 class="h6">The risk check</h3>
+          <p>The same 5 questions as above. A red answer pauses your sign-up.</p>
+          <span class="placeholder-tag">TO CONFIRM that the app implements this</span>
+          <p class="never-ask"><strong>Never asked here:</strong> to change an answer so you can carry on. No one from us will coach you through it.</p>
+        </li>
+        <li class="card flow-frame" data-reveal data-reveal-delay="3">
+          <div class="screen" aria-hidden="true">
+            <span class="wf w-60"></span><span class="wf tall"></span><span class="wf w-80"></span><span class="wf w-40"></span>
+            <span class="wf btn-shape"></span>
+          </div>
+          <span class="flow-step">Step 4</span>
+          <h3 class="h6">Add rupees from your own bank account</h3>
+          <p>Only from an account in your name.</p>
+          <p class="never-ask"><strong>Never asked here:</strong> a transfer to a personal account, or to a UPI ID or QR code shown outside the app.</p>
+        </li>
+        <li class="card flow-frame" data-reveal data-reveal-delay="4">
+          <div class="screen" aria-hidden="true">
+            <span class="wf w-40"></span><span class="wf-split"><span class="wf"></span><span class="wf"></span></span>
+            <span class="wf w-80"></span><span class="wf w-60"></span><span class="wf w-80"></span>
+          </div>
+          <span class="flow-step">Step 5</span>
+          <h3 class="h6">Your holding, in US$ and ₹, side by side</h3>
+          <p>Dated, with the currency effect on its own line.</p>
+          <p class="never-ask"><strong>Never asked here:</strong> a "tax" or "release fee" paid to a person before you can withdraw.</p>
+        </li>
+      </ol>
+      <p class="rail-hint">Swipe sideways to see all five steps.</p>
+      <div class="cta-row" data-reveal>
+        <a class="btn btn-secondary store-btn" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>App Store</a>
+        <a class="btn btn-secondary store-btn" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Google Play</a>
+        <span class="placeholder-tag">Official badges and links TO CONFIRM</span>
+        <a class="btn btn-secondary" href="risks.html#brief">Not yet: read the brief</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- D5.10 Moving from Grade Capital? + official channels -->
+  <section class="section section-alt" id="moving" aria-labelledby="moving-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <h2 class="h2" id="moving-title">Coming from Grade Capital? Check before you tap.</h2>
+      </div>
+      <div class="grid grid-2">
+        <ol class="steps" data-reveal>
+          <li>Grade Capital is now Paraa Capital. What carries over: <span class="placeholder-tag">TO CONFIRM</span></li>
+          <li>Only download from the official store links on this page.</li>
+          <li>We will never ask for your OTP, PIN or a transfer to a personal account, by call, SMS or WhatsApp.</li>
+        </ol>
+        <form class="card card-lg checker-form" data-checker data-reveal data-reveal-delay="1" aria-labelledby="checker-title">
+          <h3 class="h5" id="checker-title">Platform checker</h3>
+          <p class="body-md muted">This checks nothing itself. It points you to the regulators' own lists.</p>
+          <div class="field">
+            <label for="checker-name">Name of a platform you were offered</label>
+            <input class="input" id="checker-name" data-role="checker-name" type="text" autocomplete="off">
+          </div>
+          <button class="btn btn-secondary" type="submit">Check</button>
+          <div aria-live="polite">
+            <div class="callout callout-neutral checker-result body-md" data-checker-result hidden>
+              Search <strong data-checker-echo>the platform's name</strong> on: <a href="#">RBI's Alert List</a> <span class="placeholder-tag">URL TO CONFIRM</span> · <a href="#">SEBI's intermediary search</a> <span class="placeholder-tag">URL TO CONFIRM</span>. If it's on the Alert List, don't send money. Not finding it there doesn't make a platform authorised.
+            </div>
+          </div>
+          <p class="body-sm muted">Advisors: send clients the <a href="risks.html#brief">2-minute brief</a> before the first call.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- D5.11 Closing CTA -->
+  <section class="section closing" aria-labelledby="closing-title">
+    <div class="container" data-reveal>
+      <h2 class="h2" id="closing-title">Two minutes now, or a surprise later.</h2>
+      <div class="row">
+        <a class="btn btn-primary btn-lg" href="risks.html#brief">Read the 2-minute risk brief</a>
+        <a class="btn btn-ghost" href="#app">Get the app</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- §0.2 Shared footer / legal block -->
+<footer class="site-footer">
+  <div class="container">
+    <h2 class="sr-only">Site information</h2>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">P</span><span>Paraa <b>Capital</b></span></a>
+        <p>USD-denominated investing for residents of India. Every number dated, every intermediary named.</p>
+        <h3>Official channels</h3>
+        <ul>
+          <li>Website: paraa.capital <span class="placeholder-tag">TO CONFIRM</span></li>
+          <li>App: <a href="#">App Store</a> · <a href="#">Google Play</a> <span class="placeholder-tag">TO CONFIRM</span></li>
+          <li>Support email: <span class="placeholder-tag">TO CONFIRM</span></li>
+          <li><a href="#">We never ask for your OTP, PIN or money over WhatsApp or personal accounts.</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Invest</h3>
+        <ul>
+          <li><a href="#">How your money moves</a></li>
+          <li><a href="#">Baskets</a></li>
+          <li><a href="#">NAV &amp; performance</a></li>
+          <li><a href="#">Fees</a></li>
+          <li><a href="risks.html">What could go wrong</a></li>
+          <li><a href="#">Getting your money out</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Check us</h3>
+        <ul>
+          <li><a href="#">Who we are legally</a></li>
+          <li><a href="#">Team &amp; governance</a></li>
+          <li><a href="#">Transparency log</a></li>
+          <li><a href="#">Letters</a></li>
+          <li><a href="#">Complaints &amp; grievances</a></li>
+          <li><a href="#">Grade is now Paraa</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Partners &amp; legal</h3>
+        <ul>
+          <li><a href="#">For advisors</a></li>
+          <li><a href="#">For CAs</a></li>
+          <li><a href="#">For institutions</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Investor agreement</a></li>
+          <li><a href="#">AML policy</a></li>
+          <li><a href="#">Full risk disclosure</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-legal">
+      <!-- §0.2.1 Registrations: production rule = a row ships only when all five cells are real -->
+      <div id="registrations">
+        <h3>Registrations</h3>
+        <div class="table-wrap">
+          <table class="table">
+            <caption class="sr-only">Registrations of Paraa Capital entities. All details to be confirmed.</caption>
+            <thead>
+              <tr><th scope="col">Entity</th><th scope="col">Regulator</th><th scope="col">Activity</th><th scope="col">Number</th><th scope="col">Check it</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Paraa Capital [legal name] <span class="placeholder-tag">TO CONFIRM</span></td>
+                <td><span class="placeholder-tag">TO CONFIRM</span></td>
+                <td><span class="placeholder-tag">TO CONFIRM</span></td>
+                <td><span class="placeholder-tag">TO CONFIRM</span></td>
+                <td>Lookup link <span class="placeholder-tag">TO CONFIRM</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- §0.2.2 Company details -->
+      <div>
+        <h3>Company details</h3>
+        <dl>
+          <dt>Registered name</dt><dd><span class="placeholder-tag">TO CONFIRM</span></dd>
+          <dt><abbr title="Corporate Identification Number">CIN</abbr></dt><dd><span class="placeholder-tag">TO CONFIRM</span> · <a href="#">MCA lookup</a></dd>
+          <dt>Registered office</dt><dd><span class="placeholder-tag">TO CONFIRM</span></dd>
+          <dt>Operations office</dt><dd><span class="placeholder-tag">TO CONFIRM</span></dd>
+          <dt>Foreign entities</dt><dd>[Entity], [country]: holds the fund's assets <span class="placeholder-tag">TO CONFIRM</span></dd>
+        </dl>
+      </div>
+
+      <!-- §0.2.3 Risk disclosure -->
+      <div class="disclosure" data-disclosure-id="global-risk-v1">
+        <p><strong>Investing involves risk, including loss of the money you put in.</strong> Your investment is held and valued in US dollars. If the rupee weakens against the dollar, the rupee value of your investment rises; if the rupee strengthens, it falls. Both can happen in the same period as a fall in the investment itself. Past performance, including any simulation, does not predict future results. Figures marked <em>Illustrative</em> are examples, not records or forecasts. How your money is legally routed and held is <span class="placeholder-tag">TO CONFIRM</span> and is described on <a href="#">How your money moves</a>. Nothing on this site is personal investment advice. Read the <a href="#">full risk disclosure</a> before investing.</p>
+      </div>
+
+      <!-- §0.2.4 Conditional SEBI line: stays hidden until Compliance confirms a SEBI-registered entity offers the service.
+           Its regulator-mandated verbatim text (brief §3.2) is inserted then; R1 exempts that quote. -->
+      <p class="disclosure" data-disclosure-id="sebi-mandated-v1" hidden></p>
+
+      <!-- §0.2.5 Grievance slot -->
+      <div>
+        <h3>Grievances</h3>
+        <p class="muted">Grievance officer: [Name] <span class="placeholder-tag">TO CONFIRM</span> · [email] <span class="placeholder-tag">TO CONFIRM</span> · [phone] <span class="placeholder-tag">TO CONFIRM</span> · We reply within [N] working days <span class="placeholder-tag">TO CONFIRM</span>. Not satisfied? [Escalation route: regulator portal / ODR] <span class="placeholder-tag">TO CONFIRM</span>.</p>
+        <a class="link-arrow" href="#">Complaint statistics</a>
+      </div>
+    </div>
+
+    <!-- §0.2.6 Bottom line -->
+    <div class="footer-bottom">
+      <p>© <span data-year-now>2026</span> Paraa Capital [legal name <span class="placeholder-tag">TO CONFIRM</span>]. Formerly Grade Capital.</p>
+      <p id="rbi-alert"><a href="#">Check whether any platform is authorised: RBI Alert List →</a> <span class="placeholder-tag">URL TO CONFIRM</span></p>
+    </div>
+  </div>
+</footer>
+
+<nav class="proto-bar" aria-label="Prototype concepts">
+  <a href="../index.html">All</a><a href="../concept-a/index.html">A</a><a href="../concept-b/index.html">B</a><a href="../concept-c/index.html">C</a><a href="../concept-d/index.html" aria-current="page">D</a>
+</nav>
+<script src="../shared/motion.js" defer></script>
+<script src="../shared/disclosures.js" defer></script>
+<script src="concept.js" defer></script>
+</body>
+</html>

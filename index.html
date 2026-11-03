@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en-IN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paraa Capital: website concepts (prototype index)</title>
+<meta name="description" content="Four concept directions for the Paraa Capital website, with research, design and audit handoffs.">
+<link rel="stylesheet" href="shared/tokens.css">
+<link rel="stylesheet" href="shared/base.css">
+<link rel="stylesheet" href="shared/components.css">
+<link rel="stylesheet" href="shared/motion.css">
+<style>
+  .concept-card .letter { font-size: var(--fs-h2); font-weight: 800; color: var(--accent-text); line-height: 1; }
+  .concept-card .thesis { color: var(--text-muted); }
+  .concept-card .meta { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .doc-list { list-style: none; display: grid; gap: var(--s-3); }
+  .doc-list a { text-decoration: none; display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-2) var(--s-4); }
+  .doc-list a > span:first-child { min-width: 0; flex: 1 1 220px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">P</span>Paraa <b>Capital</b></a>
+    <span class="badge">Prototype index</span>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Website rebuild · round 1</span>
+        <h1 class="h1">Four ways to earn trust</h1>
+        <p class="body-xl muted">Each concept is a different content strategy and page structure built on the same design file. Pick one to pursue; the recommendation is in COMPARISON.md.</p>
+      </div>
+
+      <div class="grid grid-2">
+        <a class="card card-lg card-link concept-card" href="concept-a/index.html" data-reveal data-reveal-delay="1">
+          <span class="letter">A</span>
+          <h2 class="h4">The Open Book</h2>
+          <p class="thesis">Trust comes from showing every number (NAV, fees, revisions, incidents) before asking for anything.</p>
+          <div class="meta"><span class="badge">Dark</span><span class="badge">CTA: See every number first</span><span class="badge">+ NAV centre page</span></div>
+        </a>
+        <a class="card card-lg card-link concept-card" href="concept-b/index.html" data-reveal data-reveal-delay="2">
+          <span class="letter">B</span>
+          <h2 class="h4">Rupee vs Dollar</h2>
+          <p class="thesis">Trust comes from teaching the idea honestly, including the years the rupee won.</p>
+          <div class="meta"><span class="badge">Light</span><span class="badge">CTA: Run your numbers</span><span class="badge">+ Learn page</span></div>
+        </a>
+        <a class="card card-lg card-link concept-card" href="concept-c/index.html" data-reveal data-reveal-delay="3">
+          <span class="letter">C</span>
+          <h2 class="h4">The Firm</h2>
+          <p class="thesis">Trust comes from accountable people, governance and the managers' own money in the baskets.</p>
+          <div class="meta"><span class="badge">Dark</span><span class="badge">CTA: Talk to us / Partner</span><span class="badge">+ Advisors page</span></div>
+        </a>
+        <a class="card card-lg card-link concept-card" href="concept-d/index.html" data-reveal data-reveal-delay="4">
+          <span class="letter">D</span>
+          <h2 class="h4">Downside First</h2>
+          <p class="thesis">Trust comes from showing what can go wrong before what can go right.</p>
+          <div class="meta"><span class="badge">Dark</span><span class="badge">CTA: Read the risk brief</span><span class="badge">+ Risks page</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container-narrow">
+      <div class="section-head" data-reveal>
+        <h2 class="h3">The written handoffs</h2>
+        <p class="muted">Each agent handed a document to the next. Read them in this order.</p>
+      </div>
+      <ul class="doc-list">
+        <li><a class="card card-link" href="00-design-tokens.md"><span><strong>00 · Design tokens</strong> <span class="muted">extracted from the design file</span></span><span class="link-arrow">Open</span></a></li>
+        <li><a class="card card-link" href="01-research-brief.md"><span><strong>01 · Research brief</strong> <span class="muted">15 sites + Indian regulatory guardrails</span></span><span class="link-arrow">Open</span></a></li>
+        <li><a class="card card-link" href="02-concepts.md"><span><strong>02 · Concept directions</strong> <span class="muted">copy-complete specs</span></span><span class="link-arrow">Open</span></a></li>
+        <li><a class="card card-link" href="03-audit.md"><span><strong>03 · Audit</strong> <span class="muted">professionalism, a11y, compliance, genericness</span></span><span class="link-arrow">Open</span></a></li>
+        <li><a class="card card-link" href="COMPARISON.md"><span><strong>Comparison &amp; recommendation</strong></span><span class="link-arrow">Open</span></a></li>
+        <li><a class="card card-link" href="ASSUMPTIONS.md"><span><strong>Assumptions</strong> <span class="muted">every decision made on your behalf</span></span><span class="link-arrow">Open</span></a></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<nav class="proto-bar" aria-label="Prototype concepts">
+  <a href="index.html" aria-current="page">All</a><a href="concept-a/index.html">A</a><a href="concept-b/index.html">B</a><a href="concept-c/index.html">C</a><a href="concept-d/index.html">D</a>
+</nav>
+<script src="shared/motion.js" defer></script>
+</body>
+</html>
