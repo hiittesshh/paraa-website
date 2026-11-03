@@ -19,15 +19,15 @@ export const metadata: Metadata = {
     template: "%s · Paraa Capital",
   },
   description:
-    "USD-denominated investing from India. Every NAV, every fee in rupees and every correction we make, published, dated and downloadable.",
+    "USD-denominated investing from India. Every fee in rupees, every hand your money passes through, and what the rupee does to your returns, in both directions.",
   openGraph: { siteName: "Paraa Capital", locale: "en_IN", type: "website" },
 };
 
-export const viewport: Viewport = { themeColor: "#131416", colorScheme: "dark" };
+export const viewport: Viewport = { themeColor: "#FFFFFF", colorScheme: "light" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-IN" className={`dark ${manrope.variable} h-full antialiased`}>
+    <html lang="en-IN" className={`${manrope.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <Providers>{children}</Providers>
       </body>

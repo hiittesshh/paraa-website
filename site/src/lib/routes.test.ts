@@ -4,7 +4,7 @@ import { isLive } from "./routes.ts";
 
 test("built pages, anchors and external links are live; unbuilt pages are not", () => {
   assert.equal(isLive("/"), true);
-  assert.equal(isLive("/nav"), true);
+  assert.equal(isLive("/nav"), false); // NAV page removed on request
   assert.equal(isLive("/#fees"), true);
   assert.equal(isLive("#how"), true);
   assert.equal(isLive("https://rbi.org.in/"), true);

@@ -6,7 +6,7 @@
 // the browser fills in the count (Cache Components forbids reading the clock during prerender).
 import { useSyncExternalStore } from "react";
 import { ArrowLink, Reveal, Section, SectionHead, ToConfirm } from "@/components/paraa/primitives";
-import { daysBetween } from "@/lib/calc";
+import { daysBetween } from "@/lib/fees";
 
 const LAST_INCIDENT = "2026-09-16";
 
@@ -24,7 +24,7 @@ export function Incident() {
     <Section tone="alt" size="sm" labelledBy="incident-title">
       <SectionHead id="incident-title" eyebrow="Transparency log" title="Our mistakes are on the record too" />
       <Reveal delay={1}>
-        <div className="grid gap-8 rounded-xl border border-gold-500/40 bg-card bg-[linear-gradient(180deg,var(--accent-soft),transparent_60%)] p-6 md:p-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <div className="grid gap-8 rounded-xl border border-gold-200 bg-card bg-[linear-gradient(180deg,var(--color-gold-50),transparent_60%)] p-6 shadow-card md:p-8 lg:grid-cols-[260px_minmax(0,1fr)]">
           <div>
             <p className="text-body-md font-semibold text-muted-foreground">Days since last logged incident</p>
             <p className="mt-1 type-h1 num" aria-live="polite">
@@ -50,13 +50,6 @@ export function Incident() {
                     <td className="px-4 py-3 text-muted-foreground">
                       Cause: a bank holiday in the US that our timeline didn&rsquo;t show · Fix: both holiday calendars now in the
                       exit estimator · Affected: 38 requests
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-3 whitespace-nowrap">12 Sep 2026</td>
-                    <td className="px-4 py-3">NAV revised</td>
-                    <td className="px-4 py-3">
-                      <ArrowLink href="#changelog">See changelog</ArrowLink>
                     </td>
                   </tr>
                 </tbody>

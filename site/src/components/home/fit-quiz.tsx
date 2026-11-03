@@ -4,9 +4,13 @@
 // One question per step, real radio inputs in a fieldset/legend, focus moved to each new
 // heading, result announced with aria-live. Logic lives in @/lib/quiz (pure, tested).
 // Nothing is stored or sent: answers exist only in this component's state.
+//
+// Light theme: the selected answer is shown three ways (ink border, gold-50 fill, filled radio),
+// never by colour alone. The verdict uses a tinted alert fill with dark text; the alert colour
+// itself only appears as a fill behind the icon, because it fails contrast as text on white.
 import { useCallback, useRef, useState, type Ref } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { AlertTriangle, Check, CheckCircle2, Lock, RotateCcw, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Lock, RotateCcw, XCircle } from "lucide-react";
 import { ArrowLink, Illustrative, Reveal, Section, SectionHead } from "@/components/paraa/primitives";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,10 +18,31 @@ import { fitResult, QUESTIONS, REASONS, type Answers, type Grade, type Verdict }
 
 const TOTAL = QUESTIONS.length;
 
-const VERDICT: Record<Verdict, { title: string; icon: typeof XCircle; tone: string; label: string }> = {
-  no: { title: "Not for you right now.", icon: XCircle, tone: "text-negative", label: "Result: no" },
-  maybe: { title: "Possibly. Weigh these first:", icon: AlertTriangle, tone: "text-warning", label: "Result: possibly" },
-  fit: { title: "It could fit.", icon: CheckCircle2, tone: "text-positive", label: "Result: it could fit" },
+const VERDICT: Record<
+  Verdict,
+  { title: string; icon: typeof XCircle; panel: string; chip: string; label: string }
+> = {
+  no: {
+    title: "Not for you right now.",
+    icon: XCircle,
+    panel: "border-error/40 bg-error/10",
+    chip: "bg-error text-ink",
+    label: "Result: no",
+  },
+  maybe: {
+    title: "Possibly. Weigh these first:",
+    icon: AlertTriangle,
+    panel: "border-warning bg-warning/20",
+    chip: "bg-warning text-ink",
+    label: "Result: possibly",
+  },
+  fit: {
+    title: "It could fit.",
+    icon: CheckCircle2,
+    panel: "border-success/40 bg-success/10",
+    chip: "bg-success text-ink",
+    label: "Result: it could fit",
+  },
 };
 
 const ease = [0.2, 0.7, 0.2, 1] as const;
@@ -39,6 +64,7 @@ export function FitQuiz() {
   const q = QUESTIONS[Math.min(step, TOTAL - 1)];
   const picked = answers[q.id];
   const result = done ? fitResult(answers) : null;
+  const progress = done ? 1 : step / TOTAL;
 
   function go(to: number) {
     interacted.current = true;
@@ -50,7 +76,7 @@ export function FitQuiz() {
   }
 
   return (
-    <Section id="fit" labelledBy="fit-title">
+    <Section id="fit" tone="alt" labelledBy="fit-title">
       <SectionHead
         id="fit-title"
         eyebrow="Am I a fit?"
@@ -59,11 +85,11 @@ export function FitQuiz() {
       />
 
       <Reveal>
-        <div className="mx-auto max-w-[760px] overflow-hidden rounded-lg border bg-card">
+        <div className="mx-auto max-w-[760px] overflow-hidden rounded-lg border bg-card shadow-card">
           {/* progress */}
-          <div className="border-b px-5 py-4 sm:px-8">
-            <div className="flex items-center justify-between gap-3 text-body-sm">
-              <span className="font-bold text-muted-foreground">
+          <div className="border-b px-5 py-4 sm:px-8 sm:py-5">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-body-sm">
+              <span className="num font-bold text-foreground">
                 {done ? "Your result" : `Question ${step + 1} of ${TOTAL}`}
               </span>
               <span className="flex items-center gap-1.5 text-faint">
@@ -72,7 +98,7 @@ export function FitQuiz() {
               </span>
             </div>
             <div
-              className="mt-3 flex gap-1.5"
+              className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted"
               role="progressbar"
               aria-label="Quiz progress"
               aria-valuemin={0}
@@ -80,15 +106,12 @@ export function FitQuiz() {
               aria-valuenow={done ? TOTAL : step}
               aria-valuetext={done ? "All questions answered" : `Question ${step + 1} of ${TOTAL}`}
             >
-              {QUESTIONS.map((qq, i) => (
-                <span
-                  key={qq.id}
-                  className={cn(
-                    "h-1 flex-1 rounded-full transition-colors duration-300",
-                    done || i < step ? "bg-gold-500" : i === step ? "bg-muted-foreground" : "bg-muted",
-                  )}
-                />
-              ))}
+              <motion.div
+                className="h-full rounded-full bg-ink"
+                initial={false}
+                animate={{ width: `${Math.max(progress, 0.04) * 100}%` }}
+                transition={{ duration: 0.45, ease }}
+              />
             </div>
           </div>
 
@@ -104,10 +127,10 @@ export function FitQuiz() {
               {!done ? (
                 <motion.form
                   key={q.id}
-                  initial={{ opacity: 0, x: 12 }}
+                  initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -12 }}
-                  transition={{ duration: 0.22, ease }}
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.24, ease }}
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (picked) go(step + 1);
@@ -115,8 +138,8 @@ export function FitQuiz() {
                   aria-label="Fit questions"
                 >
                   <fieldset className="m-0 min-w-0 border-0 p-0">
-                    <legend className="mb-5 w-full p-0">
-                      <h3 ref={headingRef} tabIndex={-1} className="type-h5 text-balance outline-none focus-visible:outline-none">
+                    <legend className="mb-6 w-full p-0">
+                      <h3 ref={headingRef} tabIndex={-1} className="type-h4 text-balance outline-none focus-visible:outline-none">
                         <span className="sr-only">Question {step + 1} of {TOTAL}: </span>
                         {q.text}
                       </h3>
@@ -148,10 +171,10 @@ export function FitQuiz() {
                 result && (
                   <motion.div
                     key="result"
-                    initial={{ opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25, ease }}
+                    transition={{ duration: 0.3, ease }}
                   >
                     <Result verdict={result.verdict} reasons={result.reasons} headingRef={headingRef} />
                     <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t pt-6">
@@ -188,23 +211,30 @@ function OptionCard({
   return (
     <label
       className={cn(
-        "flex min-h-14 cursor-pointer items-center gap-4 rounded-md border border-border-strong bg-background-alt px-4 py-3 transition-[border-color,background-color] duration-150",
-        "hover:border-muted-foreground",
-        "has-checked:border-gold-500 has-checked:bg-accent-soft",
-        "has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring",
+        "flex min-h-16 cursor-pointer items-center gap-4 rounded-md border bg-card px-5 py-4",
+        "transition-[border-color,background-color,box-shadow,transform] duration-200 ease-out-soft",
+        "hover:-translate-y-0.5 hover:border-border-strong hover:shadow-card",
+        "has-checked:border-ink has-checked:bg-gold-50 has-checked:shadow-card",
+        "has-focus-visible:outline-2 has-focus-visible:outline-offset-3 has-focus-visible:outline-ring",
       )}
     >
       <input type="radio" name={name} value={grade} checked={checked} onChange={onChange} className="peer sr-only" />
+      {/* The visible radio: an ink ring, filled with an ink dot when chosen. */}
       <span
         aria-hidden
         className={cn(
-          "grid size-5 shrink-0 place-items-center rounded-full border-2 transition-colors",
-          checked ? "border-gold-500 bg-gold-500 text-primary-foreground" : "border-border-strong",
+          "grid size-6 shrink-0 place-items-center rounded-full border-2 bg-card transition-colors duration-200",
+          checked ? "border-ink" : "border-border-strong",
         )}
       >
-        {checked && <Check className="size-3" strokeWidth={3} />}
+        <motion.span
+          className="block size-3 rounded-full bg-ink"
+          initial={false}
+          animate={{ scale: checked ? 1 : 0, opacity: checked ? 1 : 0 }}
+          transition={{ duration: 0.2, ease }}
+        />
       </span>
-      <span className="text-body-lg font-bold">{label}</span>
+      <span className="text-body-lg font-semibold text-foreground">{label}</span>
     </label>
   );
 }
@@ -222,33 +252,36 @@ function Result({
   const Icon = v.icon;
   return (
     <div>
-      <p className={cn("flex items-center gap-2 text-body-sm font-extrabold tracking-[0.06em] uppercase", v.tone)}>
-        <Icon aria-hidden className="size-4" />
-        {v.label}
-      </p>
-      <h3 ref={headingRef} tabIndex={-1} className="mt-2 type-h4 outline-none focus-visible:outline-none">
-        {v.title}
-      </h3>
+      <div className={cn("rounded-lg border p-5 sm:p-6", v.panel)}>
+        <div className="flex items-start gap-4">
+          <span aria-hidden className={cn("grid size-11 shrink-0 place-items-center rounded-full", v.chip)}>
+            <Icon className="size-5" strokeWidth={2.2} />
+          </span>
+          <div className="min-w-0">
+            <p className="text-body-sm font-extrabold tracking-[0.06em] text-foreground uppercase">{v.label}</p>
+            <h3 ref={headingRef} tabIndex={-1} className="mt-1 type-h4 text-foreground outline-none focus-visible:outline-none">
+              {v.title}
+            </h3>
+          </div>
+        </div>
 
-      {reasons.length > 0 && (
-        <ul className="mt-5 space-y-3">
-          {reasons.map((k) => {
-            const r = REASONS[k];
-            return (
-              <li key={k} className="flex gap-3 rounded-md border bg-background-alt p-4 text-body-md text-muted-foreground">
-                <Icon aria-hidden className={cn("mt-0.5 size-4 shrink-0", v.tone)} />
-                <span>
+        {reasons.length > 0 && (
+          <ul className="mt-5 space-y-2">
+            {reasons.map((k) => {
+              const r = REASONS[k];
+              return (
+                <li key={k} className="rounded-md border bg-card p-4 text-body-md text-foreground">
                   {r.text}
                   {r.illustrative && <Illustrative className="ml-2 align-middle" />}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
 
       <div className="mt-6">
-        <p className="text-body-sm font-bold text-foreground">What to do next</p>
+        <p className="text-body-md font-bold text-foreground">What to do next</p>
         {verdict === "no" && (
           // Any red answer: no app link and no sign-up nudge, by design (D5 §3).
           <ul className="mt-2 list-disc space-y-1 pl-5 text-body-md text-muted-foreground">
@@ -258,11 +291,14 @@ function Result({
         )}
         {verdict === "maybe" && (
           <div className="mt-2 space-y-1">
-            <p className="text-body-md text-muted-foreground">Read the answers to the common worries before you decide.</p>
+            <p className="text-body-md text-muted-foreground">
+              Investments can fall, and recovering can take time. Read the answers to the common worries, and how your money moves,
+              before you decide.
+            </p>
             <div className="flex flex-wrap gap-x-6">
               <ArrowLink href="#faq">Read the common worries</ArrowLink>
-              <ArrowLink href="#range" className="text-foreground">
-                See both ends of the range
+              <ArrowLink href="#how" className="text-foreground">
+                How your money moves
               </ArrowLink>
             </div>
           </div>
@@ -270,7 +306,7 @@ function Result({
         {verdict === "fit" && (
           <div className="mt-2 space-y-1">
             <p className="text-body-md text-muted-foreground">
-              Before you decide, read what it costs on a real amount and how your money moves.
+              Before you decide, read what it costs on a real amount and how your money moves. Values can still fall.
             </p>
             <div className="flex flex-wrap gap-x-6">
               <ArrowLink href="#fees">See the fee receipt</ArrowLink>

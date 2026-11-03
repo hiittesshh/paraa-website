@@ -5,6 +5,8 @@
 // Changed for Paraa: design-file gold instead of the demo pink/purple gradients, a visible
 // <label>, aria-valuetext with the formatted amount, a visible focus ring on the hidden input,
 // no fixed-height card wrapper, and generic value formatting instead of "kCal".
+// Light theme: Secondary gold fill on a Greyscale-100 track, a white thumb with a Greyscale-300
+// border and the card shadow, value set in type-h3 (the file's 24/32 heading size).
 import { useId, useMemo, useState, type ChangeEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -44,7 +46,7 @@ export function AdaptiveSlider({
   const shown = format(current);
 
   const dots = useMemo(
-    () => Array.from({ length: 6 }, (_, i) => <span key={i} className="size-1.5 rounded-full bg-ink-600" />),
+    () => Array.from({ length: 6 }, (_, i) => <span key={i} className="size-1.5 rounded-full bg-grey-300" />),
     [],
   );
 
@@ -57,17 +59,17 @@ export function AdaptiveSlider({
   return (
     <div className={cn("w-full select-none", className)}>
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <label htmlFor={id} className="text-body-md font-semibold">
+        <label htmlFor={id} className="text-body-md font-semibold text-foreground">
           {label}
         </label>
-        <AnimatedText value={shown} className="text-[28px] font-extrabold tracking-tight num sm:text-[32px]" />
+        <AnimatedText value={shown} className="type-h3 text-foreground num" />
       </div>
 
-      <div className="relative flex h-13 w-full items-center overflow-hidden rounded-full bg-muted has-[input:focus-visible]:outline-3 has-[input:focus-visible]:outline-offset-3 has-[input:focus-visible]:outline-ring">
+      <div className="group/slider relative flex h-13 w-full items-center overflow-hidden rounded-full border border-border bg-muted has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-3 has-[input:focus-visible]:outline-ring">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-6">{dots}</div>
         <motion.div
           aria-hidden
-          className="pointer-events-none absolute top-0 left-0 h-full rounded-full bg-linear-to-r from-gold-700 to-gold-500"
+          className="pointer-events-none absolute top-0 left-0 h-full rounded-full bg-linear-to-r from-gold-400 to-secondary"
           animate={{ width: `calc((${pct} / 100) * (100% - ${THUMB}px) + ${THUMB}px)` }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         />
@@ -89,7 +91,7 @@ export function AdaptiveSlider({
           animate={{ left: `calc((${pct} / 100) * (100% - ${THUMB}px))` }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-          <span className="size-10 rounded-full bg-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.12)]" />
+          <span className="size-10 rounded-full border border-border-strong bg-card shadow-card transition-transform duration-200 ease-out-soft group-has-[input:active]/slider:scale-95" />
         </motion.div>
       </div>
       {hint && (

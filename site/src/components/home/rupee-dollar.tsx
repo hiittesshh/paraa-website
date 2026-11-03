@@ -1,11 +1,12 @@
 "use client";
 
-// Section 5: "The rupee, honestly" (Concept B, B5.2), restyled for the dark site.
+// Section 5: "The rupee, honestly" (Concept B, B5.2), on the light theme: Main 3 gold line, error-tinted bands for
+// the years the rupee got stronger, Greyscale 500/600 axis text at 12px or more.
 // Client component because the chart measures its own width (so labels stay a real 12px on a
 // 375px phone, audit B3) and has a hover / keyboard readout. Data and maths: @/lib/rupee.
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { CalendarClock, TrendingDown, TrendingUp } from "lucide-react";
-import { Card, Illustrative, Reveal, Section, SectionHead, ToConfirm } from "@/components/paraa/primitives";
+import { Card, Illustrative, Reveal, RevealGroup, RevealItem, Section, SectionHead, ToConfirm } from "@/components/paraa/primitives";
 import { formatINR, formatPct, formatUSD, roundHalfUp } from "@/lib/format";
 import { birthYearResult, seriesWindow } from "@/lib/rupee";
 
@@ -47,7 +48,7 @@ export function RupeeDollar() {
       />
 
       <Reveal>
-        <figure className="m-0 rounded-lg border bg-card p-4 sm:p-6">
+        <figure className="m-0 rounded-lg border bg-card p-4 shadow-card sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <h3 className="type-h6">
               Rupees per US dollar, annual average, {FROM}&ndash;{TO}
@@ -57,7 +58,7 @@ export function RupeeDollar() {
           <RupeeChart />
           <figcaption className="mt-4 space-y-2 text-body-sm text-muted-foreground">
             <span className="flex items-center gap-2">
-              <span aria-hidden className="inline-block size-3 shrink-0 rounded-[3px] border border-negative/60 bg-negative/15" />
+              <span aria-hidden className="inline-block size-4 shrink-0 rounded-xs border border-error/40 bg-error/10" />
               Shaded: a year the rupee got stronger (fewer rupees per dollar). Unshaded: a year it got weaker.
             </span>
             <span className="block text-faint">
@@ -68,40 +69,44 @@ export function RupeeDollar() {
         </figure>
       </Reveal>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
-        <Reveal delay={1} className="h-full">
-          <Card className="h-full border-l-4 border-l-positive">
-            <p className="flex items-center gap-2 text-body-md font-bold">
-              <TrendingUp aria-hidden className="size-5 text-positive" />
+      <RevealGroup className="mt-6 grid gap-4 md:grid-cols-2">
+        <RevealItem className="h-full">
+          <Card className="h-full border-l-4 border-l-success">
+            <p className="flex items-center gap-3 text-body-md font-bold text-foreground">
+              <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-success/15 text-ink">
+                <TrendingUp className="size-5" />
+              </span>
               When it helps
               <Illustrative className="ml-auto" />
             </p>
-            <p className="mt-2 text-body-lg text-muted-foreground">
+            <p className="mt-3 text-body-lg text-muted-foreground">
               If you invest {formatINR(AMOUNT)} and the rupee weakens {formatPct(MOVE, { digits: 0, signed: false })}, your
               holding is worth about <strong className="num text-foreground">{formatINR(AMOUNT * (1 + MOVE))}</strong> before
               any investment gain or loss.
             </p>
           </Card>
-        </Reveal>
-        <Reveal delay={2} className="h-full">
-          <Card className="h-full border-l-4 border-l-negative">
-            <p className="flex items-center gap-2 text-body-md font-bold">
-              <TrendingDown aria-hidden className="size-5 text-negative" />
+        </RevealItem>
+        <RevealItem className="h-full">
+          <Card className="h-full border-l-4 border-l-error">
+            <p className="flex items-center gap-3 text-body-md font-bold text-foreground">
+              <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-error/10 text-ink">
+                <TrendingDown className="size-5" />
+              </span>
               When it hurts
               <Illustrative className="ml-auto" />
             </p>
-            <p className="mt-2 text-body-lg text-muted-foreground">
+            <p className="mt-3 text-body-lg text-muted-foreground">
               If the rupee strengthens {formatPct(MOVE, { digits: 0, signed: false })}, the same holding is worth about{" "}
               <strong className="num text-foreground">{formatINR(AMOUNT * (1 - MOVE))}</strong>, even if the investment
               didn&rsquo;t move.
             </p>
           </Card>
-        </Reveal>
-      </div>
+        </RevealItem>
+      </RevealGroup>
 
       {/* B3's birth-year calculator is not part of B5.2, so it is only previewed here, with its sample year. */}
-      <Reveal delay={1} className="mt-4">
-        <div className="flex flex-col gap-4 rounded-lg border border-dashed border-border-strong p-5 sm:flex-row sm:items-start sm:gap-6 sm:p-6">
+      <Reveal className="mt-4">
+        <div className="flex flex-col gap-4 rounded-lg border border-dashed border-border-strong bg-card p-5 sm:flex-row sm:items-start sm:gap-6 sm:p-6">
           <span className="grid size-11 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground" aria-hidden>
             <CalendarClock className="size-5" />
           </span>
@@ -242,8 +247,8 @@ function RupeeChart() {
                 y={top}
                 width={step}
                 height={bottom - top}
-                fill="var(--chart-4)"
-                fillOpacity={0.14}
+                fill="var(--color-error)"
+                fillOpacity={0.1}
               />
               <text
                 x={x(yr - 1) + step / 2}
@@ -275,7 +280,7 @@ function RupeeChart() {
             d={path}
             fill="none"
             stroke="var(--chart-1)"
-            strokeWidth={2}
+            strokeWidth={2.5}
             strokeLinejoin="round"
             strokeLinecap="round"
           />
@@ -288,7 +293,7 @@ function RupeeChart() {
               cy={y(r.rate)}
               r={4.5}
               fill="var(--card)"
-              stroke="var(--chart-4)"
+              stroke="var(--color-error)"
               strokeWidth={2}
             />
           ))}
@@ -309,7 +314,7 @@ function RupeeChart() {
             x={x(TO)}
             y={y(last.rate) + 22}
             textAnchor="end"
-            fontSize={13}
+            fontSize={14}
             fontWeight={700}
             fill="var(--foreground)"
           >

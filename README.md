@@ -1,5 +1,9 @@
 # Paraa Capital website: round 1 (content strategy + 4 prototypes)
 
+> **The finished site is in [`site/`](site/)** (Next.js; see [site/README.md](site/README.md)).
+> It's Concept A, rebuilt in the light design system with no basket NAV data. Everything below
+> describes round 1: the research, the four static prototypes and the audit that led to it.
+
 Open **[index.html](index.html)** in a browser. It links to all four concepts, and every concept
 page has a switcher bar at the bottom (All · A · B · C · D). No install or build step is needed.
 

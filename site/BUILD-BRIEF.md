@@ -1,5 +1,65 @@
 # Build brief: Paraa Capital site (Next.js 16 + Tailwind 4 + shadcn + Watermelon UI)
 
+## ROUND 2 (2026-11-03): this section overrides anything below it
+The user asked for three things:
+1. Remove all basket NAV data. The explorer, range stats, `/nav` page, ledger, changelog and CSV are **gone**.
+2. Refine the overall UI/UX, with smooth animation and transitions.
+3. Follow the design system **strictly**.
+
+Their answers to the open questions:
+- **Light theme**, like the design file.
+- **Main buttons = Primary #272A33** (white label), gold #FDC037 = secondary.
+- **No basket performance data anywhere.**
+
+### Design system: strict
+Every token is in `src/app/globals.css`, and all of them come from the design file. **Use only these:**
+- **Surfaces:**
+  - `bg-background` (#FFF) and `bg-background-alt` (Greyscale 50 #F8F9FD) for alternating sections;
+  - `bg-card` (#FFF) with `border` (Greyscale 200) and `shadow-card`;
+  - `bg-muted` (Greyscale 100);
+  - `bg-paper` (#F2F2F2);
+  - `bg-ink` (#272A33) for dark emphasis panels, with white text.
+- **Text:**
+  - `text-foreground` (Greyscale 900) for headings and key numbers;
+  - `text-muted-foreground` (Greyscale 600) for body;
+  - `text-faint` (Greyscale 500) for captions;
+  - `text-accent` (gold-800) is the **only** gold text colour.
+- **Gold:** `bg-secondary` (#FDC037), and the `gold-50 … gold-900` tints/ramp for fills, highlights and badges. `main-1/2/3` are the "Main" swatches.
+- **Alerts:** `success` #10B981, `warning` #FACC15, `error` #EF4444, plus `positive`/`negative`.
+  - Use them only as fills, icons, borders, bars or tinted backgrounds (e.g. `bg-success/10 border-success`).
+  - **Never use them as text on white.** They fail contrast: green 2.5:1, yellow 1.6:1, red 3.8:1.
+  - Meaning goes in words and +/− signs, with dark text.
+- **Buttons:**
+  - `ButtonLink`/`Button` `variant="default"` is the dark primary; `"secondary"` is gold; `"outline"` and `"ghost"` are also available.
+  - **At most one primary button per view**, and gold secondary buttons are rare.
+- **Type:** only the file's scale.
+  - Headings: `type-h1 … type-h6` (Bold).
+  - Body: `text-body-xl|lg|md|sm|xs` with weights `font-normal|medium|semibold|bold`, plus `font-extrabold` only at sm/xs, as the file shows.
+  - **No arbitrary sizes** (`text-[28px]` etc.). Big numbers use `type-h2`/`type-h3`/`type-h4` + `num`.
+  - `text-body-xs` (10px) is for labels only, never sentences.
+- **Radius:** `rounded-sm|md|lg|xl` (8/12/16/24). **Spacing:** the 4px grid only. **No raw hex anywhere in components.**
+- **Focus:** the global 2px Primary ring. Don't remove it.
+
+### Motion: smooth, but quiet
+- Use `Reveal`, `RevealGroup` and `RevealItem` from `@/components/paraa/primitives` (a 16px rise, fade and blur-clear, once). They are the **only** scroll reveals: one vocabulary, no per-section custom timings.
+- **Hover:** cards lift `hover:-translate-y-0.5 hover:shadow-lift` (200ms, `ease-out-soft`); links get underline or arrow nudges; buttons are already animated.
+- **State changes:**
+  - numbers that change use `@number-flow/react` (already installed);
+  - accordions and tabs animate height and layout through Motion and Radix;
+  - the quiz uses `AnimatePresence`.
+- Respect reduced motion: `MotionConfig reducedMotion="user"` is global, and nothing may stay at opacity 0 without JS.
+- **Don't** add parallax, scroll-jacking, looping or autoplay animations, or anything over ~600ms.
+
+### Removed: don't reintroduce
+`/nav`, NAV charts, basket returns, drawdowns, "best/worst month", "since inception", CSV downloads, and links to any of them.
+`lib/calc.ts` and `lib/nav-data.ts` are gone; the fee maths is in `lib/fees.ts`. The routes in `lib/routes.ts` are now `/` only.
+
+### Homepage order (`src/app/page.tsx`)
+Hero → TrustChecks → FeeReceipt → RupeeDollar → HowMoneyMoves → FitQuiz → (Incident, commented out) → Methodology → Router → PartnerCard → Faq → ClosingCta.
+
+---
+*Round 1 brief follows. Its file-ownership table is historical; its accessibility and compliance rules still apply.*
+
 Finished version of **Concept A "The Open Book"** with grafts from B, C and D.
 Round-1 prototypes (the source of all copy, maths and structure) live in `../concept-a … ../concept-d`.
 Specs: `../02-concepts.md` (§0.2 footer/legal, §0.3 copy rulebook: **binding**, §0.4 dataset).
