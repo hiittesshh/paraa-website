@@ -6,6 +6,8 @@ import type { SleeveId } from "@/lib/basket";
 export interface SleeveInfo {
   /** Fill for the dot / bar. Ink, gold and grey: three tones from the design file. */
   swatch: string;
+  /** The same dot on a dark Primary surface, where the ink swatch would vanish. */
+  swatchOnInk: string;
   tag?: string;
   short: string;
   what: string;
@@ -16,6 +18,7 @@ export interface SleeveInfo {
 export const SLEEVE_INFO: Record<SleeveId, SleeveInfo> = {
   us: {
     swatch: "bg-ink",
+    swatchOnInk: "bg-primary-foreground",
     tag: "Tokenized",
     short: "Shares of large US companies, as tokens.",
     what: "Tokens that track shares of large US companies.",
@@ -24,6 +27,7 @@ export const SLEEVE_INFO: Record<SleeveId, SleeveInfo> = {
   },
   gold: {
     swatch: "bg-secondary",
+    swatchOnInk: "bg-secondary",
     short: "Tends to hold its value when stocks fall.",
     what: "Tracks the global price of gold.",
     why: "Often steady when markets are nervous.",
@@ -31,6 +35,7 @@ export const SLEEVE_INFO: Record<SleeveId, SleeveInfo> = {
   },
   oil: {
     swatch: "bg-grey-400",
+    swatchOnInk: "bg-grey-400",
     short: "Moves with global supply and demand.",
     what: "Tracks the global price of crude oil.",
     why: "Tends to rise with inflation.",

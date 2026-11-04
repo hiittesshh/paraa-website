@@ -1,14 +1,15 @@
 "use client";
 
 // Adapted from Watermelon UI "adaptive-slider" (registry.watermelon.sh/r/adaptive-slider.json).
-// Kept: the spring-animated fill + thumb and the per-character value pop.
+// Kept: the spring-animated fill + thumb over a hidden native range input.
 // Changed for Paraa: design-file gold instead of the demo pink/purple gradients, a visible
 // <label>, aria-valuetext with the formatted amount, a visible focus ring on the hidden input,
-// no fixed-height card wrapper, and generic value formatting instead of "kCal".
-// Light theme: Secondary gold fill on a Greyscale-100 track, a white thumb with a Greyscale-300
-// border and the card shadow, value set in type-h3 (the file's 24/32 heading size).
-import { useId, useMemo, useState, type ChangeEvent } from "react";
-import { AnimatePresence, motion } from "motion/react";
+// and generic value formatting instead of "kCal".
+// A gold fill on a track tinted from the current text colour, so it works on light and dark
+// surfaces, with a gold thumb. When the range crosses zero the fill grows from zero, so "no change"
+// looks empty and a loss goes left. The hit area is the full 44px row.
+import { useId, useState, type ChangeEvent } from "react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 interface AdaptiveSliderProps {
@@ -25,7 +26,8 @@ interface AdaptiveSliderProps {
   className?: string;
 }
 
-const THUMB = 52; // px, also the track height: comfortably over the 44px touch target
+const THUMB = 28; // px: the fill and thumb travel inside (100% - THUMB), like a native range
+const SPRING = { type: "spring", stiffness: 500, damping: 40 } as const;
 
 export function AdaptiveSlider({
   label,
@@ -42,13 +44,13 @@ export function AdaptiveSlider({
   const id = useId();
   const [internal, setInternal] = useState(defaultValue ?? min);
   const current = value ?? internal;
-  const pct = ((current - min) / (max - min)) * 100;
+  const toPct = (v: number) => ((v - min) / (max - min)) * 100;
+  const pct = toPct(current);
+  const crossesZero = min < 0 && max > 0;
+  const origin = crossesZero ? toPct(0) : 0;
   const shown = format(current);
 
-  const dots = useMemo(
-    () => Array.from({ length: 6 }, (_, i) => <span key={i} className="size-1.5 rounded-full bg-grey-300" />),
-    [],
-  );
+  const at = (p: number) => `calc(${THUMB / 2}px + (${p} / 100) * (100% - ${THUMB}px))`;
 
   const handle = (e: ChangeEvent<HTMLInputElement>) => {
     const v = Number(e.target.value);
@@ -58,20 +60,29 @@ export function AdaptiveSlider({
 
   return (
     <div className={cn("w-full select-none", className)}>
-      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <label htmlFor={id} className="text-body-md font-semibold text-foreground">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+        <label htmlFor={id} className="text-body-md font-semibold">
           {label}
         </label>
-        <AnimatedText value={shown} className="type-h3 text-foreground num" />
+        <span aria-hidden className="type-h6 num">
+          {shown}
+        </span>
       </div>
 
-      <div className="group/slider relative flex h-13 w-full items-center overflow-hidden rounded-full border border-border bg-muted has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-3 has-[input:focus-visible]:outline-ring">
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-6">{dots}</div>
+      <div className="group/slider relative flex h-11 w-full items-center rounded-full has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-1 has-[input:focus-visible]:outline-ring">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 h-2.5 rounded-full bg-current/15" />
+        {crossesZero && (
+          <span aria-hidden className="pointer-events-none absolute h-4 w-0.5 -translate-x-1/2 rounded-full bg-current/40" style={{ left: at(origin) }} />
+        )}
         <motion.div
           aria-hidden
-          className="pointer-events-none absolute top-0 left-0 h-full rounded-full bg-linear-to-r from-gold-400 to-secondary"
-          animate={{ width: `calc((${pct} / 100) * (100% - ${THUMB}px) + ${THUMB}px)` }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="pointer-events-none absolute h-2.5 rounded-full bg-secondary"
+          initial={false}
+          animate={{
+            left: at(Math.min(pct, origin)),
+            width: `calc((${Math.abs(pct - origin)} / 100) * (100% - ${THUMB}px))`,
+          }}
+          transition={SPRING}
         />
         <input
           id={id}
@@ -83,41 +94,23 @@ export function AdaptiveSlider({
           onChange={handle}
           aria-valuetext={shown}
           aria-describedby={hint ? `${id}-hint` : undefined}
-          className="absolute inset-0 z-50 h-13 w-full cursor-pointer opacity-0"
+          className="absolute inset-0 z-50 h-11 w-full cursor-pointer opacity-0"
         />
         <motion.div
           aria-hidden
-          className="pointer-events-none absolute top-0 z-40 flex size-13 items-center justify-center"
-          animate={{ left: `calc((${pct} / 100) * (100% - ${THUMB}px))` }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="pointer-events-none absolute z-40 -ml-3.5 size-7"
+          initial={false}
+          animate={{ left: at(pct) }}
+          transition={SPRING}
         >
-          <span className="size-10 rounded-full border border-border-strong bg-card shadow-card transition-transform duration-200 ease-out-soft group-has-[input:active]/slider:scale-95" />
+          <span className="block size-7 rounded-full border-4 border-card bg-secondary shadow-lift transition-transform duration-150 ease-out-soft group-hover/slider:scale-110 group-has-[input:active]/slider:scale-95" />
         </motion.div>
       </div>
       {hint && (
-        <p id={`${id}-hint`} className="mt-2 text-body-sm text-muted-foreground">
+        <p id={`${id}-hint`} className="text-body-sm text-muted-foreground">
           {hint}
         </p>
       )}
     </div>
-  );
-}
-
-function AnimatedText({ value, className }: { value: string; className?: string }) {
-  return (
-    <span aria-hidden className={cn("flex will-change-transform", className)}>
-      <AnimatePresence mode="popLayout" initial={false}>
-        {value.split("").map((char, i) => (
-          <motion.span
-            key={char + i}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } }}
-            exit={{ opacity: 0, transition: { duration: 0 } }}
-          >
-            {char === " " ? " " : char}
-          </motion.span>
-        ))}
-      </AnimatePresence>
-    </span>
   );
 }

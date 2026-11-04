@@ -1,33 +1,38 @@
-// Closing CTA: one centred white panel with a soft gold-50 wash from the top, one dark primary
-// button (the only primary in this view) and one outline button, per the design file.
-import { ButtonLink, Reveal, Section } from "@/components/paraa/primitives";
+// Closing CTA: a dark band with a gold main button, ending in a skyline that runs straight into the
+// dark footer, so the page finishes on one continuous scene instead of a stack of boxes.
+import { ButtonLink, Reveal } from "@/components/paraa/primitives";
+import { Mark } from "@/components/paraa/mark";
+import { SkylineArt } from "./asset-art";
 
 export function ClosingCta() {
   return (
-    <Section size="md" labelledBy="closing-title">
-      <Reveal>
-        <div className="relative isolate mx-auto max-w-[880px] overflow-hidden rounded-xl border bg-card px-6 py-14 text-center shadow-lift md:px-12 md:py-20">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(70%_80%_at_50%_0%,var(--color-gold-50),transparent_70%)]"
-          />
-          <div aria-hidden className="mx-auto mb-6 h-1 w-12 rounded-full bg-secondary" />
+    <section aria-labelledby="closing-title" className="surface-ink overflow-hidden pt-20 md:pt-28">
+      <Reveal className="container-page flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div>
           <h2 id="closing-title" className="type-h2 text-balance">
-            Ready to invest globally?
+            Ready to <Mark>invest globally?</Mark>
           </h2>
-          <p className="mx-auto mt-4 max-w-[44ch] text-body-xl text-pretty text-muted-foreground">
-            Talk to a CA first. It&rsquo;s free, and there&rsquo;s no obligation.
-          </p>
-          <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-            <ButtonLink href="#ask" size="lg">
-              Talk to a CA
-            </ButtonLink>
-            <ButtonLink href="#basket" variant="outline" size="lg">
-              Explore the basket
-            </ButtonLink>
-          </div>
+          <p className="mt-3 text-body-xl text-grey-300">Talk to a CA first. It&rsquo;s free, and there&rsquo;s no obligation.</p>
+        </div>
+        <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+          <ButtonLink href="#ask" variant="secondary" size="lg">
+            Talk to a CA
+          </ButtonLink>
+          <ButtonLink
+            href="#basket"
+            variant="outline"
+            size="lg"
+            className="border-ink-4 bg-transparent text-primary-foreground hover:border-grey-300 hover:bg-ink-2"
+          >
+            Explore the basket
+          </ButtonLink>
         </div>
       </Reveal>
-    </Section>
+      <div className="mt-16 flex justify-center gap-1">
+        {[0, 1, 2, 3].map((n) => (
+          <SkylineArt key={n} className={n > 0 ? "hidden w-1/4 shrink-0 md:block" : "w-full shrink-0 md:w-1/4"} />
+        ))}
+      </div>
+    </section>
   );
 }

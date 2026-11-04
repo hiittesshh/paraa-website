@@ -1,5 +1,55 @@
 # Build brief: Paraa Capital site (Next.js 16 + Tailwind 4 + shadcn + Watermelon UI)
 
+## ROUND 10 (2026-11-04): FIU-IND registration
+The user stated that Paraa is registered with FIU-IND. The hero's third tile now says so, and a footer note
+(`fiu-registration-v1`) says what that means. Rules:
+- **State the registration as a fact.** No "approved by", "certified by" or "under the Ministry of Finance", and
+  no government emblem or logo: wording that suggests official backing is misleading, however it's phrased.
+- **Keep the footer note beside any such claim.**
+- **Still needed (R6):** the number (`FIU_REG_NO` in `src/lib/links.ts`), the legal entity's name, and
+  compliance sign-off on the wording. Not yet on file.
+
+## ROUND 9 (2026-11-04): hero rebuilt, overrides anything below it
+The user rejected the split hero. It's now a centred headline over three full-width tiles that start as a
+tilted 3D stack and deal out into a linked row while the page is pinned (md+; phones don't pin). The finished
+row is the plain CSS layout, so server render and reduced motion show it flat. All in `hero.tsx`.
+**The hero must not repeat Basket:** its tiles answer "why Paraa?" (rupees, no tax when you invest, the
+registration) and never show the asset split. The gold facts band (`FactMarquee`) was removed because it repeated those three.
+
+## ROUND 8 (2026-11-04): the rest of the page, overrides anything below it
+The user liked only Basket, Why USD and How it works from round 7: big colour blocks, big numbers, drawn art.
+Those three are the reference and weren't changed. Everything else was brought up to them: a fully dark hero
+with art on the deck cards, live visuals in the what-if and tax calculator with the answer in big gold type,
+art tiles for CA Advisors (`PlanArt`, `ChatArt`, `FileArt`), a gold #ask band, solid FAQ tiles, and a dark
+closing band whose skyline runs into the footer. Headings stay inside the design file's 48px limit.
+
+## ROUND 7 (2026-11-04): bolder, overrides anything below it
+The user found round 6 still too plain. Same tokens, type scale, copy and pinned hero, with more visual weight:
+- **Replaces round 2's motion limits:** scroll-linked effects and one slow loop are now allowed. Scrolling is
+  still never taken over (no wheel interception), and anything that loops needs a pause control.
+- **Replaces round 6's "no cards":** Basket is solid tiles sized by share with drawn art (`asset-art.tsx`), How it
+  works is sticky stacking cards, Advisors has icon rows. No art may read as basket performance.
+- **New pieces:** `Mark` (gold highlighter under a heading phrase), `FactMarquee` (gold band with pause), the
+  dark hero stage, the dark Why USD band whose line and rupee figure follow scroll, the header progress line.
+
+## ROUND 6 (2026-11-04): structural polish, overrides anything below it
+The user asked for a clean, polished UI that doesn't look generated. Colours, type, copy and the pinned
+hero stayed; how sections are built changed. Guidance came from Impeccable (`pbakaus/impeccable`) and Emil
+Kowalski's skills; `npx impeccable detect http://localhost:3000` checks the running site.
+- **No small label above a heading.** The `eyebrow` utility and `SectionHead`'s `eyebrow` prop are gone.
+- **No rows of same-size icon + heading + text cards, and no card inside a card.** Use hairline rows
+  (Tax, Advisors, FAQ), a real proportional shape (Basket's bar) or a numbered rail (How it works). Cards are
+  for tools only: the tax calculator and the form.
+- **One dark Primary band (`surface-ink`) for the main action (#ask), one gold band (closing CTA), a dark
+  footer.** `surface-ink` also switches the focus ring to gold; a white card inside it sets it back.
+- **Sliders are slim** and fill from zero when the range crosses zero. Slider values are bold body text.
+- **Motion:** the hero's 3D deck is the page's one big moment, and it lands flat so the text is crisp.
+  `Reveal` is now a 12px rise + fade over 500ms with no blur; section headings don't animate. Easing is
+  `cubic-bezier(.23, 1, .32, 1)`. The rupee line draws once. The header underline follows the current section.
+- **Icons come from lucide, never text glyphs** such as arrows.
+
+Homepage order is unchanged. "CA Advisors" and the #ask band are now two separate sections.
+
 ## ROUND 5 (2026-11-03): no Grade Capital anywhere, overrides anything below it
 - **The site never mentions Grade Capital.** The name-change bar (`rebrand-bar.tsx`) and the footer's
   "Formerly Grade Capital." are gone; this replaces `content-rules.md` §0.1's rebrand bar and the

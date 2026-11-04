@@ -1,18 +1,19 @@
 "use client";
 
 // Shared scroll reveals: the one motion vocabulary for the whole site, so sections never invent
-// their own timings. A 16px rise + fade + soft 6px blur that clears, once, on the soft ease.
+// their own timings. A 12px rise + fade, once, on the soft ease. Deliberately quiet: section
+// headings don't use it at all, and the hero's 3D deck is the page's one big moment.
 // MotionConfig reducedMotion="user" (providers.tsx) removes the movement for people who ask
 // their OS for less motion; the fade still runs so nothing is ever stuck invisible.
 import { motion, type Variants } from "motion/react";
 import type { ReactNode } from "react";
 
-const EASE = [0.2, 0.7, 0.2, 1] as const;
+const EASE = [0.23, 1, 0.32, 1] as const;
 const VIEWPORT = { once: true, margin: "0px 0px -10% 0px" } as const;
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
-  shown: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.6, ease: EASE } },
+  hidden: { opacity: 0, y: 12 },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
 };
 
 /** Reveal one block. `delay` is a stagger step (0–4), 80ms each. */
@@ -34,7 +35,7 @@ export function Reveal({
       initial="hidden"
       whileInView="shown"
       viewport={VIEWPORT}
-      variants={{ ...item, shown: { ...(item.shown as object), transition: { duration: 0.6, ease: EASE, delay: delay * 0.08 } } }}
+      variants={{ ...item, shown: { ...(item.shown as object), transition: { duration: 0.5, ease: EASE, delay: delay * 0.08 } } }}
     >
       {children}
     </Tag>

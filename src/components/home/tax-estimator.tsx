@@ -4,7 +4,10 @@
 // Maths: lib/tax estimateTax() (tested). Deliberately simple and says so: no surcharge, rebate or
 // regime maths, because those depend on the rest of your income. The starting point is a ₹1 lakh
 // profit at the 30% slab, the case that shows the most tax, so it never flatters (R5).
+// A dark panel with the answer as the biggest thing on it, and a bar that splits the profit into
+// what you keep and what goes in tax (a second signal; the figures carry the meaning).
 import { useState, type ReactNode } from "react";
+import { motion } from "motion/react";
 import { Money } from "@/components/paraa/money";
 import { AdaptiveSlider } from "@/components/watermelon/adaptive-slider";
 import { formatINR, formatPct } from "@/lib/format";
@@ -20,10 +23,11 @@ export function TaxEstimator() {
   const [slab, setSlab] = useState(0.3);
   const t = estimateTax(profit, slab);
   const loss = profit < 0;
+  const keptShare = profit > 0 ? (t.keep / profit) * 100 : 100;
 
   return (
-    <article aria-labelledby="tax-est-title" className="rounded-xl border bg-card p-5 shadow-card sm:p-7">
-      <h3 id="tax-est-title" className="type-h6">
+    <article aria-labelledby="tax-est-title" className="surface-ink rounded-xl p-6 shadow-lift sm:p-8">
+      <h3 id="tax-est-title" className="type-h5">
         Tax calculator
       </h3>
 
@@ -38,16 +42,16 @@ export function TaxEstimator() {
         format={(v) => formatINR(v, { signed: true })}
       />
 
-      <fieldset className="mt-6 min-w-0 border-0 p-0">
-        <legend className="mb-3 p-0 text-body-md font-semibold text-foreground">Your income tax slab</legend>
+      <fieldset className="mt-5 min-w-0 border-0 p-0">
+        <legend className="mb-3 p-0 text-body-md font-semibold">Your income tax slab</legend>
         <div className="flex flex-wrap gap-2">
           {SLAB_RATES.map((r) => (
             <label
               key={r}
               className={cn(
-                "inline-flex min-h-11 min-w-14 cursor-pointer items-center justify-center rounded-full border px-4 text-body-md font-semibold num transition-colors duration-200 ease-out-soft",
+                "inline-flex min-h-11 min-w-14 cursor-pointer items-center justify-center rounded-full border px-4 text-body-md font-semibold num transition-[background-color,border-color,color,transform] duration-150 ease-out-soft active:scale-[0.97]",
                 "has-focus-visible:outline-2 has-focus-visible:outline-offset-3 has-focus-visible:outline-ring",
-                slab === r ? "border-ink bg-ink text-primary-foreground" : "border-border-strong bg-card hover:border-ink",
+                slab === r ? "border-secondary bg-secondary text-ink" : "border-ink-4 hover:border-grey-300",
               )}
             >
               <input type="radio" name="slab" value={r} checked={slab === r} onChange={() => setSlab(r)} className="sr-only" />
@@ -57,13 +61,25 @@ export function TaxEstimator() {
         </div>
       </fieldset>
 
-      <dl className="mt-6 divide-y divide-dashed divide-border-strong border-t border-dashed border-border-strong">
+      <div className="mt-8 border-t border-ink-3 pt-6">
+        <p className="text-body-md font-semibold text-grey-300">{loss ? "Loss you can carry forward" : "You keep"}</p>
+        <Money value={loss ? t.lossCarried : t.keep} className="mt-1 block type-h1 text-secondary num" />
+      </div>
+
+      <div aria-hidden className="mt-4 flex h-3 gap-0.5 overflow-hidden rounded-full bg-ink-3">
+        <motion.div
+          className="bg-secondary"
+          initial={false}
+          animate={{ width: `${keptShare}%` }}
+          transition={{ type: "spring", stiffness: 300, damping: 34 }}
+        />
+        <div className="flex-1 bg-grey-400" />
+      </div>
+
+      <dl className="mt-4 divide-y divide-ink-3">
         <Row label="Tax when you invest" value={formatINR(0)} />
         {loss ? (
-          <>
-            <Row label="Tax on a loss" value={formatINR(0)} />
-            <Row label="Loss you can carry forward" value={<Money value={t.lossCarried} />} />
-          </>
+          <Row label="Tax on a loss" value={formatINR(0)} />
         ) : (
           <Row
             label={`Tax on profit (${formatPct(slab, { digits: 0, signed: false })} + 4% cess)`}
@@ -72,32 +88,22 @@ export function TaxEstimator() {
         )}
       </dl>
 
-      {!loss && (
-        <div className="mt-4 flex items-baseline justify-between gap-4 rounded-lg bg-ink px-5 py-4 text-primary-foreground">
-          <span className="text-body-lg font-bold">You keep</span>
-          <Money value={t.keep} className="type-h4 num" />
-        </div>
-      )}
-
       <p className="sr-only" aria-live="polite" aria-atomic="true">
         {loss
           ? `No tax. A loss of ${formatINR(t.lossCarried)} can be carried forward.`
           : `Tax ${formatINR(t.tax)} on a profit of ${formatINR(profit)} at the ${formatPct(slab, { digits: 0, signed: false })} slab. You keep ${formatINR(t.keep)}.`}
       </p>
 
-      <p className="mt-5 text-body-sm text-muted-foreground">Estimate only. Doesn&rsquo;t include surcharge or rebates.</p>
+      <p className="mt-3 text-body-sm text-grey-300">Estimate only. Doesn&rsquo;t include surcharge or rebates.</p>
     </article>
   );
 }
 
-function Row({ label, value, note }: { label: string; value: ReactNode; note?: string }) {
+function Row({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex items-baseline justify-between gap-4 py-3">
-      <dt className="min-w-0 text-body-md text-muted-foreground">
-        {label}
-        {note && <span className="mt-0.5 block text-body-sm text-faint">{note}</span>}
-      </dt>
-      <dd className="shrink-0 text-right text-body-lg font-bold text-foreground num">{value}</dd>
+      <dt className="min-w-0 text-body-md text-grey-300">{label}</dt>
+      <dd className="shrink-0 text-right text-body-lg font-bold num">{value}</dd>
     </div>
   );
 }

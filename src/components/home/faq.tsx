@@ -3,11 +3,12 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Accordion, type AccordionEntry } from "@/components/paraa/accordion";
+import { Mark } from "@/components/paraa/mark";
 import { Reveal, Section, SectionHead } from "@/components/paraa/primitives";
 
 function A({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <Link href={href} className="font-semibold text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:decoration-foreground">
+    <Link href={href} className="font-semibold text-foreground underline decoration-current/40 underline-offset-4 transition-colors duration-150 hover:decoration-current">
       {children}
     </Link>
   );
@@ -77,13 +78,17 @@ const ITEMS: AccordionEntry[] = [
 
 export function Faq() {
   return (
-    <Section id="faq" tone="alt" labelledBy="faq-title">
+    <Section id="faq" labelledBy="faq-title">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <SectionHead
             id="faq-title"
-            eyebrow="FAQ"
-            title="Common questions"
+            stacked
+            title={
+              <>
+                Common <Mark>questions</Mark>
+              </>
+            }
             lede={
               <>
                 Can&rsquo;t find your answer? <A href="#ask">Ask a CA</A>.

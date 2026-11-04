@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 type Status = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; reference: string } | { kind: "failed" };
 
-const EASE = [0.2, 0.7, 0.2, 1] as const;
+const EASE = [0.23, 1, 0.32, 1] as const;
 const FIELD_ORDER = ["name", "phone", "question", "consent"] as const;
 const EMPTY = { name: "", phone: "", question: "", consent: false };
 
@@ -73,7 +73,7 @@ export function AskForm() {
   }
 
   return (
-    <div className="rounded-lg border bg-card p-5 shadow-card sm:p-7">
+    <div className="rounded-xl bg-card p-6 text-foreground shadow-lift sm:p-8">
       <AnimatePresence mode="wait" initial={false}>
         {status.kind === "sent" ? (
           <motion.div

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import type { VariantProps } from "class-variance-authority";
+import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Reveal, RevealGroup, RevealItem } from "./reveal";
@@ -31,7 +32,7 @@ export function Section({
       aria-labelledby={labelledBy}
       className={cn(
         tone === "alt" && "bg-background-alt",
-        size === "md" ? "py-16 md:py-24" : "py-12 md:py-16",
+        size === "md" ? "py-20 md:py-28" : "py-12 md:py-16",
         className,
       )}
     >
@@ -40,28 +41,37 @@ export function Section({
   );
 }
 
-/** Eyebrow + heading + lede block that opens most sections. */
+/**
+ * Heading + lede that opens most sections. On wide screens the lede sits to the right of the
+ * heading, level with its last line; `stacked` keeps them in one column, for a head that lives in
+ * a narrow side column. Not animated: a heading is there the moment you reach it.
+ */
 export function SectionHead({
   id,
-  eyebrow,
   title,
   lede,
+  stacked = false,
   className,
 }: {
   id: string;
-  eyebrow?: string;
   title: ReactNode;
   lede?: ReactNode;
+  stacked?: boolean;
   className?: string;
 }) {
   return (
-    <Reveal className={cn("mb-10 max-w-[720px] space-y-3 md:mb-12", className)}>
-      {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+    <div
+      className={cn(
+        "mb-12 grid content-start gap-4 md:mb-16",
+        !stacked && "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end lg:gap-16",
+        className,
+      )}
+    >
       <h2 id={id} className="type-h2 text-balance">
         {title}
       </h2>
-      {lede && <p className="text-body-xl text-muted-foreground text-pretty">{lede}</p>}
-    </Reveal>
+      {lede && <p className="max-w-[48ch] text-body-xl text-muted-foreground">{lede}</p>}
+    </div>
   );
 }
 
@@ -130,23 +140,21 @@ export function ButtonLink({
 export function ArrowLink({ className, children, ...props }: ComponentProps<typeof Link>) {
   return (
     <Link
-      className={cn("group inline-flex min-h-11 items-center gap-1 text-body-md font-bold text-accent no-underline", className)}
+      className={cn("group inline-flex min-h-11 items-center gap-1.5 text-body-md font-bold text-accent no-underline", className)}
       {...props}
     >
       {children}
-      <span aria-hidden className="transition-transform duration-150 group-hover:translate-x-1">
-        →
-      </span>
+      <ArrowRight aria-hidden className="size-4 transition-transform duration-150 ease-out-soft group-hover:translate-x-1" />
     </Link>
   );
 }
 
-/** Legal/disclaimer box (dashed border, small muted text). */
+/** Legal/disclaimer text. Plain and readable, capped at a comfortable line length. */
 export function Disclosure({ id, className, children }: { id: string; className?: string; children: ReactNode }) {
   return (
     <div
       data-disclosure-id={id}
-      className={cn("rounded-md border border-dashed border-border-strong p-4 text-body-sm text-muted-foreground [&_strong]:text-foreground", className)}
+      className={cn("max-w-[56ch] text-body-md text-muted-foreground [&_strong]:text-foreground", className)}
     >
       {children}
     </div>

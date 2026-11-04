@@ -47,7 +47,7 @@ docs/
 | shadcn/ui | Button, the `cn()` helper | Source is copied in, not imported, so it is restyled to the design file. |
 | **Watermelon UI** | `AdaptiveSlider`, `DiscreteTabs`, `Stepper`, plus the accordion-9 look | Installed with `npx shadcn add https://registry.watermelon.sh/r/<name>.json`, then adapted (see below). |
 | Radix Accordion | FAQ | Handles `aria-expanded` and keyboard support. |
-| Motion | Scroll reveals, the hero's 3D deck, header shrink, Watermelon micro-interactions | `MotionConfig reducedMotion="user"` honours the OS "reduce motion" setting. |
+| Motion | Scroll reveals, the hero's 3D deck, the rupee line, header shrink and section underline, Watermelon micro-interactions | `MotionConfig reducedMotion="user"` honours the OS "reduce motion" setting. |
 | @number-flow/react | Animated rupee figures in the what-if and tax estimator | Digits roll to the new value; screen readers get the plain formatted string. |
 | lucide-react | Icons | One icon set. `react-icons` was removed. |
 
@@ -57,6 +57,7 @@ system; the brief said "may use".
 ## What the user asked for, and where it is
 | Request | Where |
 |---|---|
+| **Round 6:** clean, polished UI that doesn't look generated | Every section; rules in ROUND 6 of `docs/build-brief.md` |
 | **Round 3:** focus on the international basket (US stocks, crude oil, gold) | `components/home/hero.tsx` (3D deck), `basket.tsx` + `sleeve-info.tsx`, `what-if.tsx` + `lib/basket.ts` |
 | **Round 3:** why invest in USD | `components/home/rupee-dollar.tsx` (chart + live birth-year calculator) + `lib/rupee.ts` |
 | **Round 3:** how tax works | `components/home/tax.tsx` + `tax-estimator.tsx` + `lib/tax.ts` |
@@ -77,7 +78,8 @@ history; see `docs/build-brief.md`, ROUND 3.
 The registry ships demo code: hardcoded pink and purple gradients, a "Calories" label, and some
 accessibility gaps. As the shadcn model intends, the copied source was adapted:
 - **adaptive-slider:** now uses design-file gold, has a visible `<label>`, announces the formatted
-  amount through `aria-valuetext`, shows a focus ring, and has no fixed-height card wrapper.
+  amount through `aria-valuetext`, shows a focus ring, has no fixed-height card wrapper, and is a
+  slim track that fills from zero when the range crosses zero.
 - **discrete-tabs:**
   - Uses real ARIA tabs (tablist, tab and tabpanel) with arrow, Home and End keys.
   - Each tab is one focus stop; the original had two.
@@ -95,7 +97,8 @@ accessibility gaps. As the shadcn model intends, the copied source was adapted:
   loses its label colour.
 - **Alert colours are never text on white.** Green, yellow and red fail contrast as text, so they
   are fills, icons and borders, with dark text on top. The only gold text is `text-accent` (gold-800).
-- **3D needs an unclipped path.** In the hero deck, nothing between the stage and a card may use
-  `overflow: hidden`, because that flattens the 3D (and breaks the sticky pin).
+- **3D needs an unclipped path.** In the hero, nothing between the stage and a tile may use
+  `overflow: hidden`, because that flattens the 3D, and no ancestor of the sticky frame may clip,
+  because that breaks the pin.
 - **No placeholder tags on the page (round 4).** Unconfirmed facts are left out, and example numbers
   say so in plain words. The copy rulebook is `docs/content-rules.md` §0.3.

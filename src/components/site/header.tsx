@@ -7,10 +7,12 @@
 // Mobile menu: a disclosure button (aria-expanded / aria-controls) that closes on Escape,
 // on any link click, and returns focus to the button when closed with Escape. It opens and
 // closes with AnimatePresence (height + fade, ~220ms); reduced motion is handled globally.
+// The desktop nav shows where you are on the page: an observer watches a thin line across the
+// middle of the screen, and a gold underline slides to whichever section is crossing it.
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
 import { ButtonLink } from "@/components/paraa/primitives";
 import { BLOG_URL } from "@/lib/links";
 import { cn } from "@/lib/utils";
@@ -30,18 +32,38 @@ const MENU_LINKS: readonly { href: string; label: string; external?: boolean }[]
 const external = { target: "_blank", rel: "noopener noreferrer" } as const;
 
 const MENU_ID = "site-mobile-menu";
-const EASE = [0.2, 0.7, 0.2, 1] as const;
+const EASE = [0.23, 1, 0.32, 1] as const;
+// The question form is its own band, but it belongs to the "CA Advisors" nav item.
+const SECTIONS: Record<string, string> = { basket: "/#basket", "why-usd": "/#why-usd", how: "/#how", tax: "/#tax", advisors: "/#advisors", ask: "/#advisors" };
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [current, setCurrent] = useState<string | null>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (y) => {
     const next = y > 8;
     if (next !== scrolled) setScrolled(next);
   });
+
+  useEffect(() => {
+    const crossing = new Set<string>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => (e.isIntersecting ? crossing.add(e.target.id) : crossing.delete(e.target.id)));
+        const [id] = crossing;
+        setCurrent(id ? SECTIONS[id] : null);
+      },
+      { rootMargin: "-50% 0px -50% 0px" },
+    );
+    Object.keys(SECTIONS).forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -63,6 +85,8 @@ export function SiteHeader() {
         (scrolled || open) && "shadow-card",
       )}
     >
+      {/* How far down the page you are. */}
+      <motion.div aria-hidden style={{ scaleX: scrollYProgress }} className="absolute inset-x-0 -bottom-px h-0.5 origin-left bg-secondary" />
       <div
         className={cn(
           "container-page flex items-center gap-6 transition-[height] duration-200 ease-out-soft",
@@ -78,9 +102,21 @@ export function SiteHeader() {
                 <Link
                   href={l.href}
                   {...(l.external ? external : {})}
-                  className="inline-flex min-h-11 items-center gap-1 rounded-sm px-3 text-body-md font-semibold text-muted-foreground no-underline transition-colors duration-150 hover:bg-muted hover:text-foreground"
+                  aria-current={current === l.href ? "location" : undefined}
+                  className={cn(
+                    "relative inline-flex min-h-11 items-center gap-1 rounded-sm px-3 text-body-md font-semibold no-underline transition-colors duration-150 hover:text-foreground",
+                    current === l.href ? "text-foreground" : "text-muted-foreground",
+                  )}
                 >
                   {l.label}
+                  {current === l.href && (
+                    <motion.span
+                      aria-hidden
+                      layoutId="nav-current"
+                      transition={{ duration: 0.25, ease: EASE }}
+                      className="absolute inset-x-3 bottom-1 h-0.5 rounded-full bg-secondary"
+                    />
+                  )}
                   {l.external && (
                     <>
                       <ArrowUpRight aria-hidden className="size-3.5" />
@@ -94,9 +130,9 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          {/* Outline, not primary: the hero already carries the one primary action in view.
+          {/* Gold, not primary: the hero already carries the one primary action in view.
               Under ~440px the hero CTA is on screen, so the header CTA is dropped (prototype A8). */}
-          <ButtonLink href="/#ask" variant="outline" className="hidden min-[440px]:inline-flex">
+          <ButtonLink href="/#ask" variant="secondary" className="hidden min-[440px]:inline-flex">
             Talk to a CA
           </ButtonLink>
           <button
@@ -136,9 +172,11 @@ export function SiteHeader() {
                     >
                       {l.label}
                       {l.external && <span className="sr-only">(opens in a new tab)</span>}
-                      <span aria-hidden className="text-faint transition-transform duration-150 group-hover:translate-x-1">
-                        {l.external ? "↗" : "→"}
-                      </span>
+                      {l.external ? (
+                        <ArrowUpRight aria-hidden className="size-5 text-faint" />
+                      ) : (
+                        <ArrowRight aria-hidden className="size-5 text-faint transition-transform duration-150 group-hover:translate-x-1" />
+                      )}
                     </Link>
                   </li>
                 ))}
