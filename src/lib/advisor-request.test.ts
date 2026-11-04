@@ -36,3 +36,14 @@ test("consent must be a real tick, not a truthy string", () => {
   const r = validateRequest({ ...good, consent: "yes" });
   assert.ok(!r.ok && r.errors.consent);
 });
+
+test("email is optional, but checked when filled in", () => {
+  const none = validateRequest({ ...good, email: "   " });
+  assert.ok(none.ok && !("email" in none.value));
+  const fine = validateRequest({ ...good, email: " asha@example.com " });
+  assert.ok(fine.ok && fine.value.email === "asha@example.com");
+  for (const bad of ["asha", "asha@", "@example.com", "asha@example", "a b@example.com"]) {
+    const r = validateRequest({ ...good, email: bad });
+    assert.ok(!r.ok && r.errors.email, bad);
+  }
+});

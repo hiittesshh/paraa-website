@@ -1,9 +1,9 @@
 // "How it works": four steps from sign-up to money back in your bank, one line each, as the app
-// actually runs them (KYC through DigiLocker and PAN, a CA assigned on joining, units at the next
-// daily price, withdrawals at maturity to your own account).
+// actually runs them (KYC through PAN, DigiLocker and a face scan, deposits into the wallet, units at
+// the next daily price, withdrawals after maturity to your own account).
 //
 // The cards stack as you scroll, each sliding over the last and warming from white to gold to
-// dark. It's plain CSS position: sticky, so scrolling is never taken over, and with no JS it still
+// ink. It's plain CSS position: sticky, so scrolling is never taken over, and with no JS it still
 // works. Nothing that wraps the cards may clip (overflow), or sticky silently stops working.
 import { BanknoteArrowDown, Landmark, UserCheck, UserRound, type LucideIcon } from "lucide-react";
 import { Section, SectionHead } from "@/components/paraa/primitives";
@@ -14,23 +14,23 @@ const STEPS: { title: string; icon: LucideIcon; body: string; card: string; quie
   {
     title: "Sign up and verify",
     icon: UserCheck,
-    body: "Download the app and complete KYC with Aadhaar and PAN.",
-    card: "border-border bg-card",
+    body: "In the app, verify your identity (KYC) with PAN, Aadhaar through DigiLocker and a face scan.",
+    card: "surface-light border-transparent",
     quiet: "text-muted-foreground",
     top: "top-20 lg:top-24",
   },
   {
-    title: "Meet your CA",
+    title: "Talk to a CA",
     icon: UserRound,
-    body: "A chartered accountant helps you plan how much to invest.",
-    card: "border-gold-200 bg-gold-100",
+    body: "Ask a chartered accountant your questions before you invest.",
+    card: "border-gold-200 bg-gold-100 text-ink",
     quiet: "text-ink",
     top: "top-24 lg:top-28",
   },
   {
     title: "Invest in rupees",
     icon: Landmark,
-    body: "Pay from your bank account. Invest once or every month.",
+    body: "Add money to your Paraa wallet in rupees, by UPI or bank transfer. After we verify the payment, invest once or every month.",
     card: "border-secondary bg-secondary text-ink",
     quiet: "text-ink",
     top: "top-28 lg:top-32",
@@ -38,8 +38,8 @@ const STEPS: { title: string; icon: LucideIcon; body: string; card: string; quie
   {
     title: "Track and withdraw",
     icon: BanknoteArrowDown,
-    body: "See your value daily. Withdraw to your bank at maturity.",
-    card: "border-ink surface-ink",
+    body: "See your investment's value daily. When it matures, move it to your wallet and withdraw to your bank account.",
+    card: "surface-ink border-ink-2",
     quiet: "text-grey-300",
     top: "top-32 lg:top-36",
   },
@@ -47,7 +47,7 @@ const STEPS: { title: string; icon: LucideIcon; body: string; card: string; quie
 
 export function HowMoneyMoves() {
   return (
-    <Section id="how" tone="alt" labelledBy="how-title">
+    <Section id="how" labelledBy="how-title">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <SectionHead
@@ -55,7 +55,7 @@ export function HowMoneyMoves() {
             stacked
             title={
               <>
-                Start in <Mark>four simple steps</Mark>
+                From sign-up to withdrawal, in <Mark>four steps</Mark>
               </>
             }
             className="mb-0 md:mb-0"

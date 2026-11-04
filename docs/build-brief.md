@@ -1,5 +1,91 @@
 # Build brief: Paraa Capital site (Next.js 16 + Tailwind 4 + shadcn + Watermelon UI)
 
+## ROUND 16 (2026-11-04): risk lines off the marketing sections, by the user's request
+Removed: "You can lose money" and "Risk:" from the hero, Basket tiles, app window, calculator and form, the FAQ's "what could I lose",
+and the catch cards (`what-you-get.tsx` keeps the Wise effect with product facts). Overrides R2 and R8 and the brief's "disclosures where doubt
+occurs" for those sections, so **compliance needs to review it**. Kept on purpose: the footer's risk note (`global-risk-v3`) and the ASCI
+line, the FIU limit, "Your CA may be paid by us", the rupee's two directions in the FAQ, and "you don't own the shares".
+
+## Viewing on another device
+Open the dev server by network address only with `allowedDevOrigins` covering it (`next.config.ts`), or Next blocks its scripts and the
+hero freezes. Production isn't affected. The pin's height is added only once the script runs, so a failed script gives a normal page.
+
+## ROUND 15 (2026-11-04): calculators back, art plays on arrival
+The user asked for "the calculator" back. Both came back: the what-if (`what-if.tsx`, nav "Calculator") and the tax estimator
+(`tax.tsx`, `tax-estimator.tsx`). This overrides proposal decisions 6 and 8 for the tools themselves. Kept from those decisions:
+real-year presets stay out (made-up scenarios only), and "No tax when you invest" stays off, including its ₹0 row. The tax
+estimate's assumption still needs a CA's sign-off, and it's wrong if the basket counts as a VDA.
+Basket art (`asset-art.tsx`) plays once when half of the drawing is on screen.
+
+## ROUND 14 (2026-11-04): one continuous object
+The user found the flight laggy, and the cut from the zoomed laptop to the tour bad. On wide screens the hero and tour are now one
+3.7-screen pin (`hero.tsx`): the app window (`AppDesktop`) flies out of the laptop, stops whole on the dark page, slides right as the
+list appears (the pair is centred and always fully on screen, by the user's request; narrower screens shrink it or tuck its side panels), then moves through its four screens, as Mercury's dashboard does. Every layer is a graphics-card
+texture, so scrolling redraws nothing, and scroll is lightly smoothed. Phones and short or reduced-motion screens keep the separate tour.
+
+## ROUND 13 (2026-11-04): the two exact effects
+The user asked for Mercury's hero motion and Wise's "Excellent everywhere" as they are. Both were recorded frame by frame.
+- **Hero (`hero.tsx`, `hero-scene.tsx`):** a 2.5-screen pin, 1,350px on a 900px screen, as Mercury's is. Mercury scrubs a video;
+  we can't use their footage, so the same camera move is built from layers in true perspective, with our app on the
+  laptop. Words fade from 14% to 42% of the pin. A photoreal video can replace the drawing later with the same scroll code.
+- **Catch (`catch.tsx`):** white band, 392x542 cards, 78px arrows, and Wise's step back: over 1s the passed card shrinks
+  to 50% and fades behind the next. Its heading goes to 80px on request, past the 48px limit, in this section only.
+
+## ROUND 12 (2026-11-04): built from the user's references, overrides anything below it
+The user rejected the calm white redesign and named references: Mercury ("the best"), Wise's "Excellent
+everywhere", Circle, Revolut (couldn't be captured: it blocks automated browsers) and Plaid. They were studied live.
+- **Dark page in Paraa's ink and gold,** with light cards using `surface-light`. Replaces round 2's light theme.
+- **Hero like Mercury's:** a drawn landscape (`hero-scene.tsx`), centred 48px headline, one field and button, the
+  product cropped by the fold, the disclosure in the first view.
+- **Sticky product tour** (`product-tour.tsx`), **light cards with product pieces** (`trust.tsx`), **arrow-led cards**
+  (`catch.tsx`, which says the catch because we have no reviews), and a **gold band** holding the form (`ask.tsx`).
+- **No visible `[TODO]`s, and no empty sections.** Fees, who holds the money and company details are left off until
+  they're confirmed, as round 4 asked. `docs/redesign/proposal.md` section 9 lists them. They block launch.
+- **Form:** name, mobile, optional email, question, consent. Replaces round 4's list.
+- **Off the page:** "No tax when you invest", the tax calculator, what-if and Why USD (unsigned or unsourced).
+- **Kept:** Basket and Four steps, restyled only as far as the dark page needs. No invented reviews, logos or people.
+
+## ROUND 11 (2026-11-04): calm trust redesign, overrides anything below it
+The user approved `docs/redesign/proposal.md` with "Implement". Its sections 3 to 6 are the spec for order,
+design system, motion and copy. Baskets and Four steps stay the visual reference. Decisions, by the proposal's
+numbers in section 8:
+- **3 Calm:** the pinned hero, full-width dark and gold bands, loops and the header progress line are gone. This
+  reverses rounds 7 to 9. Backgrounds are white or grey-50, and colour lives in contained tiles.
+- **12 Scroll:** two scroll moments only: the Four steps stack and the money-path line.
+- **2 `[TODO]`s:** visible on this branch, and a plain production build fails while any remain. This replaces
+  round 4's "no placeholder tags". See the README.
+- **6 Tax:** "No tax when you invest" and the tax estimator are off everywhere until sign-off.
+- **7 Next step:** "Talk to a CA" is the primary CTA until store links exist.
+- **8 Bad-year tool:** off by default behind `BAD_YEAR_TOOL` in `src/lib/flags.ts`. Real-year presets are removed.
+- **9 Baskets:** all four edits accepted (caption above the tiles, no hover lift or wave, facts row, new lede).
+- **10 Baskets claims:** the gold risk line is reworded to "Can stay flat for long stretches." and the S&P line
+  shows `[TODO: source and date]`.
+- **11 FAQ:** "What happens to my money, and what could I lose?" replaces "Is my money safe?", so R1 holds.
+- **5 Headings:** the 48px limit stays.
+- **13 Why USD:** off the page until RBI/FBIL data exists.
+- **14 CA payment:** "Your CA may be paid by us; see Fees." sits beside the CA pitch and the form.
+- **15 "It's free":** removed until confirmed.
+- **22 Nav:** Basket · How it works · Your money · Fees · Who we are · FAQ, plus "Talk to a CA".
+
+**New from the user: the form also collects email.** An optional "Email (optional)" field, checked for format
+only when filled in, shared by the client and API route through `lib/advisor-request`, and sent in the webhook.
+Name and mobile stay required. This replaces round 4's "name, mobile, question, consent, nothing else".
+
+**Honesty rules, no exceptions:** no invented logos, partners, audits, custodians, licences, AUM, user counts, fees,
+people or testimonials. Mock screens carry an Example tag and show no returns, value, percentages, prices or charts.
+Never imply government approval, name the Ministry of Finance as a selling point or use government emblems. Never
+reword FIU-IND as approval. The ASCI line stays verbatim.
+
+**Still open, for counsel or compliance (proposal section 8):** whether the basket is a VDA (1), where the ASCI line
+goes (4), whether the CA is giving advice (16), KYC wording (17), lock-in vs maturity (18), and what FIU-IND proof can
+be shown (19). The full list of facts needed is in proposal section 9.
+
+**Choices made while building that the proposal didn't spell out:**
+- The footer's registrations table says "Registered with", not §0.2's "Regulator", because FIU-IND registration isn't
+  regulation of this product.
+- The mobile menu is a native `<details>`, so it works with no JavaScript. Motion is gone from the header.
+- The hero's radios use the sibling selector rather than `:has()`, so older browsers switch screens too.
+
 ## ROUND 10 (2026-11-04): FIU-IND registration
 The user stated that Paraa is registered with FIU-IND. The hero's third tile now says so, and a footer note
 (`fiu-registration-v1`) says what that means. Rules:

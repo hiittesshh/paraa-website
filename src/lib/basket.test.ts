@@ -26,16 +26,21 @@ test("a weaker rupee raises the rupee value; a stronger one lowers it", () => {
   near(scenario(1_00_000, NO_MOVES, -0.05).inrValue, 95_000);
 });
 
-test("2022: the basket fell in dollars, the rupee's fall more than made up for it", () => {
-  const r = scenario(1_00_000, preset("2022").moves, preset("2022").rupee);
-  near(r.basketUsd, -0.073); // 0.5 × −19% + 0.3 × 0% + 0.2 × +11%
-  near(r.inrChange, 0.927 * 1.11 - 1);
-  near(r.rupeeEffect, r.inrChange - r.basketUsd);
-  assert.ok(r.basketUsd < 0 && r.inrChange > 0);
+test("each scenario gives the figure it should", () => {
+  const value = (id: string) => scenario(1_00_000, preset(id).moves, preset(id).rupee).inrValue;
+  near(value("stocks-fall"), 90_000);
+  near(value("oil-falls"), 92_000);
+  near(value("rupee-strong"), 95_000);
+  near(value("rupee-weak"), 1_05_000);
 });
 
-test("the hard year loses money in rupees too", () => {
-  const r = scenario(1_00_000, preset("hard").moves, preset("hard").rupee);
+test("no scenario is a real year, and the rupee's two directions are both there", () => {
+  assert.ok(PRESETS.every((p) => !/^\d{4}$/.test(p.id) && !/\d{4}/.test(p.label)));
+  assert.ok(PRESETS.some((p) => p.rupee > 0) && PRESETS.some((p) => p.rupee < 0));
+});
+
+test("when everything falls, it loses money in rupees too", () => {
+  const r = scenario(1_00_000, preset("all-fall").moves, preset("all-fall").rupee);
   near(r.basketUsd, -0.22);
   near(r.inrValue, 1_00_000 * 0.78 * 0.95);
 });

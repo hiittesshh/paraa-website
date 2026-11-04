@@ -1,6 +1,6 @@
 // "What's inside": the one international basket as three solid tiles, each taking up its share of
-// the space (US stocks half, gold and oil splitting the rest 60/40), with what it is, why it's
-// there and its main risk on the tile itself. Then four key facts for the whole basket.
+// the space (US stocks half, gold and oil splitting the rest 60/40), with what it is and why it's
+// there on the tile itself. Then four key facts for the whole basket.
 import { CalendarClock, ChartLine, IndianRupee, Repeat } from "lucide-react";
 import { Reveal, RevealGroup, RevealItem, Section, SectionHead } from "@/components/paraa/primitives";
 import { Mark } from "@/components/paraa/mark";
@@ -12,9 +12,9 @@ import { SLEEVE_INFO } from "./sleeve-info";
 
 const FACTS = [
   { icon: IndianRupee, label: "Invest and withdraw in rupees" },
-  { icon: Repeat, label: "Invest once, or every month" },
-  { icon: ChartLine, label: "Priced daily in US dollars" },
-  { icon: CalendarClock, label: "Withdraw when your lock-in ends" },
+  { icon: Repeat, label: "Invest once or every month" },
+  { icon: ChartLine, label: "Priced daily" },
+  { icon: CalendarClock, label: "Withdraw after your investment matures" },
 ];
 
 const TILE: Record<SleeveId, string> = {
@@ -30,10 +30,10 @@ export function Basket() {
         id="basket-title"
         title={
           <>
-            Three global assets in <Mark>one basket</Mark>
+            What&rsquo;s in <Mark>the basket</Mark>
           </>
         }
-        lede="Each one moves for different reasons, so one bad market doesn't decide everything."
+        lede="Three markets, each moving for its own reasons."
       />
 
       <RevealGroup as="ul" className="grid gap-3 lg:grid-cols-2 lg:grid-rows-[auto_auto]">
@@ -64,17 +64,13 @@ export function Basket() {
                 <div className={cn("mt-6 max-w-[44ch]", dark ? "lg:mt-0" : "sm:pr-32")}>
                   <p className="text-body-lg font-semibold">{info.what}</p>
                   <p className={cn("mt-1 text-body-md", dark ? "text-grey-300" : "text-ink")}>{info.why}</p>
-                  <p className={cn("mt-4 text-body-md", dark ? "text-grey-300" : "text-ink")}>
-                    <span className="font-bold">Risk: </span>
-                    {info.risk}
-                  </p>
                 </div>
               </article>
             </RevealItem>
           );
         })}
       </RevealGroup>
-      <p className="mt-3 text-body-sm text-faint">Example allocation, for illustration.</p>
+      <p className="mt-3 text-body-sm text-faint">These percentages are an example.</p>
 
       <Reveal>
         <ul className="mt-10 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">

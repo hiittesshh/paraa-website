@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // An untracked leftover with its own build output, not part of this project.
+    "site/**",
   ]),
 ]);
 

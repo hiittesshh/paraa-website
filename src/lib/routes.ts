@@ -1,5 +1,5 @@
 // Pages that actually exist. The site map (docs/content-rules.md §0.1) has ~20 routes; only these are
-// built. Links to anything else render as "Soon" text instead of a 404 (see SiteLink).
+// built. Check a link with isLive() so it never points at a 404.
 // When a page ships, add it here and every link to it switches on.
 export const LIVE_ROUTES: ReadonlySet<string> = new Set(["/"]);
 

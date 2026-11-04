@@ -102,21 +102,17 @@
   --radius-xl: 24px;
   --radius-2xl: 32px;
 
-  /* Body sizes from the file: XLarge 18 · Large 16 · Medium 14 · Small 12 · XSmall 10 */
+  /* Body sizes, size/line: XLarge 18/29 (ledes) · Large 16/26 (body, inputs) · Medium 14/22 (support,
+     risk, legal) · Small 12/18 (table column labels only). Honesty, risk and legal text is never
+     below 14px, and the old 10px size is retired. */
   --text-body-xl: 18px;
-  --text-body-xl--line-height: 1.6;
+  --text-body-xl--line-height: 29px;
   --text-body-lg: 16px;
-  --text-body-lg--line-height: 1.6;
+  --text-body-lg--line-height: 26px;
   --text-body-md: 14px;
-  --text-body-md--line-height: 1.6;
+  --text-body-md--line-height: 22px;
   --text-body-sm: 12px;
-  --text-body-sm--line-height: 1.5;
-  --text-body-xs: 10px;
-  --text-body-xs--line-height: 1.4;
-
-  /* vignette: Greyscale 900 at low opacity, so the darkening stays in-palette */
-  --color-vignette: rgb(15 23 42 / 0.07);
-  --color-vignette-strong: rgb(15 23 42 / 0.12);
+  --text-body-sm--line-height: 18px;
 
   /* elevation, tinted with Greyscale 900 so shadows stay in-palette */
   --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.05);
@@ -126,34 +122,36 @@
   --ease-out-soft: cubic-bezier(.23, 1, .32, 1);
 }
 
+/* The site is dark, like its references: near-black page, cards one step up, gold as the one accent.
+   Light cards opt out with surface-light, which puts the design file's light values back. */
 :root {
-  --background: #FFFFFF;
-  --background-alt: #F8F9FD;     /* Greyscale 50 */
-  --foreground: #0F172A;         /* Greyscale 900: headings, key numbers */
-  --card: #FFFFFF;
-  --card-foreground: #0F172A;
-  --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --primary: #272A33;            /* "Primary" in the file: main buttons */
-  --primary-hover: #3D4049;
-  --primary-foreground: #FFFFFF;
-  --secondary: #FDC037;          /* "Secondary" in the file: gold buttons, highlights */
-  --secondary-hover: #FFB000;    /* Main 1 */
+  --background: #131416;         /* dark 900 */
+  --background-alt: #1F2027;     /* dark 800 */
+  --foreground: #FFFFFF;
+  --card: #1F2027;
+  --card-foreground: #FFFFFF;
+  --popover: #1F2027;
+  --popover-foreground: #FFFFFF;
+  --primary: #FDC037;            /* the main action on a dark page, with a dark label (8.7:1) */
+  --primary-hover: #FFB000;
+  --primary-foreground: #272A33;
+  --secondary: #FDC037;
+  --secondary-hover: #FFB000;
   --secondary-foreground: #272A33;
-  --muted: #F1F5F9;              /* Greyscale 100 */
-  --muted-foreground: #475569;   /* Greyscale 600: body text, 7.6:1 on white */
-  --faint: #64748B;              /* Greyscale 500: captions, 4.8:1 on white */
-  --accent: #8E6414;             /* gold-800: the only gold allowed as text on white (5.6:1) */
+  --muted: #272A33;
+  --muted-foreground: #CBD5E1;   /* Greyscale 300: body text on the page */
+  --faint: #94A3B8;              /* Greyscale 400: captions on the page */
+  --accent: #FDCB5E;             /* gold 400: gold text on dark */
   --accent-foreground: #272A33;
-  --accent-soft: #FFF8EA;        /* gold-50 tint */
+  --accent-soft: #272A33;
   --destructive: #EF4444;
   --positive: #10B981;
   --negative: #EF4444;
-  --border: #E2E8F0;             /* Greyscale 200 */
-  --border-strong: #CBD5E1;      /* Greyscale 300 */
-  --input: #CBD5E1;
-  --ring: #272A33;               /* gold fails 3:1 against white, so focus is Primary */
-  --chart-1: #C68C0A;            /* Main 3: the darkest gold, 3:1 as a line on white */
+  --border: #3D4049;
+  --border-strong: #53565E;
+  --input: #6A6C73;
+  --ring: #FDC037;               /* Primary would vanish on the dark page, so focus is gold */
+  --chart-1: #C68C0A;
   --chart-2: #272A33;
   --chart-3: #10B981;
   --chart-4: #EF4444;
@@ -161,30 +159,114 @@
   --radius: 12px;
 }
 
-/* ---- Heading scale. Desktop = the file (48/40/32/24/20/18, Bold). On phones each level
-   steps down to the next size *in the same scale*, so no off-system size is introduced. ---- */
-@utility type-h1 { font-size: 40px; line-height: 1.1; font-weight: 700; letter-spacing: -0.025em; @media (width >= 48rem) { font-size: 48px; } }
-@utility type-h2 { font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; @media (width >= 48rem) { font-size: 40px; } }
-@utility type-h3 { font-size: 24px; line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; @media (width >= 48rem) { font-size: 32px; } }
-@utility type-h4 { font-size: 20px; line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; @media (width >= 48rem) { font-size: 24px; } }
-@utility type-h5 { font-size: 18px; line-height: 1.3; font-weight: 700; @media (width >= 48rem) { font-size: 20px; } }
-@utility type-h6 { font-size: 18px; line-height: 1.3; font-weight: 700; }
+/* ---- Heading scale, size/line. h1 is the hero only, h2 section titles and big numbers, h4 card
+   titles, h6 risk titles and FAQ questions. The 48px limit is deliberate (proposal decision 5). ---- */
+@utility type-h1 {
+  font-size: 40px; line-height: 44px; font-weight: 700; letter-spacing: -0.025em;
+  @media (width < 22.5rem) { font-size: 32px; line-height: 37px; }
+  @media (width >= 48rem) { font-size: 48px; line-height: 53px; }
+}
+@utility type-h2 { font-size: 32px; line-height: 37px; font-weight: 700; letter-spacing: -0.02em; @media (width >= 48rem) { font-size: 40px; line-height: 46px; } }
+@utility type-h4 { font-size: 20px; line-height: 25px; font-weight: 700; letter-spacing: -0.01em; @media (width >= 48rem) { font-size: 24px; line-height: 30px; } }
+@utility type-h6 { font-size: 18px; line-height: 23px; font-weight: 700; }
 @utility num { font-variant-numeric: tabular-nums; }
-@utility bg-dots { background-image: radial-gradient(var(--color-grey-300) 1px, transparent 1px); background-size: 20px 20px; }
-@keyframes slide-half { to { transform: translateX(-50%); } }
 /* Dark Primary surface: white text, and a gold focus ring because the Primary ring vanishes on it. */
-@utility surface-ink { background-color: var(--color-ink); color: var(--primary-foreground); --ring: var(--color-gold-500); }
+@utility surface-ink { background-color: var(--color-ink); color: #FFFFFF; }
+/* A light card on the dark page. Everything inside reads the design file's light values. */
+@utility surface-light {
+  background-color: #FFFFFF; color: #0F172A; color-scheme: light;
+  --background: #FFFFFF; --background-alt: #F8F9FD; --foreground: #0F172A; --card: #FFFFFF; --card-foreground: #0F172A;
+  --primary: #272A33; --primary-hover: #3D4049; --primary-foreground: #FFFFFF;
+  --muted: #F1F5F9; --muted-foreground: #475569; --faint: #64748B; --accent: #8E6414;
+  --border: #E2E8F0; --border-strong: #CBD5E1; --input: #64748B; --ring: #272A33;
+}
 @utility container-page { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: 16px; @media (width >= 40rem) { padding-inline: 24px; } }
+
+/* `tall:sticky` sticks only on screens at least 600px high, so 200% zoom and landscape phones
+   never have their content covered by something that won't scroll away. */
+@custom-variant tall (@media (height >= 600px));
+
+@keyframes land-tint { from { background-color: var(--color-ink-2); } }
+@keyframes scene-drift { to { transform: translateY(var(--drift)); } }
+@keyframes line-fill { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 
 @layer base {
   * { @apply border-border outline-ring/50; }
   html { @apply font-sans; scroll-behavior: smooth; scroll-padding-top: 88px; scrollbar-color: var(--color-grey-300) transparent; }
-  body { @apply bg-background text-foreground; font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; caret-color: var(--accent); }
+  body { @apply bg-background text-foreground; font-size: 16px; line-height: 26px; -webkit-font-smoothing: antialiased; caret-color: var(--accent); }
   p { text-wrap: pretty; }
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 4px; }
-  ::selection { background: #FEE2AC; color: #0F172A; }
+  ::selection { background: var(--color-gold-200); color: var(--color-grey-900); }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
+    }
+  }
+}
+
+/* ---- Motion that has to live in CSS. Everything here starts from the finished state, so a page
+   with no JavaScript, an old browser or reduced motion simply shows everything. ---- */
+@layer components {
+  /* Reveal: components/paraa/reveal.tsx. The script sets data-reveal-state only on blocks still below
+     the fold, and only when motion is welcome. The markup alone never hides anything. */
+  [data-reveal-state="waiting"] { opacity: 0; transform: translateY(12px); }
+  [data-reveal-state="shown"] {
+    transition: opacity 500ms var(--ease-out-soft), transform 500ms var(--ease-out-soft);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* Mark: a gold stroke under a phrase, drawn in full by default. Its sweep runs once, 600ms. */
+  .mark {
+    background-image: linear-gradient(var(--color-secondary), var(--color-secondary));
+    background-repeat: no-repeat;
+    background-position: 0 92%;
+    background-size: 100% 0.2em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .mark[data-reveal-state="waiting"] { opacity: 1; transform: none; background-size: 0% 0.2em; }
+  .mark[data-reveal-state="shown"] { transition: background-size 600ms var(--ease-out-soft) 150ms; }
+
+  /* A link landed here: a brief grey tint that fades away (the one 1.2s motion on the page). */
+  .land-target:target { animation: land-tint 1.2s var(--ease-out-soft); }
+
+  /* The money-path line: put it inside a grey track of the same size. Its tip follows the middle of
+     the screen, from the track's top reaching there to its bottom reaching there. CSS only; where
+     unsupported, or with reduced motion, the line is simply full. */
+  .scroll-line { transform-origin: top; }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .scroll-line {
+        animation: line-fill linear both;
+        animation-timeline: view();
+        animation-range: cover 50vh cover calc(100% - 50vh);
+      }
+    }
+  }
+
+  /* The hero's landscape: each layer drifts at its own speed as the page scrolls. Compositor only,
+     and where unsupported, or with reduced motion, the scene simply holds still. */
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .scene-layer {
+        animation: scene-drift linear both;
+        animation-timeline: scroll();
+        animation-range: 0 100vh;
+        will-change: transform;
+      }
+    }
+  }
+
+  /* The arrow-led cards scroll sideways with no scrollbar: the arrows and swipe do the work. */
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  @media print {
+    [data-reveal-state="waiting"] { opacity: 1; transform: none; }
+    .mark[data-reveal-state="waiting"] { background-size: 100% 0.2em; }
   }
 }

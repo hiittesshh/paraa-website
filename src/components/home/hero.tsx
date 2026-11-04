@@ -1,205 +1,246 @@
 "use client";
 
-// The hero: a centred headline on a dark stage, over three reasons to choose Paraa as big solid
-// tiles. It answers "why Paraa?"; the section after it answers "what's inside?", so the asset
-// split deliberately isn't shown here. The tiles start as one tilted 3D stack. As you scroll they
-// deal out into a full-width row, straighten and link together.
+// The first screen, with Mercury's scroll, as one continuous pinned sequence on wide screens:
+//   1. the camera flies from the valley into the laptop, and the words fade early in the flight;
+//   2. the world falls away, leaving the app window whole on the dark page;
+//   3. that same window slides right as the list appears beside it, and the pair sits centred, fully
+//      on screen. On narrower screens the window also shrinks, or tucks away its side panels;
+//   4. scrolling moves the app through its four screens, then the page carries on.
+// It's a CSS pin, not wheel interception, so keyboard, trackpad and scrollbar all keep working. Scroll
+// is lightly smoothed, because a mouse wheel moves in steps. All of it only moves graphics-card
+// textures, so nothing is redrawn while scrolling.
 //
-// How it's built, and why:
-// - The *finished row* is the normal CSS layout. The stack is a set of transforms that pull the
-//   tiles together. So with no transforms at all (server render, reduced motion) the visitor sees
-//   the final row, flat and fully readable, in reading order.
-// - md+: the section is taller than the screen and an inner frame is position:sticky, so scrolling
-//   plays the deal while the page holds still, then the page carries on. It's a CSS pin, not wheel
-//   interception: keyboard, trackpad momentum, scrollbars and screen readers all keep working.
-// - Phones: a headline, buttons and tiles don't fit one short screen, so nothing pins; the tiles
-//   deal out as they scroll into view.
-// - Scroll-linked (useScroll + useTransform), never time-based, with no pointer effects.
-// - Sticky rule: no ancestor of the sticky frame may clip. The frame itself may, so it crops the
-//   stack. 3D rule: nothing between the stage and a tile may clip, which would flatten the 3D.
-import { useEffect, useRef, useSyncExternalStore, type ComponentType } from "react";
-import { motion, useMotionValue, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
-import { ArrowRight, Link2 } from "lucide-react";
-import { ButtonLink, Reveal } from "@/components/paraa/primitives";
+// A phone can't show that window whole, so narrow and short screens fly into the laptop, dissolve into
+// the page, and show the tour as its own section. With reduced motion: one still first screen and the
+// tour section. The registration line is on the first screen either way.
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "motion/react";
+import { ButtonLink } from "@/components/paraa/primitives";
 import { cn } from "@/lib/utils";
-import { FIU_REG_NO } from "@/lib/links";
-import { RegistrationArt, RupeeCoinArt, ZeroTaxArt } from "./asset-art";
+import { HeroAsk } from "./hero-ask";
+import { HeroScene, flightMove } from "./hero-scene";
+import { AppDesktop, DESK_H, DESK_TUCKED_W, DESK_W, ProductTour, SCREENS } from "./product-tour";
 
-// true only after hydration. The server can't know the visitor's motion preference or screen, so
-// it renders the flat row; the stack switches on in the browser, and the markup always matches.
+const WIDE = "(min-width: 1024px) and (min-height: 600px) and (prefers-reduced-motion: no-preference)";
+const subscribe = (notify: () => void) => {
+  const query = window.matchMedia(WIDE);
+  query.addEventListener("change", notify);
+  return () => query.removeEventListener("change", notify);
+};
+const useWide = () => useSyncExternalStore(subscribe, () => window.matchMedia(WIDE).matches, () => false);
+// The pin's extra height is only added once the script is running. If it never runs, this is a normal
+// one-screen hero, not a long stretch of scrolling past a picture that doesn't move.
 const noop = () => () => {};
-const useHydrated = () => useSyncExternalStore(noop, () => true, () => false);
+const useReady = () => useSyncExternalStore(noop, () => true, () => false);
 
-const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
-const smooth = (t: number) => t * t * (3 - 2 * t); // soft start, soft landing
+// Where each part of the wide sequence ends, as a share of the pinned scroll (3.7 screens long).
+const FLIGHT_END = 0.36;
+const SLIDE_START = 0.42;
+const SLIDE_END = 0.55;
 
-// The row is finished at 80% of the pinned range; the last 20% holds it before the pin lets go.
-const DEAL_END = 0.8;
-
-const REASONS: { title: string; body: string; art: ComponentType<{ className?: string }>; tile: string }[] = [
-  {
-    title: "Invest in rupees",
-    body: "Pay from your bank account. Invest once or every month.",
-    art: RupeeCoinArt,
-    tile: "bg-ink-800 text-primary-foreground",
-  },
-  {
-    title: "No tax when you invest",
-    body: "You pay tax only on the profit you make.",
-    art: ZeroTaxArt,
-    tile: "bg-secondary text-ink",
-  },
-  {
-    // A stated fact, not an endorsement: the footer note says what this registration does and
-    // doesn't mean. Never reword it as "approved by" or name the ministry (see build-brief ROUND 10).
-    title: "Registered with FIU-IND",
-    body: FIU_REG_NO ? `Financial Intelligence Unit, India. Reg. no. ${FIU_REG_NO}.` : "Financial Intelligence Unit, India.",
-    art: RegistrationArt,
-    tile: "bg-grey-400 text-ink",
-  },
-];
+const HEADER = 72;
+// The laptop's screen is 170 wide in the 1600-wide picture.
+const SCREEN_W = 170;
+// The list gets a share of the screen, within limits.
+const listWidth = (vw: number) => Math.min(380, Math.max(280, vw * 0.24));
+// Below this size the window's text gets too small, so it tucks away its side panels instead.
+const MIN_WHOLE_SCALE = 0.8;
 
 export function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
-  const active = useHydrated() && !reduce;
-  const pins = useMotionValue(false);
+  const wide = useWide();
+  const ready = useReady();
+  const [active, setActive] = useState(0);
+  const [listW, setListW] = useState(380);
+  const [listLeft, setListLeft] = useState(48);
+
+  // Measured on resize: how the picture maps to this screen, and where the window ends up.
+  const camera = useMotionValue(9.6);
+  const endShift = useMotionValue(0);
+  const startScale = useMotionValue(0.13);
+  const fullScale = useMotionValue(1);
+  const startDrop = useMotionValue(0);
+  const slideX = useMotionValue(0);
+  const tourRatio = useMotionValue(1);
+  const tuck = useMotionValue(0);
 
   useEffect(() => {
-    const query = window.matchMedia("(min-width: 768px)");
-    const sync = () => pins.set(query.matches);
-    sync();
-    query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
-  }, [pins]);
+    const measure = () => {
+      // clientWidth leaves out the scrollbar, which is what the sticky frame is measured against.
+      const vw = document.documentElement.clientWidth;
+      const vh = window.innerHeight;
+      const k = Math.max(vw / 1600, vh / 900);
+      const small = SCREEN_W * k;
+      if (!window.matchMedia(WIDE).matches) {
+        camera.set(9.6);
+        endShift.set(0);
+        return;
+      }
+      const fit = Math.min(1, (vw - 96) / DESK_W, (vh - HEADER - 48) / DESK_H);
+      camera.set((DESK_W * fit) / small);
+      endShift.set(HEADER / 2);
+      startScale.set(small / DESK_W);
+      fullScale.set(fit);
+      startDrop.set(vh * (vh <= 780 ? 0.18 : 0.12));
+      // The pair (list + window) is centred, and always fits.
+      const list = listWidth(vw);
+      const margin = vw >= 1280 ? 48 : 24;
+      const gap = vw >= 1280 ? 48 : 32;
+      const room = vw - 2 * margin - list - gap;
+      const whole = Math.min(fit, room / DESK_W);
+      const tucked = whole < MIN_WHOLE_SCALE;
+      const tourScale = tucked ? Math.min(fit, room / DESK_TUCKED_W) : whole;
+      const shown = (tucked ? DESK_TUCKED_W : DESK_W) * tourScale;
+      const left = Math.max(margin, (vw - list - gap - shown) / 2);
+      setListW(list);
+      setListLeft(left);
+      tourRatio.set(tourScale / fit);
+      tuck.set(tucked ? DESK_W - DESK_TUCKED_W : 0);
+      // The window scales about its middle, so aim its middle at where its left edge should end up.
+      slideX.set(left + list + gap + (DESK_W * tourScale) / 2 - vw / 2);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [camera, endShift, startScale, fullScale, startDrop, slideX, tourRatio, tuck]);
 
-  const { scrollYProgress: pinned } = useScroll({ target: sectionRef, offset: ["start 64px", "end end"] });
-  const { scrollYProgress: entering } = useScroll({ target: stageRef, offset: ["start 85%", "end 75%"] });
+  const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start start", "end end"] });
+  const smooth = useSpring(scrollYProgress, { stiffness: 220, damping: 40, mass: 0.35, restDelta: 0.0002 });
+  const flight = useTransform(smooth, (p) => (reduce ? 0 : p / (wide ? FLIGHT_END : 0.86)));
 
-  // Function form: Motion subscribes to every .get() made on the first run, so read all sources
-  // unconditionally (a value read only inside the ternary would never be tracked).
-  const progress = useTransform(() => {
-    const a = pinned.get();
-    const b = entering.get();
-    return smooth(clamp01(pins.get() ? a / DEAL_END : b));
+  const copyOpacity = useTransform(flight, [0.16, 0.48], [1, 0]);
+  // Faded words shouldn't catch a click meant for what's underneath.
+  const copyEvents = useTransform(copyOpacity, (o) => (o < 0.05 ? "none" : "auto"));
+
+  const slide = useTransform(smooth, [SLIDE_START, SLIDE_END], [0, 1], { clamp: true });
+  const windowTransform = useTransform(() => {
+    const move = flightMove(flight.get());
+    const y = startDrop.get() * (1 - move) + endShift.get() * move;
+    const t = slide.get();
+    const eased = t * t * (3 - 2 * t);
+    const s = startScale.get() * (fullScale.get() / startScale.get()) ** move * tourRatio.get() ** eased;
+    return `translate3d(${(slideX.get() * eased).toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${s.toFixed(4)})`;
+  });
+  // The list arrives once the window has cleared the space it needs.
+  const windowClip = useTransform(() => {
+    const t = slide.get();
+    const right = tuck.get() * t * t * (3 - 2 * t);
+    return right > 0 ? `inset(0 ${right.toFixed(1)}px 0 0 round 24px)` : "none";
+  });
+  const listOpacity = useTransform(slide, [0.72, 1], [0, 1]);
+  const listY = useTransform(slide, [0.72, 1], [16, 0]);
+  const listEvents = useTransform(listOpacity, (o) => (o < 0.5 ? "none" : "auto"));
+
+  useMotionValueEvent(smooth, "change", (p) => {
+    if (!wide) return;
+    const t = (p - SLIDE_END) / (1 - SLIDE_END);
+    setActive(Math.min(SCREENS.length - 1, Math.max(0, Math.floor(t * SCREENS.length))));
   });
 
-  const rotateX = useTransform(progress, [0, 1], [30, 0]);
-  const y = useTransform(progress, [0, 1], [40, 0]);
-  const scale = useTransform(progress, [0, 1], [0.88, 1]);
-  const linkOpacity = useTransform(progress, [0.8, 1], [0, 1]);
+  function choose(i: number) {
+    const track = trackRef.current;
+    if (!track) return;
+    const range = track.offsetHeight - window.innerHeight;
+    const share = SLIDE_END + ((i + 0.5) / SCREENS.length) * (1 - SLIDE_END);
+    window.scrollTo({ top: track.getBoundingClientRect().top + window.scrollY + share * range, behavior: "instant" });
+  }
 
   return (
-    <section
-      ref={sectionRef}
-      aria-labelledby="hero-title"
-      className="surface-ink relative isolate md:h-[220svh] motion-reduce:md:h-auto"
-    >
-      <div className="relative flex flex-col overflow-hidden md:sticky md:top-16 md:h-[calc(100svh-4rem)] motion-reduce:md:static motion-reduce:md:h-auto">
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-          {/* A faint grid, fading out from the centre: the stage floor. */}
-          <div className="absolute inset-0 [background-image:linear-gradient(var(--color-ink-2)_1px,transparent_1px),linear-gradient(90deg,var(--color-ink-2)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:radial-gradient(70%_70%_at_50%_30%,black,transparent)]" />
-          {/* Gold light behind the tiles. */}
-          <div className="absolute inset-0 bg-[radial-gradient(55%_50%_at_50%_75%,rgb(253_192_55/0.3),transparent_75%)]" />
-          {/* Vignette: the edges fall away to the darkest ink, pulling the eye to the centre. */}
-          <div className="absolute inset-0 bg-[radial-gradient(120%_95%_at_50%_50%,transparent_55%,var(--color-ink-900)_120%)]" />
-        </div>
+    <>
+      <section
+        ref={trackRef}
+        aria-labelledby="hero-title"
+        className={cn("relative isolate motion-reduce:h-auto", ready && (wide ? "h-[470svh]" : "h-[250svh]"))}
+      >
+        {/* Where "The app" in the header lands, and how the header knows you're there. */}
+        {wide && <div id="tour" aria-hidden className="absolute inset-x-0 top-[203.5svh] h-[166.5svh]" />}
 
-        <div className="container-page flex min-h-0 flex-1 flex-col py-8 md:py-10 [@media(max-height:820px)]:md:py-6">
-          <Reveal className="mx-auto max-w-[800px] shrink-0 text-center">
-            <h1 id="hero-title" className="type-h1 text-balance">
-              Invest in <span className="text-secondary">US stocks, gold and crude oil</span>
-            </h1>
-            <p className="mx-auto mt-4 max-w-[52ch] text-body-xl text-grey-300">
-              One basket, bought in rupees from India. A chartered accountant guides you from day one.
-            </p>
-            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-              <ButtonLink href="#basket" variant="secondary" size="lg" className="group">
-                Explore the basket
-                <ArrowRight aria-hidden className="transition-transform duration-150 ease-out-soft group-hover:translate-x-1" />
-              </ButtonLink>
-              <ButtonLink
-                href="#ask"
-                variant="outline"
-                size="lg"
-                className="border-ink-4 bg-transparent text-primary-foreground hover:border-grey-300 hover:bg-ink-2"
+        <div className="sticky top-0 flex h-svh min-h-[560px] flex-col overflow-hidden pt-24 motion-reduce:static md:pt-32">
+          <HeroScene flight={flight} camera={camera} endShift={endShift} drawScreen={!wide} />
+
+          {wide && (
+            <>
+              {/* The app: flies out of the laptop, stops whole, slides aside. */}
+              <motion.div
+                data-tour
+                style={{ transform: windowTransform, clipPath: windowClip, marginLeft: -DESK_W / 2, marginTop: -DESK_H / 2 }}
+                className="pointer-events-none absolute top-1/2 left-1/2 z-10 will-change-transform"
               >
-                Talk to a CA
-              </ButtonLink>
+                <AppDesktop active={active} />
+              </motion.div>
+
+              <motion.div
+                data-tour
+                style={{ opacity: listOpacity, y: listY, pointerEvents: listEvents, left: listLeft }}
+                className="absolute inset-y-0 flex items-center"
+              >
+                <div style={{ width: listW }}>
+                  <h2 className="type-h2 text-balance">Invest and withdraw from one app</h2>
+                  <ul className="mt-8 border-b">
+                    {SCREENS.map((s, i) => {
+                      const on = i === active;
+                      return (
+                        <li key={s.key} className="border-t">
+                          <button type="button" aria-pressed={on} onClick={() => choose(i)} className="w-full cursor-pointer rounded-sm py-4 text-left">
+                            <span className={cn("flex items-center gap-3 text-body-lg font-bold transition-colors duration-200", on ? "text-foreground" : "text-faint hover:text-foreground")}>
+                              <span aria-hidden className={cn("size-2 rounded-full transition-colors duration-200", on ? "bg-secondary" : "bg-border-strong")} />
+                              {s.title}
+                            </span>
+                            <span
+                              className={cn(
+                                "grid pl-5 text-body-md text-muted-foreground transition-[grid-template-rows,opacity] duration-300 ease-out-soft",
+                                on ? "mt-1 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+                              )}
+                            >
+                              <span className="overflow-hidden">{s.body}</span>
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <p className="mt-3 text-body-md text-faint">An illustration of how it works, with sample numbers. Not a screenshot of the app, a real account, a quote or a past result.</p>
+                </div>
+              </motion.div>
+            </>
+          )}
+
+          <motion.div style={{ opacity: copyOpacity, pointerEvents: copyEvents }} className="relative z-20 flex flex-1 flex-col">
+            <div className="container-page text-center">
+              <h1 id="hero-title" className="mx-auto max-w-[820px] type-h1 text-balance">
+                US stocks, gold and crude oil in one basket, bought in rupees
+              </h1>
+              <p className="mx-auto mt-4 max-w-[52ch] text-body-xl text-grey-100">
+                One of the baskets in the Paraa app, for residents of India. Its price is updated daily.
+              </p>
+              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <HeroAsk />
+                <ButtonLink href="#tour" variant="ghost" className="h-13 bg-ink-900/70 px-6 text-foreground hover:bg-ink-900/90 hover:text-foreground">
+                  See an example
+                </ButtonLink>
+              </div>
             </div>
-          </Reveal>
 
-          {/* Stage: perspective for the 3D. No overflow-hidden from here down to the tiles. */}
-          <div
-            ref={stageRef}
-            className="mt-8 h-80 min-h-0 [perspective:1400px] md:h-auto md:min-h-64 md:flex-1 motion-reduce:md:h-96 motion-reduce:md:flex-none"
-          >
-            <motion.ul
-              style={
-                active
-                  ? { rotateX, y, scale, transformStyle: "preserve-3d", transformOrigin: "50% 100%" }
-                  : { transformStyle: "preserve-3d" }
-              }
-              className="relative grid h-full grid-cols-3 gap-2 will-change-transform sm:gap-3"
-            >
-              {REASONS.map((reason, i) => (
-                <Tile key={reason.title} reason={reason} index={i} progress={progress} active={active} />
-              ))}
-              {[1, 2].map((n) => (
-                <motion.li
-                  key={n}
-                  aria-hidden
-                  style={active ? { opacity: linkOpacity, z: 1 } : undefined}
-                  className={cn(
-                    "absolute top-1/2 z-10 grid size-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-secondary bg-ink text-secondary sm:size-10",
-                    n === 1 ? "left-1/3" : "left-2/3",
-                  )}
-                >
-                  <Link2 className="size-4 sm:size-5" />
-                </motion.li>
-              ))}
-            </motion.ul>
-          </div>
+            {/* The registration and its limit, in the first view on every screen. */}
+            <div className="container-page mt-auto pt-8 pb-5">
+              <p className="mx-auto max-w-[860px] rounded-xl bg-ink-900/95 px-5 py-3 text-center text-body-md text-grey-100">
+                Paraa Capital is registered with FIU-IND for anti-money-laundering reporting. This isn&rsquo;t approval of this investment.
+              </p>
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
 
-/**
- * One tile. Its place in the row is plain CSS; these transforms start it in the stack: the side
- * tiles slid in behind the middle one, turned outward, further back, peeking out on each side.
- */
-function Tile({
-  reason,
-  index,
-  progress,
-  active,
-}: {
-  reason: (typeof REASONS)[number];
-  index: number;
-  progress: MotionValue<number>;
-  active: boolean;
-}) {
-  const side = 1 - index; // +1 left tile, 0 middle, -1 right
-  const x = useTransform(progress, [0, 1], [`${side * 80}%`, "0%"]);
-  const rotateZ = useTransform(progress, [0, 1], [-side * 7, 0]);
-  const rotateY = useTransform(progress, [0, 1], [side * 20, 0]);
-  const z = useTransform(progress, [0, 1], [side === 0 ? 0 : -140, 0]);
-  const Art = reason.art;
-
-  return (
-    <motion.li style={active ? { x, z, rotateZ, rotateY } : undefined} className="relative min-w-0 will-change-transform">
-      <article className={cn("flex h-full flex-col overflow-hidden rounded-lg p-3 shadow-lift sm:rounded-xl sm:p-6", reason.tile)}>
-        {/* The art takes all the room above the words, so they can never collide. */}
-        <div className="relative mb-3 min-h-0 flex-1 sm:mb-4">
-          <Art className="absolute inset-0 size-full" />
-        </div>
-        <h2 className="text-body-md font-bold sm:type-h4">{reason.title}</h2>
-        {/* On short laptop screens the art needs this room more than the sentence does. */}
-        <p className="mt-1 hidden text-body-md lg:block [@media(max-height:820px)]:hidden">{reason.body}</p>
-      </article>
-    </motion.li>
+      {!wide && <ProductTour />}
+    </>
   );
 }

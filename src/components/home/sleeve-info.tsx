@@ -1,6 +1,6 @@
-// What each part of the international basket is, why it's there and its main risk, in one short
-// line each. Shared by the hero deck and the basket cards, so the two never disagree. Weights
-// live in lib/basket. Risk lines cite real, well-known market events about the asset itself.
+// What each part of the international basket is, and why it's there, in one short
+// line each. Shared by the basket tiles and the calculator's colour dots. Weights
+// live in lib/basket.
 import type { SleeveId } from "@/lib/basket";
 
 export interface SleeveInfo {
@@ -9,10 +9,8 @@ export interface SleeveInfo {
   /** The same dot on a dark Primary surface, where the ink swatch would vanish. */
   swatchOnInk: string;
   tag?: string;
-  short: string;
   what: string;
   why: string;
-  risk: string;
 }
 
 export const SLEEVE_INFO: Record<SleeveId, SleeveInfo> = {
@@ -20,25 +18,19 @@ export const SLEEVE_INFO: Record<SleeveId, SleeveInfo> = {
     swatch: "bg-ink",
     swatchOnInk: "bg-primary-foreground",
     tag: "Tokenized",
-    short: "Shares of large US companies, as tokens.",
-    what: "Tokens that track shares of large US companies.",
-    why: "Growth from the world's biggest companies.",
-    risk: "Stocks can fall sharply. The S&P 500 fell about 19% in 2022.",
+    what: "Tokens (digital units) that track shares of large US companies.",
+    why: "Moves with the share prices of those companies.",
   },
   gold: {
     swatch: "bg-secondary",
     swatchOnInk: "bg-secondary",
-    short: "Tends to hold its value when stocks fall.",
     what: "Tracks the global price of gold.",
-    why: "Often steady when markets are nervous.",
-    risk: "Can stay flat for years, as it did from 2020 to 2023.",
+    why: "Has often moved differently from shares, though not always.",
   },
   oil: {
     swatch: "bg-grey-400",
     swatchOnInk: "bg-grey-400",
-    short: "Moves with global supply and demand.",
     what: "Tracks the global price of crude oil.",
-    why: "Tends to rise with inflation.",
-    risk: "The most volatile of the three. Prices can swing hard in weeks.",
+    why: "Moves with global supply and demand.",
   },
 };

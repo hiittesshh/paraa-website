@@ -1,67 +1,67 @@
-"use client";
-
 // Shared scroll reveals: the one motion vocabulary for the whole site, so sections never invent
-// their own timings. A 12px rise + fade, once, on the soft ease. Deliberately quiet: section
-// headings don't use it at all, and the hero's 3D deck is the page's one big moment.
-// MotionConfig reducedMotion="user" (providers.tsx) removes the movement for people who ask
-// their OS for less motion; the fade still runs so nothing is ever stuck invisible.
-import { motion, type Variants } from "motion/react";
-import type { ReactNode } from "react";
+// their own timings. A 12px rise + fade over 500ms, once, on the soft ease. Section headings don't
+// use it, and neither does anything in the first view.
+//
+// These only write data attributes into the server's HTML, so they hide nothing. The page starts
+// complete; RevealController (one small script) then tucks away only what is still below the fold.
+// No JavaScript, a failed script or reduced motion means a normal, fully visible page. The CSS is
+// in globals.css. A block already on screen is never touched, so nothing moves on load.
+import type { CSSProperties, ReactNode } from "react";
 
-const EASE = [0.23, 1, 0.32, 1] as const;
-const VIEWPORT = { once: true, margin: "0px 0px -10% 0px" } as const;
+/** The stagger step and how many items may use it (at most 4 items, 70ms apart). */
+const STAGGER_MS = 70;
+const MAX_STEP = 3;
 
-const item: Variants = {
-  hidden: { opacity: 0, y: 12 },
-  shown: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
-};
+const delayStyle = (step: number) =>
+  ({ "--reveal-delay": `${Math.min(Math.max(step, 0), MAX_STEP) * STAGGER_MS}ms` }) as CSSProperties;
 
-/** Reveal one block. `delay` is a stagger step (0–4), 80ms each. */
+/** Reveal one block. `delay` is a stagger step (0–3), 70ms each. */
 export function Reveal({
   children,
   delay = 0,
   className,
-  as = "div",
+  as: Tag = "div",
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
-  as?: "div" | "li";
+  as?: "div" | "li" | "tr";
 }) {
-  const Tag = as === "li" ? motion.li : motion.div;
   return (
-    <Tag
-      className={className}
-      initial="hidden"
-      whileInView="shown"
-      viewport={VIEWPORT}
-      variants={{ ...item, shown: { ...(item.shown as object), transition: { duration: 0.5, ease: EASE, delay: delay * 0.08 } } }}
-    >
+    <Tag data-reveal="" className={className} style={delay ? delayStyle(delay) : undefined}>
       {children}
     </Tag>
   );
 }
 
-/** Reveal a list: children wrapped in <RevealItem> cascade in, 70ms apart. */
-export function RevealGroup({ children, className, as = "div" }: { children: ReactNode; className?: string; as?: "div" | "ul" | "ol" }) {
-  const Tag = as === "ul" ? motion.ul : as === "ol" ? motion.ol : motion.div;
+/** Reveal a list: children wrapped in <RevealItem> cascade in, 70ms apart, when the group arrives. */
+export function RevealGroup({
+  children,
+  className,
+  as: Tag = "div",
+}: {
+  children: ReactNode;
+  className?: string;
+  as?: "div" | "ul" | "ol" | "tbody";
+}) {
   return (
-    <Tag
-      className={className}
-      initial="hidden"
-      whileInView="shown"
-      viewport={VIEWPORT}
-      variants={{ hidden: {}, shown: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } } }}
-    >
+    <Tag data-reveal-group="" className={className}>
       {children}
     </Tag>
   );
 }
 
-export function RevealItem({ children, className, as = "div" }: { children: ReactNode; className?: string; as?: "div" | "li" }) {
-  const Tag = as === "li" ? motion.li : motion.div;
+export function RevealItem({
+  children,
+  className,
+  as: Tag = "div",
+}: {
+  children: ReactNode;
+  className?: string;
+  as?: "div" | "li" | "tr";
+}) {
   return (
-    <Tag className={className} variants={item}>
+    <Tag data-reveal-item="" className={className}>
       {children}
     </Tag>
   );

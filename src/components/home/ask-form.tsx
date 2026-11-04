@@ -1,11 +1,11 @@
 "use client";
 
-// The "Talk to a CA" form: name, mobile, question, consent. Validation is lib/advisor-request (the
+// The "Talk to a CA" form: name, mobile, optional email, question, consent. Validation is lib/advisor-request (the
 // same function the API route runs), so the visitor sees the same messages the server would send.
 // Each error sits under its field, is tied to it with aria-describedby and aria-invalid, and focus
 // moves to the first one. Delivery is /api/advisor-request; if that fails, the form says so and
 // keeps what was typed. A hidden "website" field catches bots (people never see it).
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,8 +15,8 @@ import { cn } from "@/lib/utils";
 type Status = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; reference: string } | { kind: "failed" };
 
 const EASE = [0.23, 1, 0.32, 1] as const;
-const FIELD_ORDER = ["name", "phone", "question", "consent"] as const;
-const EMPTY = { name: "", phone: "", question: "", consent: false };
+const FIELD_ORDER = ["name", "phone", "email", "question", "consent"] as const;
+const EMPTY = { name: "", phone: "", email: "", question: "", consent: false };
 
 const input =
   "block w-full rounded-md border border-input bg-card px-4 text-body-lg text-foreground placeholder:text-faint transition-[border-color,box-shadow] duration-150 hover:border-grey-400 focus-visible:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-invalid:border-error";
@@ -27,6 +27,17 @@ export function AskForm() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const formRef = useRef<HTMLFormElement>(null);
   const doneRef = useRef<HTMLHeadingElement>(null);
+
+  // The hero's quick field hands its number over, so nobody types it twice.
+  useEffect(() => {
+    const onPrefill = (e: Event) => {
+      const phone = (e as CustomEvent<{ phone: string }>).detail.phone;
+      setForm((f) => ({ ...f, phone }));
+      formRef.current?.querySelector<HTMLElement>('[data-field="name"]')?.focus({ preventScroll: true });
+    };
+    window.addEventListener("paraa:prefill", onPrefill);
+    return () => window.removeEventListener("paraa:prefill", onPrefill);
+  }, []);
 
   const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -73,7 +84,7 @@ export function AskForm() {
   }
 
   return (
-    <div className="rounded-xl bg-card p-6 text-foreground shadow-lift sm:p-8">
+    <div className="surface-light rounded-xl p-6 shadow-lift sm:p-8">
       <AnimatePresence mode="wait" initial={false}>
         {status.kind === "sent" ? (
           <motion.div
@@ -87,11 +98,12 @@ export function AskForm() {
               <CheckCircle2 className="size-6 stroke-ink" />
             </span>
             <h4 ref={doneRef} tabIndex={-1} className="mt-4 type-h4 outline-none">
-              Thank you! We&rsquo;ll call you soon.
+              Thank you. We&rsquo;ve received your question.
             </h4>
             <p className="mt-2 text-body-md text-muted-foreground">
               Your reference: <strong className="text-foreground num">{status.reference}</strong>
             </p>
+            <p className="mt-2 text-body-md text-muted-foreground">We&rsquo;ll contact you about it. We never ask for your OTP or PIN by call or message.</p>
             <Button
               type="button"
               variant="outline"
@@ -152,13 +164,29 @@ export function AskForm() {
               </Field>
             </div>
 
+            <Field id="ask-email" label="Email (optional)" error={errors.email}>
+              <input
+                id="ask-email"
+                data-field="email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                maxLength={LIMITS.email}
+                value={form.email}
+                onChange={(e) => set("email", e.target.value)}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "ask-email-error" : undefined}
+                className={cn(input, "h-13")}
+              />
+            </Field>
+
             <Field id="ask-question" label="Your question" error={errors.question}>
               <textarea
                 id="ask-question"
                 data-field="question"
                 rows={4}
                 maxLength={LIMITS.question}
-                placeholder="For example: how much should I invest?"
+                placeholder="For example: what are the fees, and when does it mature?"
                 value={form.question}
                 onChange={(e) => set("question", e.target.value)}
                 aria-invalid={!!errors.question}
@@ -186,14 +214,14 @@ export function AskForm() {
                   aria-describedby={errors.consent ? "ask-consent-error" : undefined}
                   className="mt-0.5 size-5 shrink-0 cursor-pointer accent-ink"
                 />
-                <span>You can call me about this question.</span>
+                <span>Paraa Capital can contact me about this question.</span>
               </label>
               <FieldError id="ask-consent-error" error={errors.consent} />
             </div>
 
             {status.kind === "failed" && (
               <p role="alert" className="rounded-md border border-error/40 bg-error/10 p-4 text-body-md text-foreground">
-                Sorry, we couldn&rsquo;t send your question. Please try again in a few minutes.
+                Sorry, we couldn&rsquo;t send your question. What you typed is still here, so please try again in a few minutes.
               </p>
             )}
 

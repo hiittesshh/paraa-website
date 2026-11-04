@@ -1,23 +1,13 @@
-"use client";
-
-// A gold highlighter stroke that sweeps under a phrase in a heading, once, as it comes into view.
-// It's a background, so the text itself is readable from the first paint and on any surface.
-import { motion, useReducedMotion } from "motion/react";
+// A gold highlighter stroke under a phrase in a heading. It's a background, so the text is readable
+// from the first paint and on any surface. Drawn in full in the server's HTML; RevealController
+// sweeps it in once (600ms) if it's still below the fold. Sweeps only in Baskets and Four steps:
+// `still` keeps it drawn and unmoving, which is what the hero uses. Styles are in globals.css.
 import type { ReactNode } from "react";
 
-const EASE = [0.23, 1, 0.32, 1] as const;
-
-export function Mark({ children }: { children: ReactNode }) {
-  const reduce = useReducedMotion();
+export function Mark({ children, still = false }: { children: ReactNode; still?: boolean }) {
   return (
-    <motion.span
-      className="bg-linear-to-r from-secondary to-secondary bg-no-repeat box-decoration-clone [background-position:0_92%]"
-      initial={{ backgroundSize: "0% 0.2em" }}
-      whileInView={{ backgroundSize: "100% 0.2em" }}
-      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-      transition={reduce ? { duration: 0 } : { duration: 0.6, ease: EASE, delay: 0.15 }}
-    >
+    <span className="mark" {...(still ? {} : { "data-mark": "" })}>
       {children}
-    </motion.span>
+    </span>
   );
 }

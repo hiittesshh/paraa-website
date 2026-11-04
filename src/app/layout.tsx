@@ -15,15 +15,15 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL("https://paraacapital.com"),
   title: {
-    default: "Paraa Capital: invest in US stocks, gold and crude oil from India",
+    default: "Paraa Capital: a basket that tracks US stocks, gold and crude oil, for residents of India",
     template: "%s · Paraa Capital",
   },
   description:
-    "One international basket of US stocks, gold and crude oil, bought in rupees. No tax when you invest, and a chartered accountant for every investor.",
+    "US stocks, gold and crude oil in one basket, bought in rupees and priced daily, for residents of India.",
   openGraph: { siteName: "Paraa Capital", locale: "en_IN", type: "website" },
 };
 
-export const viewport: Viewport = { themeColor: "#FFFFFF", colorScheme: "light" };
+export const viewport: Viewport = { themeColor: "#131416", colorScheme: "dark" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

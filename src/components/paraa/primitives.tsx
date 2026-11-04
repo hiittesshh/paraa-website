@@ -75,54 +75,60 @@ export function SectionHead({
   );
 }
 
-export function Card({ className, accent, ...props }: ComponentProps<"div"> & { accent?: boolean }) {
+/**
+ * The "side heading 4/7" layout: a heading column beside the content. `sticky` holds the heading in
+ * view on tall screens while the content scrolls past; off by default.
+ */
+export function SideHead({
+  id,
+  title,
+  lede,
+  sticky = false,
+  className,
+  children,
+}: {
+  id: string;
+  title: ReactNode;
+  lede?: ReactNode;
+  sticky?: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <div
-      className={cn(
-        "rounded-lg border bg-card p-6 shadow-card",
-        accent && "border-gold-300 bg-[linear-gradient(180deg,var(--color-gold-50),var(--card)_60%)]",
-        className,
-      )}
-      {...props}
-    />
+    <div className={cn("grid gap-12 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-16", className)}>
+      <div className={cn(sticky && "lg:tall:sticky lg:tall:top-28 lg:self-start")}>
+        <SectionHead id={id} stacked title={title} lede={lede} className="mb-0 md:mb-0" />
+      </div>
+      <div className="min-w-0">{children}</div>
+    </div>
   );
 }
 
-export function Badge({ className, tone = "neutral", ...props }: ComponentProps<"span"> & { tone?: "neutral" | "accent" | "pending" }) {
+/** A plain bordered panel: 24 corners, 32/24 padding, no shadow, because nothing overlaps it. */
+export function Card({ className, ...props }: ComponentProps<"div">) {
+  return <div className={cn("rounded-xl border bg-card p-6 md:p-8", className)} {...props} />;
+}
+
+/** The one ink tile a section may have (fees figure, form tile). Same corners and padding as Card. */
+export function InkTile({ className, ...props }: ComponentProps<"div">) {
+  return <div className={cn("surface-ink rounded-xl p-6 md:p-8", className)} {...props} />;
+}
+
+/** An inner panel, sitting inside a tile or card: 16 corners on grey-50. */
+export function InnerPanel({ className, ...props }: ComponentProps<"div">) {
+  return <div className={cn("rounded-lg bg-background-alt p-6", className)} {...props} />;
+}
+
+/** Sits inside every mock screen, so a crop can't remove it. Mock screens show no returns, value or prices. */
+export function ExampleTag({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-body-sm font-bold whitespace-nowrap",
-        tone === "neutral" && "border-border bg-muted text-muted-foreground",
-        tone === "accent" && "border-gold-200 bg-gold-50 text-accent",
-        tone === "pending" && "border-warning bg-warning/15 text-foreground",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-/** Rulebook R5: any number that could be mistaken for real carries this label. */
-export function Illustrative({ className }: { className?: string }) {
-  return (
-    <Badge tone="accent" className={className}>
-      Illustrative
-    </Badge>
-  );
-}
-
-/** Rulebook R6: anything unconfirmed (registrations, partners, routes) is visibly marked. */
-export function ToConfirm({ children = "TO CONFIRM", className }: { children?: ReactNode; className?: string }) {
-  return (
-    <span
-      className={cn(
-        // Warning #FACC15 as a fill with Primary text: the yellow itself fails contrast as text on white.
-        "inline-block rounded-sm border border-warning bg-warning/25 px-1.5 align-middle text-body-xs font-extrabold tracking-[0.06em] text-ink uppercase",
+        "inline-flex items-center rounded-full border border-ink bg-card px-2.5 text-body-md font-semibold whitespace-nowrap text-ink",
         className,
       )}
     >
-      {children}
+      Example
     </span>
   );
 }
@@ -135,6 +141,28 @@ export function ButtonLink({
   ...props
 }: ComponentProps<typeof Link> & VariantProps<typeof buttonVariants>) {
   return <Link className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+}
+
+/**
+ * A link inside a sentence. The invisible strip above and below brings its tap area to 44px at
+ * 14px and larger, measured from the 18px-tall text box, without pushing the lines apart.
+ * `tone="ink"` on an ink tile.
+ */
+export function InlineLink({
+  className,
+  tone = "base",
+  ...props
+}: ComponentProps<typeof Link> & { tone?: "base" | "ink" }) {
+  return (
+    <Link
+      className={cn(
+        "relative font-semibold underline underline-offset-4 transition-colors duration-150 ease-out-soft after:absolute after:inset-x-0 after:-inset-y-[13px]",
+        tone === "ink" ? "text-primary-foreground hover:text-grey-300" : "text-accent hover:text-ink",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 export function ArrowLink({ className, children, ...props }: ComponentProps<typeof Link>) {

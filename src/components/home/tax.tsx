@@ -1,45 +1,26 @@
-// "Tax": how the basket's income is taxed, as Paraa states its position: nothing is taxed when
-// you invest; the basket earns through derivative contracts, so profit is business income, taxed
-// at your own slab rate. Loss carry-forward depends on how the income is classified, so the page
-// defers to the CA rather than picking a number of years. The first rule leads as a gold tile,
-// three short rules follow, and the live estimator sits on the right (tax-estimator.tsx).
-import { ArrowLink, Reveal, RevealGroup, RevealItem, Section, SectionHead } from "@/components/paraa/primitives";
-import { Mark } from "@/components/paraa/mark";
-import { formatINR } from "@/lib/format";
+// "Tax on your profit": two short rules and the live estimator (tax-estimator.tsx). The tax position
+// depends on how the income is classified, and no CA has signed it off, so the page says so rather than
+// stating it as settled (docs/redesign/content-audit.md).
+import { InlineLink, Reveal, RevealGroup, RevealItem, Section } from "@/components/paraa/primitives";
 import { TaxEstimator } from "./tax-estimator";
 
 const RULES: { title: string; body: string }[] = [
-  {
-    title: "Profit is taxed at your slab rate",
-    body: "It counts as business income from derivatives, taxed at your normal rate plus 4% cess.",
-  },
-  { title: "Losses can be carried forward", body: "A loss can be set off against future profits." },
-  { title: "Your CA files it for you", body: "Your CA prepares and files your return (ITR-3)." },
+  { title: "Profit may be taxed at your slab rate", body: "It depends on how this income is classified. If the basket counts as a virtual digital asset, the rate is a flat 30% plus cess." },
+  { title: "Losses may not carry forward", body: "This also depends on how this income is classified. If the basket counts as a virtual digital asset, a loss can't be set off against other income or carried forward." },
 ];
 
 export function Tax() {
   return (
-    <Section id="tax" labelledBy="tax-title">
-      <SectionHead
-        id="tax-title"
-        title={
-          <>
-            How <Mark>tax</Mark> works
-          </>
-        }
-        lede="No tax when you invest. You pay tax only on the profit you make."
-      />
-
+    <Section id="tax" tone="alt" labelledBy="tax-title">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
         <div>
-          <Reveal>
-            <article className="rounded-xl bg-secondary p-6 text-ink sm:p-8">
-              <p className="type-h1 num">{formatINR(0)}</p>
-              <h3 className="mt-6 type-h4">No tax when you invest</h3>
-              <p className="mt-1 text-body-lg">Buying and holding units creates no tax.</p>
-            </article>
-          </Reveal>
-          <RevealGroup as="ul" className="mt-3 divide-y">
+          <h2 id="tax-title" className="type-h2 text-balance">
+            See the tax on your profit
+          </h2>
+          <p className="mt-4 max-w-[48ch] text-body-xl text-muted-foreground">
+            Move the slider to estimate what you&rsquo;d keep. <InlineLink href="#ask">Talk to a CA</InlineLink> about your own tax.
+          </p>
+          <RevealGroup as="ul" className="mt-8 divide-y border-y">
             {RULES.map(({ title, body }) => (
               <RevealItem as="li" key={title} className="py-5">
                 <h3 className="type-h6">{title}</h3>
@@ -47,15 +28,8 @@ export function Tax() {
               </RevealItem>
             ))}
           </RevealGroup>
-          <Reveal>
-            <p className="mt-2 text-body-sm text-muted-foreground">
-              General information. Your CA will confirm the exact tax for your situation.
-            </p>
-            <ArrowLink href="#ask">Ask a CA about your tax</ArrowLink>
-          </Reveal>
         </div>
-
-        <Reveal delay={1} className="lg:sticky lg:top-24 lg:self-start">
+        <Reveal delay={1} className="lg:tall:sticky lg:tall:top-24 lg:self-start">
           <TaxEstimator />
         </Reveal>
       </div>

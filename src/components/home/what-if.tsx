@@ -2,9 +2,8 @@
 
 // "See how your money could move": pick how each part of the basket and the rupee move over a
 // year and see what an amount becomes, in rupees, part by part. Maths: lib/basket scenario()
-// (tested). Everything starts at zero (R5). The presets are real calendar-year market moves
-// (labelled as such, never as the basket's returns) plus one made-up bad year, so the downside
-// is one tap away (R8). Each breakdown row is a signed ₹ amount; the bar is only a second signal.
+// (tested). Everything starts at zero (R5). The scenarios are made up and say so, never real years,
+// so nothing here reads as the basket's past returns, and the downside is one tap away (R8). Each breakdown row is a signed ₹ amount; the bar is only a second signal.
 // Everything you change is on the left and the answer is one dark panel on the right, which
 // stays in view while you move the sliders.
 import { useState } from "react";
@@ -30,7 +29,7 @@ const RUPEE_RANGE = 15;
 
 const move = (v: number) => (v === 0 ? "No change" : formatPct(v / 100, { digits: 0 }));
 const rupeeWords = (v: number) =>
-  v === 0 ? "Unchanged" : `${formatPct(Math.abs(v) / 100, { digits: 0, signed: false })} ${v > 0 ? "weaker" : "stronger"}`;
+  v === 0 ? "No change" : `${formatPct(Math.abs(v) / 100, { digits: 0, signed: false })} ${v > 0 ? "weaker" : "stronger"}`;
 
 export function WhatIf() {
   const [amount, setAmount] = useState(1_00_000);
@@ -65,7 +64,7 @@ export function WhatIf() {
   const rows: { label: string; detail: string; value: number; swatch?: string }[] = [
     ...SLEEVES.map((s) => ({
       label: s.name,
-      detail: moves[s.id] === 0 ? "no change" : `${formatPct(moves[s.id] / 100, { digits: 0 })} on its share`,
+      detail: moves[s.id] === 0 ? "no change" : `${formatPct(moves[s.id] / 100, { digits: 0 })} on its part of the basket`,
       value: amount * r.contributions[s.id],
       swatch: SLEEVE_INFO[s.id].swatchOnInk,
     })),
@@ -82,7 +81,7 @@ export function WhatIf() {
             See how your money <Mark>could move</Mark>
           </>
         }
-        lede="Pick a past year, or move the sliders yourself. It's an example, not a forecast."
+        lede="Try a scenario, or move the sliders yourself."
       />
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-16">
@@ -109,17 +108,17 @@ export function WhatIf() {
           </div>
 
           <div>
-            <p className="mb-3 text-body-md font-semibold text-foreground">Pick a year</p>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" role="group" aria-label="Example years">
+            <p className="mb-3 text-body-md font-semibold text-foreground">Try a scenario</p>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3" role="group" aria-label="Example scenarios">
               {PRESETS.map((p) => (
                 <button key={p.id} type="button" aria-pressed={presetOn === p.id} onClick={() => apply(p.id)} className={chip(presetOn === p.id)}>
-                  <span className="type-h5">{p.label}</span>
+                  <span className="type-h6">{p.label}</span>
                   <span className={cn("text-body-sm", presetOn === p.id ? "text-ink" : "text-faint")}>{p.note}</span>
                 </button>
               ))}
             </div>
             <p className="mt-2 text-body-sm text-muted-foreground">
-              Uses how the markets actually moved that year, rounded. Not the basket&rsquo;s past returns.
+              Made-up scenarios on an example mix. Not a forecast, and not the basket&rsquo;s past returns.
             </p>
           </div>
 
@@ -145,7 +144,7 @@ export function WhatIf() {
               value={rupee}
               onChange={setRupee}
               format={rupeeWords}
-              hint="A weaker rupee raises your value in rupees. A stronger rupee lowers it."
+              hint="A weaker rupee raises your investment's rupee value. A stronger rupee lowers it."
             />
           </div>
 
@@ -165,7 +164,7 @@ export function WhatIf() {
               After one year
             </h3>
 
-            <p className="mt-6 text-body-md font-semibold text-grey-300">You would have</p>
+            <p className="mt-6 text-body-md font-semibold text-grey-300">Your investment&rsquo;s value</p>
             <Money value={r.inrValue} className="mt-1 block type-h1 text-secondary num" />
             <p className="mt-1 text-body-lg font-semibold num">
               <Money value={r.inrValue - amount} signed /> ({formatPct(r.inrChange)})
@@ -191,11 +190,11 @@ export function WhatIf() {
             </ul>
 
             <p className="sr-only" aria-live="polite" aria-atomic="true">
-              {formatINR(amount)} would become {formatINR(r.inrValue)}, {formatPct(r.inrChange)}. Example only.
+              {formatINR(amount)} would become {formatINR(r.inrValue)} after one year, {formatPct(r.inrChange)}. Example only.
             </p>
 
             <p className="mt-4 border-t border-ink-2 pt-4 text-body-sm text-grey-300">
-              Example only, before fees and tax. You can lose money.
+              Example only, before fees and tax.
             </p>
           </article>
         </Reveal>
@@ -220,8 +219,8 @@ function Columns({ from, to }: { from: number; to: number }) {
   );
   return (
     <div aria-hidden className="mt-6 flex h-40 gap-3">
-      {column(from, "bg-grey-400", "If you invest")}
-      {column(to, "bg-secondary", "You would have")}
+      {column(from, "bg-grey-400", "You invest")}
+      {column(to, "bg-secondary", "Value after")}
     </div>
   );
 }
