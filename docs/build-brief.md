@@ -1,5 +1,125 @@
 # Build brief: Paraa Capital site (Next.js 16 + Tailwind 4 + shadcn + Watermelon UI)
 
+## ROUND 18 (2026-11-11): bold brand blocks, overrides ROUND 17's visual rules
+The owner rejected the round-17 result as flat and empty: "absolute trash". The problems they named were no brand, no real product visuals, no motion, and a weak hero and typography. They chose **"Bold brand blocks"**. Content, copy, calculators, the form and its states, accessibility and every honesty limit are unchanged. Only the visual layer changed.
+
+| Area | Round 18 |
+|---|---|
+| Hero | 68px headline. A phone mockup of the Invest screen stands on a gold block, with two floating detail cards (`hero-visual.tsx`). The four facts sit in an ink block, with a gold rule over each cell. Below 1024 the order is copy → facts → visual, so "You can lose money" stays in the 390×844 first view. |
+| Basket | Ink, gold and Light tiles sized by weight, with 136px / 76px numbers. The Example tag stays above the tiles. |
+| How it works | White step cards with gold number chips. The money path sits in a gold block, with ink end nodes. |
+| Surfaces | white · white · Light · **ink** (Security) · Light (tools; the result panel is ink) · white · **gold** (Ask) · **ink** (footer). New scopes: `.theme-gold`, and `Section tone="gold"`. |
+| Motion | Motion is now in use, as `motion/react-mini` `useAnimate` plus `useInView` in `components/motion/reveal.tsx`, for scroll reveals. The server HTML is complete. A block hides only after hydration and only if it is below the fold, and it never hides for reduced motion, without JavaScript, or in print. The hero entrance is CSS (`.enter-rise` / `.enter-pop`), and the h1 never animates. The Magic UI, Aceternity and React Bits registries are still unused. |
+| Type | `type-display` is 40 / 56 / 68px. `type-title` is 32 / 40 / 48px. New `type-numeral`, `type-numeral-sm` and `text-micro` (phone UI only). |
+
+Measured on the production build: 200.3 KB of JS gzipped; 8,466px at 1440 and 13,530px at 390; axe reports 0 violations at 320–1440, including after every reveal; no sideways scroll; no console errors. `spec.md` v1.5 is out of date on the visual rules above: one ink band, gold limits, no motion, page budgets. Its honesty, accessibility and form rules still apply.
+
+**Round 18b, same day:** the owner approved the page from the hero through "Where your money goes" and called everything below it ugly. Those sections were rebuilt in the same language: contained rounded colour blocks on light sections, product visuals, and short text.
+
+| Section | Round 18b |
+|---|---|
+| Security | Now a white section, not a full-bleed ink band, with four tiles:<br>• ink: withdrawals, with an example withdraw card<br>• gold: the OTP/PIN rule, with six masked code boxes<br>• Light: payment checks, with a verified chip<br>• outlined: FIU-IND and its limit<br>"How to spot a fake" is one ink block, with each scam line as a message bubble. All anchor ids are kept. |
+| Calculators | Segmented tabs (ink pill), filled Light chips, borderless 32px-corner cards, and an ink result panel. |
+| FAQ | Questions as Light cards; the open card turns white and floats. A sticky left column holds an ink "Don't see yours?" card with the CTA. |
+| Ask | Step cards on the gold band, question prompts as wrapped chips, and 16px-corner inputs. |
+| Footer | Brand line and CTA on top, links in one row, the legal notes in their own panel. |
+
+**Measured:** 9,008px at 1440 and 14,315px at 390; JS 200.3 KB; axe 0 violations at 320/390/768/1024/1440 after all reveals; no sideways scroll. The 320px overflow from the OTP boxes was fixed.
+
+**Round 18c, same day: the calculators.** The owner still found them ugly: a long form beside a half-empty result. They were rebuilt answer-first.
+- **Markets and the rupee:**
+  - One ink card holds the starting amount, the scenario's name, the value after a year (76px) and the breakdown.
+  - Below it, the five made-up scenarios are tiles, each showing its own outcome on the chosen amount (−25.9% · ₹74,100, …).
+  - The four sliders fold away under "Set each market yourself" (native `<details>`).
+- **Tax:** one ink card, with the inputs on the left and "You'd keep" on the right. The two tax rules are cards underneath.
+
+The maths, defaults, live region, mobile readout, anchors (`#what-if`, `#tax`, `#…-title`) and no-JS behaviour are unchanged. The tool totals still match Appendix B.
+
+**Round 18d: the calculators, again.** The owner still disliked them, so 18c's ink card, scenario tiles and folded sliders were replaced with the familiar Indian-fintech calculator pattern (Groww-style).
+- **One white card per tool, inputs on the left:**
+  - every slider has its label at reading size and its value in a soft gold box (`bg-brand-soft`, gold-6);
+  - the starting amount is a slider from ₹10,000 to ₹10 lakh;
+  - the scenarios are pills;
+  - the four market sliders are always visible, so picking a scenario visibly sets them.
+- **The answer on the right, in a Light panel that stays in view on desktop:**
+  - the scenario name, "You invest", the value after a year (76px) and the change;
+  - one compact line per market (swatch, name, diverging bar, rupee amount).
+- **Tax:** the same card, with "You'd keep" as the big figure, a keep/tax bar with a legend, and Profit and Tax rows. The two rules stay as cards underneath.
+
+Unchanged: the maths, defaults (₹74,100 / ₹68,800), live region, mobile readout, anchors, and the no-JS behaviour.
+
+**Round 18h: two prototypes kept, made clearer and compact.** The owner kept "One at a time" and "Tiles + waterfall" and asked for three things: make the waterfall easier to understand, fix the "Your own" UI, and stop the calculator feeling zoomed in (they had to scroll to see a change land). The comparison chart and the money split were removed. Copies of all four 18g prototypes are in the session scratchpad, `backup-bad-year-18g/`.
+
+- **Waterfall → "How ₹1,00,000 becomes ₹74,100".** One row per market, in the order the maths runs. Each row says what the move acts on ("₹50,000 of your money"; the rupee: "All ₹78,000 is held in dollars"), the move, what it takes away or adds, and what's left ("₹87,500 left"). Every bar uses one scale: the light track is what you started with, ink is what you have now, hatching is what that step lost and gold what it gained. So the bars visibly shrink row by row. The figures are rounded so each row adds up and the last one equals the answer (`parts` in `model.ts`).
+- **"Your own" is edited in place.** There's no separate slider panel any more. Each move is a pill; in "Your own" the same pill gains − and + (5 points for markets, 1 for the rupee; − always means less money, so for the rupee it means stronger). The figure doesn't move, and the row, the answer and the readout update together. "Change the moves" switches to Your own from any scenario; "Set all to zero" resets. At the ends of a range the buttons stay focusable and are `aria-disabled`. The live region now speaks the moves in Your own too. In "One at a time" the ink card lists the four moves in every scenario, and Your own adds − and + to them there.
+- **Compact.**
+  - The answer is one step smaller (`type-result` 36/44px).
+  - A new `type-scenario` sets the stepper's scenario name.
+  - Tiles are one compact row.
+  - Card padding is 32px.
+  - The review toggle is now a small floating bar at the bottom of the screen, shown only while the calculator is on screen and portalled to `<body>`. It no longer adds height.
+  - The ink answer gains one summary bar (what's still yours vs lost).
+- **Measured (production):**
+  - Card height: 795px at 1440×900 in both prototypes, the same in Your own. It fits below the header. At 1366×768 the footer line falls just below the fold.
+  - axe: 0 for both prototypes, default and Your own, at 320/390/768/1024/1366/1440.
+  - Overflow and errors: no sideways overflow and no console errors at any width.
+  - Keyboard: Enter and Space on − work, focus stays put, and the end of the range is `aria-disabled`.
+  - Gates: tsc, eslint, 53 tests and the build all pass.
+
+**Round 18g: four prototypes of the bad-year calculator, switchable.** The owner asked for other prototypes of the same concept, toggleable. All four share one model (`components/home/bad-year/model.ts`: state, maths, live region, sentence) and one shell (`what-if.tsx`: heading, limit, amount, readout, footnote, CTA), so they can't drift apart.
+
+| # | `?badyear=` | Prototype |
+|---|---|---|
+| 1 | `tiles` | Six scenario tiles, the ink answer and the waterfall (18f) |
+| 2 | `chart` | Every scenario on one comparison chart; the picked one is broken down in ink, and a gold card opens "Set each market" |
+| 3 | `stepper` | One at a time: previous/next and jump-to pills on an ink card, beside a before-and-after (the dashed drop or the gold rise) and each market's effect |
+| 4 | `split` | One bar for what you invest: gold for what you keep, a shaded slice per market that takes money away, and any gain past a "You invest" marker |
+
+- **Default:** `BAD_YEAR_PROTOTYPE` in `src/lib/bad-year-prototypes.ts`, currently `tiles`.
+- **Review toggle:** a dashed "Prototype (review only)" bar above the calculator. It shows in development, and on the live site only with `?prototypes` or `?badyear=` (verified absent from the production HTML otherwise). A pick is written to `?badyear=`.
+- **Measured:** JS 203.7 KB; axe 0 and no overflow for every prototype at 1440/768/390/320 in the All three fall, Weaker rupee and Your own states.
+
+**Round 18f: the scenario concept only, done properly (supersedes 18e).** The owner wants only the "All three fall / Stocks fall / Oil falls…" concept. The growth calculator, `lib/growth.ts` (with its tests), the design switch (`lib/calculator.ts`, `?calc=`) and the growth disclosures were removed. Copies are kept outside the repo in the session scratchpad, `backup-growth-designs/`.
+
+"A bad year" (`what-if.tsx`) is now:
+- **Scenario tiles:** six big tiles. Five made-up scenarios, each showing its result on the chosen amount (−25.9%, −10.0%, −8.0%, −5.0%, +5.0%), plus "Your own", which opens the four market sliders inline, starting from the scenario that was picked.
+- **The answer:** an ink panel with the value after a year (`type-result`, which fits ₹10,50,000 at every width) and the scenario as one plain sentence.
+- **The waterfall:** a chart starting at "You invest", where each market takes its part away (slate) or adds it (gold) from where the last ended, ending on "After one year". The bars glide when the scenario changes (CSS; instant under reduced motion). Below 640 each row stacks: label and figure on one line, the bar full width under them.
+
+The tax tab is unchanged. Measured: JS 200.9 KB; axe 0 at 320–1440 on the default, "Your own" and tax states; no overflow; 53 tests pass.
+
+**Round 18e: three calculator designs, switchable (superseded by 18f).** The owner rejected 18d as plain, with a weak result visual and the wrong kind of calculator. They were shown three mockups (`docs/redesign/design/img/calc-option-a/b/c.png`) and asked for all three to be built and switchable.
+- **The switch:** `CALCULATOR_DESIGN` in `src/lib/calculator.ts`, one line. To preview without editing, add `?calc=growth-light`, `growth-ink` or `scenarios` to the URL (read on the client after hydration).
+- **The designs:**
+
+  | Design | What it shows | Tabs |
+  |---|---|---|
+  | `growth-light` (A, the default) | Growth calculator: monthly SIP or one-time, amount, years 1–25, an assumed return of −5% to 10%, and a donut of invested vs estimated growth (or loss) | Growth · A bad year · Tax |
+  | `growth-ink` (B) | The same calculator in the dark brand card: a gold total and year-by-year bars. The other tabs are in ink too | Growth · A bad year · Tax |
+  | `scenarios` (C) | No growth projection | A bad year · Tax |
+
+  "A bad year" (`what-if.tsx`) shows all five made-up scenarios as one chart. Picking a row shows its breakdown; "Set each market" adds a "Your own scenario" row.
+- **Maths:** growth is in `src/lib/growth.ts`, with tests: ₹10,000 a month for 5 years at 6% = ₹7,01,189. The scenario and tax maths are unchanged.
+- **Honesty:** the growth designs reverse the old "no projected returns" rule. The return is always the visitor's own choice. `growth-assumption-v1` ("Your assumption, not a forecast. The basket can fall in value, and you can lose money.") sits under the choice, and `growth-foot-v1` under the result. **Compliance must approve the growth designs before launch;** until then, `scenarios` is the safe setting.
+- **Measured:** 203.2 KB JS; axe shows 0 violations for every design, tab and width (1440/390/320); no overflow. `#growth`, `#what-if` and `#tax` deep links select their tab.
+
+**Tooling fix (round 18c):** Tailwind now runs through PostCSS (`postcss.config.mjs`, `@tailwindcss/postcss@4.3.3`), as the Next.js docs say. The custom `@tailwindcss/turbopack` loader rule was removed from `next.config.ts` and the package uninstalled. That loader didn't track source files, so classes added while `next dev` ran (and theme edits after a restart) never reached the browser. It's now verified: a class added to a `.tsx` file appears in the served CSS within seconds.
+
+## ROUND 17 (2026-11-11): research → design → development rebuild, overrides anything below it
+The homepage was rebuilt through a staged process: five researchers studied ten reference sites (`docs/redesign/research/`), three designers drafted, cross-reviewed and merged one spec, and three developers built it. A joint design and dev review followed (`docs/redesign/design/`).
+- **The spec is the source of truth:** `docs/redesign/design/spec.md` (v1.5). Every decision and its reason is in its decision log. The theme is the owner's Colors board (`docs/redesign/design/brand-board.md`): Primary ink `#272A33`, Secondary gold `#FDC037`, Light `#F2F2F2`, and Manrope with Bold 700 headings.
+- **Owner decisions:**
+  - a light page with one ink band (Security);
+  - a static hero with an example panel;
+  - "You can lose money" sits in the hero facts row, and each limit is set at the same size as its claim;
+  - the CTA is "Ask a CA" everywhere, because CAs read the questions;
+  - the what-if opens on "All three fall";
+  - main buttons stay ink;
+  - FIU-IND is a plain sentence until the number exists.
+- **Installed but not used:** `motion` and the Magic UI, Aceternity and React Bits shadcn registries. The owner chose "install only". QA A4/A24 fail if anything imports them, and a spec change is needed first.
+- **Skills used:** `ui-ux-pro-max`, `frontend-design`, `design-taste-frontend`, `vercel-react-best-practices`, `vercel-composition-patterns` and `web-design-guidelines`. The project rules (spec, brand board, `content-rules.md`) win any conflict; Taste Skill's house rules don't apply here.
+- **Launch blockers (owner facts):** spec §12, and `proposal.md` §9. They include the production webhook (`ADVISOR_REQUEST_WEBHOOK_URL`), a privacy page, the legal entity, the FIU-IND number, grievance details, fees and custody.
+
 ## ROUND 16 (2026-11-04): risk lines off the marketing sections, by the user's request
 Removed: "You can lose money" and "Risk:" from the hero, Basket tiles, app window, calculator and form, the FAQ's "what could I lose",
 and the catch cards (`what-you-get.tsx` keeps the Wise effect with product facts). Overrides R2 and R8 and the brief's "disclosures where doubt

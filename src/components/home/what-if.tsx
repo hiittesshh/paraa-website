@@ -1,243 +1,146 @@
 "use client";
 
-// "See how your money could move": pick how each part of the basket and the rupee move over a
-// year and see what an amount becomes, in rupees, part by part. Maths: lib/basket scenario()
-// (tested). Everything starts at zero (R5). The scenarios are made up and say so, never real years,
-// so nothing here reads as the basket's past returns, and the downside is one tap away (R8). Each breakdown row is a signed ₹ amount; the bar is only a second signal.
-// Everything you change is on the left and the answer is one dark panel on the right, which
-// stays in view while you move the sliders.
-import { useState } from "react";
-import { motion } from "motion/react";
-import { RotateCcw } from "lucide-react";
-import { Reveal, Section, SectionHead } from "@/components/paraa/primitives";
-import { Mark } from "@/components/paraa/mark";
-import { Money } from "@/components/paraa/money";
-import { AdaptiveSlider } from "@/components/watermelon/adaptive-slider";
-import { NO_MOVES, PRESETS, SLEEVES, scenario, type Moves, type SleeveId } from "@/lib/basket";
-import { formatINR, formatPct } from "@/lib/format";
+// "What could a bad year do to your money?" (round 18g; two prototypes from 18h): the shell around them.
+// The card, its heading and limit, the amount, the readout, the footnote and the live region are shared; the
+// prototype in the middle is the one picked in lib/bad-year-prototypes.ts, or on the page with the review
+// toggle. The toggle shows in development, and on the live site only with ?prototypes or ?badyear= in the URL,
+// so visitors never see it. The pick is written to ?badyear=<id>, so a reload or a shared link keeps it.
+//
+// No-JS: the server renders the configured prototype in its default state. The controls move natively but the
+// result doesn't update; the section's <noscript> line says so.
+import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from "react";
+import { createPortal } from "react-dom";
+import { ButtonLink } from "@/components/ui/button";
+import { ChoiceChips } from "@/components/ui/choice-chips";
+import { Disclosure } from "@/components/ui/disclosure";
+import { Panel } from "@/components/ui/panel";
+import { ResultReadout } from "@/components/ui/tool-result";
+import {
+  BAD_YEAR_PROTOTYPE,
+  BAD_YEAR_PROTOTYPES,
+  isBadYearPrototype,
+  type BadYearPrototype,
+} from "@/lib/bad-year-prototypes";
+import { CTA } from "@/lib/nav";
 import { cn } from "@/lib/utils";
-import { SLEEVE_INFO } from "./sleeve-info";
+import { AMOUNTS, useBadYear } from "./bad-year/model";
+import { StepperPrototype } from "./bad-year/stepper";
+import { TilesPrototype } from "./bad-year/tiles";
 
-const AMOUNTS = [
-  { value: 50_000, label: "₹50,000" },
-  { value: 1_00_000, label: "₹1 lakh" },
-  { value: 5_00_000, label: "₹5 lakh" },
-  { value: 10_00_000, label: "₹10 lakh" },
-];
-const RANGE: Record<SleeveId, number> = { us: 40, gold: 30, oil: 60 };
-const RUPEE_RANGE = 15;
+const noSubscribe = () => () => {};
+const readQuery = () => window.location.search;
 
-const move = (v: number) => (v === 0 ? "No change" : formatPct(v / 100, { digits: 0 }));
-const rupeeWords = (v: number) =>
-  v === 0 ? "No change" : `${formatPct(Math.abs(v) / 100, { digits: 0, signed: false })} ${v > 0 ? "weaker" : "stronger"}`;
+const PROTOTYPE = { tiles: TilesPrototype, stepper: StepperPrototype } as const;
+
+/**
+ * Review only: a small bar fixed to the bottom of the screen while the calculator is on it, so it never adds to
+ * the card's height. Portalled to <body>, because an animated ancestor (Reveal) would otherwise trap `fixed`.
+ */
+function PrototypeToggle({
+  panel,
+  prototype,
+  onPick,
+}: {
+  panel: RefObject<HTMLDivElement | null>;
+  prototype: BadYearPrototype;
+  onPick: (id: BadYearPrototype) => void;
+}) {
+  const [onScreen, setOnScreen] = useState(false);
+  useEffect(() => {
+    const el = panel.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => setOnScreen(entry.isIntersecting), { threshold: 0.15 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [panel]);
+  if (!onScreen) return null;
+  return createPortal(
+    <div
+      role="group"
+      aria-labelledby="what-if-prototype"
+      className="theme-ink fixed bottom-4 left-1/2 z-50 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-wrap items-center gap-1.5 rounded-xl p-1.5 shadow-float"
+    >
+      <span id="what-if-prototype" className="px-2 text-body-md text-muted-foreground">
+        Prototype
+      </span>
+      {BAD_YEAR_PROTOTYPES.map((p, i) => (
+        <button
+          key={p.id}
+          type="button"
+          aria-pressed={prototype === p.id}
+          onClick={() => onPick(p.id)}
+          className={cn(
+            "inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-3 text-body-md font-semibold transition-colors duration-150",
+            prototype === p.id ? "bg-primary text-primary-foreground" : "bg-background-alt hover:bg-accent",
+          )}
+        >
+          <span className="num opacity-70">{i + 1}</span>
+          {p.label}
+        </button>
+      ))}
+    </div>,
+    document.body,
+  );
+}
 
 export function WhatIf() {
-  const [amount, setAmount] = useState(1_00_000);
-  const [moves, setMoves] = useState<Moves>(NO_MOVES); // whole percents
-  const [rupee, setRupee] = useState(0); // whole percent; + = rupee weaker
+  const m = useBadYear();
 
-  const asFractions: Moves = { us: moves.us / 100, gold: moves.gold / 100, oil: moves.oil / 100 };
-  const r = scenario(amount, asFractions, rupee / 100);
-  const presetOn = PRESETS.find(
-    (p) => SLEEVES.every((s) => Math.round(p.moves[s.id] * 100) === moves[s.id]) && Math.round(p.rupee * 100) === rupee,
-  )?.id;
+  // The prototype: the one picked on the page, else ?badyear=, else the configured default.
+  const query = useSyncExternalStore(noSubscribe, readQuery, () => "");
+  const params = new URLSearchParams(query);
+  const fromUrl = params.get("badyear");
+  const [picked, setPicked] = useState<BadYearPrototype | null>(null);
+  const prototype = picked ?? (isBadYearPrototype(fromUrl) ? fromUrl : BAD_YEAR_PROTOTYPE);
+  const showToggle = process.env.NODE_ENV !== "production" || params.has("prototypes") || params.has("badyear");
+  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);
+  const panel = useRef<HTMLDivElement>(null);
+  const Body = PROTOTYPE[prototype];
 
-  function apply(id: string) {
-    const p = PRESETS.find((x) => x.id === id)!;
-    setMoves({ us: Math.round(p.moves.us * 100), gold: Math.round(p.moves.gold * 100), oil: Math.round(p.moves.oil * 100) });
-    setRupee(Math.round(p.rupee * 100));
+  function pick(id: BadYearPrototype) {
+    setPicked(id);
+    const url = new URL(window.location.href);
+    url.searchParams.set("badyear", id);
+    window.history.replaceState(window.history.state, "", url);
   }
-  function reset() {
-    setMoves(NO_MOVES);
-    setRupee(0);
-  }
-
-  const press = "cursor-pointer transition-[background-color,border-color,color,transform] duration-150 ease-out-soft active:scale-[0.97]";
-  const chip = (on: boolean) =>
-    cn(
-      "inline-flex min-h-11 flex-col items-start justify-center rounded-md border px-4 py-2 text-left",
-      press,
-      on ? "border-secondary bg-secondary text-ink" : "border-border-strong bg-card text-foreground hover:border-ink",
-    );
-
-  // Breakdown rows: what each part added or took away, in rupees.
-  const rows: { label: string; detail: string; value: number; swatch?: string }[] = [
-    ...SLEEVES.map((s) => ({
-      label: s.name,
-      detail: moves[s.id] === 0 ? "no change" : `${formatPct(moves[s.id] / 100, { digits: 0 })} on its part of the basket`,
-      value: amount * r.contributions[s.id],
-      swatch: SLEEVE_INFO[s.id].swatchOnInk,
-    })),
-    { label: "Rupee vs dollar", detail: rupeeWords(rupee).toLowerCase(), value: amount * r.rupeeEffect },
-  ];
-  const scale = Math.max(amount * 0.1, ...rows.map((x) => Math.abs(x.value)));
 
   return (
-    <Section id="what-if" tone="alt" labelledBy="what-if-title">
-      <SectionHead
-        id="what-if-title"
-        title={
-          <>
-            See how your money <Mark>could move</Mark>
-          </>
-        }
-        lede="Try a scenario, or move the sliders yourself."
-      />
+    <Panel ref={panel} id="what-if" className="lg:p-8" onPointerUp={m.live.flush} onKeyUp={m.live.flush}>
+      <ResultReadout>
+        Example result: <span className="font-semibold text-foreground">{m.value}</span> ({m.change})
+      </ResultReadout>
 
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-16">
-        <Reveal className="space-y-8">
-          <div>
-            <p className="mb-3 text-body-md font-semibold text-foreground">If you invest</p>
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Starting amount">
-              {AMOUNTS.map((a) => (
-                <button
-                  key={a.value}
-                  type="button"
-                  aria-pressed={amount === a.value}
-                  onClick={() => setAmount(a.value)}
-                  className={cn(
-                    "inline-flex min-h-11 items-center rounded-full border px-4 text-body-md font-semibold num",
-                    press,
-                    amount === a.value ? "border-secondary bg-secondary text-ink" : "border-border-strong bg-card hover:border-ink",
-                  )}
-                >
-                  {a.label}
-                </button>
-              ))}
-            </div>
-          </div>
+      {showToggle && hydrated && <PrototypeToggle panel={panel} prototype={prototype} onPick={pick} />}
 
-          <div>
-            <p className="mb-3 text-body-md font-semibold text-foreground">Try a scenario</p>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3" role="group" aria-label="Example scenarios">
-              {PRESETS.map((p) => (
-                <button key={p.id} type="button" aria-pressed={presetOn === p.id} onClick={() => apply(p.id)} className={chip(presetOn === p.id)}>
-                  <span className="type-h6">{p.label}</span>
-                  <span className={cn("text-body-sm", presetOn === p.id ? "text-ink" : "text-faint")}>{p.note}</span>
-                </button>
-              ))}
-            </div>
-            <p className="mt-2 text-body-sm text-muted-foreground">
-              Made-up scenarios on an example mix. Not a forecast, and not the basket&rsquo;s past returns.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {SLEEVES.map((s) => (
-              <AdaptiveSlider
-                key={s.id}
-                label={s.name}
-                min={-RANGE[s.id]}
-                max={RANGE[s.id]}
-                step={1}
-                value={moves[s.id]}
-                onChange={(v) => setMoves((m) => ({ ...m, [s.id]: v }))}
-                format={move}
-              />
-            ))}
-
-            <AdaptiveSlider
-              label="Rupee vs dollar"
-              min={-RUPEE_RANGE}
-              max={RUPEE_RANGE}
-              step={1}
-              value={rupee}
-              onChange={setRupee}
-              format={rupeeWords}
-              hint="A weaker rupee raises your investment's rupee value. A stronger rupee lowers it."
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={reset}
-            className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md px-1 text-body-md font-bold text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:decoration-foreground"
-          >
-            <RotateCcw aria-hidden className="size-4" />
-            Set everything back to zero
-          </button>
-        </Reveal>
-
-        <Reveal delay={1} className="lg:sticky lg:top-24 lg:self-start">
-          <article aria-labelledby="what-if-result" className="surface-ink rounded-xl p-6 shadow-lift sm:p-8">
-            <h3 id="what-if-result" className="type-h6">
-              After one year
-            </h3>
-
-            <p className="mt-6 text-body-md font-semibold text-grey-300">Your investment&rsquo;s value</p>
-            <Money value={r.inrValue} className="mt-1 block type-h1 text-secondary num" />
-            <p className="mt-1 text-body-lg font-semibold num">
-              <Money value={r.inrValue - amount} signed /> ({formatPct(r.inrChange)})
-            </p>
-
-            <Columns from={amount} to={r.inrValue} />
-
-            <p className="mt-8 text-body-sm font-semibold text-grey-300">Where the change came from</p>
-            <ul className="mt-1 divide-y divide-ink-2">
-              {rows.map((row) => (
-                <li key={row.label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 py-3">
-                  <span className="min-w-0">
-                    <span className="flex items-center gap-2 text-body-md font-bold">
-                      {row.swatch && <span aria-hidden className={cn("size-2.5 shrink-0 rounded-full", row.swatch)} />}
-                      {row.label}
-                    </span>
-                    <span className="block text-body-sm text-grey-300 num">{row.detail}</span>
-                  </span>
-                  <span className="text-right text-body-md font-bold num">{formatINR(row.value, { signed: true })}</span>
-                  <Bar value={row.value} scale={scale} />
-                </li>
-              ))}
-            </ul>
-
-            <p className="sr-only" aria-live="polite" aria-atomic="true">
-              {formatINR(amount)} would become {formatINR(r.inrValue)} after one year, {formatPct(r.inrChange)}. Example only.
-            </p>
-
-            <p className="mt-4 border-t border-ink-2 pt-4 text-body-sm text-grey-300">
-              Example only, before fees and tax.
-            </p>
-          </article>
-        </Reveal>
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <h3 id="what-if-title" tabIndex={-1} className="type-heading">
+            What could a bad year do to your money?
+          </h3>
+          <Disclosure id="scenarios-v1" as="p" className="mt-1 max-w-[62ch] text-body-md text-muted-foreground" />
+        </div>
+        <ChoiceChips
+          className="shrink-0"
+          legend="If you invest"
+          name="what-if-amount"
+          options={AMOUNTS}
+          value={String(m.amount)}
+          onValueChange={(v) => m.setAmount(Number(v))}
+        />
       </div>
-    </Section>
-  );
-}
 
-/** What you put in beside what you'd have, drawn to the same scale. A second signal, so hidden from screen readers. */
-function Columns({ from, to }: { from: number; to: number }) {
-  const tallest = Math.max(from, to);
-  const column = (value: number, tone: string, label: string) => (
-    <div className="flex h-full flex-1 flex-col justify-end">
-      <motion.div
-        className={cn("rounded-t-md", tone)}
-        initial={false}
-        animate={{ height: `${(value / tallest) * 100}%` }}
-        transition={{ type: "spring", stiffness: 300, damping: 34 }}
-      />
-      <span className="border-t border-ink-3 pt-2 text-body-sm text-grey-300">{label}</span>
-    </div>
-  );
-  return (
-    <div aria-hidden className="mt-6 flex h-40 gap-3">
-      {column(from, "bg-grey-400", "You invest")}
-      {column(to, "bg-secondary", "Value after")}
-    </div>
-  );
-}
+      <Body m={m} />
 
-/** A diverging bar from the centre: right and green for a gain, left and red for a loss. */
-function Bar({ value, scale }: { value: number; scale: number }) {
-  const w = `${Math.min(1, Math.abs(value) / scale) * 50}%`;
-  return (
-    <span aria-hidden className="relative col-span-2 block h-1 rounded-full bg-ink-2">
-      <span className="absolute inset-y-[-2px] left-1/2 w-px bg-ink-4" />
-      <span
-        className={cn(
-          "absolute inset-y-0 rounded-full transition-[width,left] duration-200 ease-out-soft",
-          value >= 0 ? "left-1/2 bg-success" : "bg-error",
-        )}
-        style={value >= 0 ? { width: w } : { width: w, left: `calc(50% - ${w})` }}
-      />
-    </span>
+      <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <Disclosure id="whatif-foot-v1" as="p" className="text-body-md text-muted-foreground" />
+        {/* The label may wrap: at 320 it's wider than the screen on one line. */}
+        <ButtonLink variant="secondary" size="md" href={CTA.href} className="self-start py-2 text-left whitespace-normal sm:self-auto">
+
+          Ask a CA what a bad year could mean for you
+        </ButtonLink>
+      </div>
+
+      {m.live.region}
+    </Panel>
   );
 }

@@ -1,65 +1,129 @@
-// FAQ: only questions we can answer today. Native <details>, so closed answers stay in the page text
-// and work with no JavaScript and in Ctrl+F. "Who holds my money?", fees and tax join once those facts
-// are confirmed (proposal section 9).
+// Questions before you invest (spec §6.7), a Server Component: native <details>, so it works with JS off,
+// several items may be open at once, and Chrome's find-in-page opens a matching closed item. Liquidity is
+// the top unanswered doubt, so "When can I get my money out?" comes first and is open (v1.1, N-d).
+// Each item's id is faq-{slug}: #faq-{slug} links open it (HashHandler). The heading isn't sticky.
+//
+// Not on the page (owner decisions and unconfirmed facts): "Can I lose money?", "Can I invest every
+// month?", and anything on fees, custody or how Paraa makes money.
 import type { ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
-import { InlineLink, Section } from "@/components/paraa/primitives";
+import { ButtonLink } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
+import { FaqItem, FaqList } from "@/components/ui/faq-item";
+import { TextLink } from "@/components/ui/link";
+import { Section } from "@/components/ui/section";
 import { FIU_REG_NO } from "@/lib/links";
+import { CTA } from "@/lib/nav";
 
-const ITEMS: { q: string; a: ReactNode }[] = [
+const ITEMS: readonly { slug: string; question: string; answer: ReactNode }[] = [
   {
-    q: "Is Paraa registered with anyone?",
-    a: `Paraa Capital is registered with FIU-IND (Financial Intelligence Unit-India)${FIU_REG_NO ? `, no. ${FIU_REG_NO},` : ""} for anti-money-laundering reporting. That means verifying customers, keeping records and reporting suspicious transactions. It isn't approval of this investment, and no authority recommends it.`,
+    slug: "money-out",
+    question: "When can I get my money out?",
+    answer:
+      "Each investment has a maturity date. When it matures, redeem it, which moves it to your Paraa wallet. Then withdraw in rupees to a verified bank account in your name.",
   },
   {
-    q: "What do I actually own?",
-    a: "Units of the basket. The basket follows these markets through derivative contracts (agreements whose value follows a price), so you don't own the shares, gold or oil directly.",
+    slug: "registered",
+    question: "Is Paraa registered with anyone?",
+    // The same text as the band's registration row.
+    answer: (
+      <>
+        <Disclosure id="fiu-band-v1" as="span" />
+        {FIU_REG_NO && <span className="num"> Registration no. {FIU_REG_NO}.</span>}
+      </>
+    ),
   },
   {
-    q: "When can I get my money out?",
-    a: "Each investment has a maturity date. When it matures, redeem it, which moves it to your Paraa wallet. Then withdraw in rupees to a verified bank account in your name. Money you've added but not invested can't be withdrawn until it has been invested, matured and redeemed.",
+    slug: "own",
+    question: "What do I actually own?",
+    answer:
+      "Units of the basket. The basket follows US stocks, gold and crude oil through derivative contracts (agreements whose value follows a price), so you don’t own the shares, gold or oil directly.",
   },
   {
-    q: "How often does the price change?",
-    a: "Once a day. Each unit has one price, and money you invest buys units at the next price. Weekends and holidays keep the last price.",
+    slug: "uninvested",
+    question: "Can I take out money I’ve added but not invested?",
+    answer:
+      "Not straight away. Money you add to your Paraa wallet has to be invested first. You can withdraw it after that investment matures and you redeem it.",
   },
   {
-    q: "How does the rupee affect my money?",
-    a: "US stocks, gold and crude oil are mostly priced in dollars. So a weaker rupee raises your investment's rupee value, and a stronger rupee lowers it.",
+    slug: "price",
+    question: "How often does the price change?",
+    answer:
+      "Once a day. Each unit has one price, and money you invest buys units at the next price. Weekends and holidays keep the last price.",
   },
   {
-    q: "Can I invest every month?",
-    a: "Yes. You can set up a monthly plan that invests from your Paraa wallet.",
+    slug: "rupee",
+    question: "How does the rupee affect my money?",
+    answer:
+      "US stocks, gold and crude oil are mostly priced in dollars. So a weaker rupee raises your investment’s rupee value, and a stronger rupee lowers it.",
   },
   {
-    q: "How do I know it's really Paraa?",
-    a: "We never ask you to share your OTP or PIN by call or message, or to pay into a personal account. If someone does, it isn't us.",
+    slug: "tax",
+    question: "How is it taxed?",
+    answer: (
+      <>
+        It depends on how this income is classified. If it’s business income, profit is taxed at your slab rate plus{" "}
+        <span className="num">4%</span> cess. If the basket counts as a virtual digital asset, it’s a flat{" "}
+        <span className="num">30%</span> plus cess, and a loss can’t be set off against other income or carried
+        forward.{" "}
+        <TextLink href="/#tax" className="whitespace-nowrap">
+          Try the tax estimate
+        </TextLink>
+        , and ask a CA about your own tax.
+      </>
+    ),
+  },
+  {
+    slug: "who-reads",
+    question: "Who reads my question?",
+    answer: (
+      <>
+        A chartered accountant (CA) reads it, and we contact you about it. <Disclosure id="ca-paid-v1" as="span" />
+      </>
+    ),
+  },
+  {
+    slug: "real",
+    question: "How do I know it’s really Paraa?",
+    answer: (
+      <>
+        We never ask you to share your OTP or PIN by call or message, or to pay into a personal account. If someone
+        does, it isn’t us. See <TextLink href="/#security-fakes">how to spot a fake</TextLink>.
+      </>
+    ),
   },
 ];
 
 export function Faq() {
   return (
     <Section id="faq" labelledBy="faq-title">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-16">
-        <div className="lg:tall:sticky lg:tall:top-28 lg:self-start">
-          <h2 id="faq-title" className="type-h2 text-balance">
-            Questions before you invest
-          </h2>
-          <p className="mt-4 text-body-xl text-muted-foreground">
-            Don&rsquo;t see yours? <InlineLink href="#ask">Talk to a CA</InlineLink>.
-          </p>
+      <div className="grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div className="mb-8 lg:mb-0">
+          <div className="lg:tall:sticky lg:tall:top-[calc(var(--header-h)+2rem)]">
+            <h2 id="faq-title" tabIndex={-1} className="type-title max-w-[24ch]">
+              Questions before you invest
+            </h2>
+            <p className="mt-4 text-body-xl text-muted-foreground">Short answers to check before you decide.</p>
+            {/* Round 18b: the way out of the FAQ, as an ink card rather than a link in a sentence. */}
+            <div className="theme-ink mt-8 hidden rounded-2xl p-6 sm:p-8 lg:block">
+              <p className="type-heading">Don’t see yours?</p>
+              <p className="mt-2 text-body-lg text-copy">Ask a CA. You don’t need an account.</p>
+              <ButtonLink variant="primary" size="lg" href={CTA.href} className="mt-6">
+                {CTA.label}
+              </ButtonLink>
+            </div>
+            <p className="mt-4 text-body-lg text-copy lg:hidden">
+              Don’t see yours? <TextLink href={CTA.href}>Ask a CA.</TextLink> You don’t need an account.
+            </p>
+          </div>
         </div>
-        <div className="border-b">
+
+        <FaqList>
           {ITEMS.map((item, i) => (
-            <details key={item.q} open={i === 0} className="group border-t">
-              <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 rounded-sm py-4 type-h6 [&::-webkit-details-marker]:hidden">
-                {item.q}
-                <ChevronDown aria-hidden className="size-5 shrink-0 text-faint transition-transform duration-200 ease-out-soft group-open:rotate-180" />
-              </summary>
-              <p className="max-w-[65ch] pb-6 text-body-lg text-muted-foreground">{item.a}</p>
-            </details>
+            <FaqItem key={item.slug} slug={item.slug} question={item.question} open={i === 0}>
+              <p>{item.answer}</p>
+            </FaqItem>
           ))}
-        </div>
+        </FaqList>
       </div>
     </Section>
   );

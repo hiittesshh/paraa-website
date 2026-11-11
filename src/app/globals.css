@@ -1,272 +1,336 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import "shadcn/tailwind.css"; /* only its custom variants (data-open/closed/checked) are used */
 
-/* ---------------------------------------------------------------------------
-   Paraa design system, light theme. Every colour below is taken from the design
-   file (docs/design-tokens.md). Labelled swatches are exact; the unlabelled
-   ramps ("Colors Generator", "Additional Colors") are eyedropped approximations.
+/* ── 0. Reset Tailwind's own scales: only the tokens below can produce classes ── */
+@theme {
+  --color-*: initial;
+  --font-*: initial;
+  --font-weight-*: initial;
+  --text-*: initial;
+  --tracking-*: initial;
+  --leading-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+  --blur-*: initial;
+  --ease-*: initial;
+  --animate-*: initial;
+  --breakpoint-2xl: initial; /* sm 640 · md 768 · lg 1024 · xl 1280 remain */
+}
 
-   Layer 1: primitives (named after the file).  Layer 2: semantic roles, mapped
-   onto shadcn's variable names so shadcn + Watermelon components pick them up.
-   --------------------------------------------------------------------------- */
+/* ── 1. Primitives: the owner's brand board, exact values (brand-board.md, 11 Nov 2026; v1.3).
+      NOT classes; never used in components (QA A22). Unused steps are kept so the board is complete. ── */
+:root {
+  --p-white: #FFFFFF;
+  /* Greyscale (labelled) */
+  --p-grey-50: #F8F9FD;  --p-grey-100: #F1F5F9; --p-grey-200: #E2E8F0; --p-grey-300: #CBD5E1; --p-grey-400: #94A3B8;
+  --p-grey-500: #64748B; --p-grey-600: #475569; --p-grey-700: #334155; --p-grey-800: #1E293B; --p-grey-900: #0F172A;
+  /* Primary (labelled); 1–6 = the tints under the Primary bar; 400–900 = Additional dark */
+  --p-ink: #272A33;
+  --p-ink-1: #3D3F47; --p-ink-2: #52555C; --p-ink-3: #686A70; --p-ink-4: #7D7F85; --p-ink-5: #939499; --p-ink-6: #A9AAAD;
+  --p-ink-400: #86888F; --p-ink-500: #64666F; --p-ink-600: #4C4E57; --p-ink-700: #343844; --p-ink-800: #1F2027; --p-ink-900: #151517;
+  /* Secondary (labelled); 1–6 = the tints under the Secondary bar; 400–900 = Additional gold */
+  --p-gold: #FDC037;
+  --p-gold-1: #FDC64B; --p-gold-2: #FDCD5F; --p-gold-3: #FED373; --p-gold-4: #FED987; --p-gold-5: #FEDF9B; --p-gold-6: #FEE6AF;
+  --p-gold-400: #FED05F; --p-gold-500: #FEBE2F; --p-gold-600: #E5A920; --p-gold-700: #B98818; --p-gold-800: #8C6612; --p-gold-900: #5F440C;
+  /* Light (the third main swatch) and the Colors Generator's light row */
+  --p-light: #F2F2F2;
+  --p-light-1: #F3F3F3; --p-light-2: #F4F4F4; --p-light-3: #F6F6F6; --p-light-4: #F7F7F7; --p-light-5: #F8F8F8; --p-light-6: #FAFAFA;
+  /* Alerts (labelled; Warning by its label, not its sample) */
+  --p-success: #10B981; --p-warning: #FACC15; --p-error: #EF4444;
+}
+
+/* ── 2. Roles. Light is the default. .theme-ink = the one band. .theme-light = a light island inside it ── */
+:root, .theme-light {
+  color-scheme: light;
+  --background: var(--p-white);           /* page, base sections */
+  --background-alt: var(--p-light);       /* v1.3 Light: alternate sections, result inset, read-only fields */
+  --card: var(--p-white);                 /* panels, inputs, mock frames                       1.12 against Light */
+  --muted: var(--p-light);                /* v1.3: quiet fills on white: mock note, money-path middle nodes, info alert */
+  --foreground: var(--p-ink);             /* headings, figures, labels on controls, links   14.33 white · 12.80 Light */
+  --copy: var(--p-grey-700);              /* body paragraphs, answers                         10.35 white · 9.25 Light */
+  --muted-foreground: var(--p-grey-600);  /* secondary text, captions, legal, row labels      7.58 white · 6.77 Light */
+  --placeholder: var(--p-grey-600);       /* v1.3: the +91 adornment (no placeholders exist)  7.58 white · 6.77 read-only Light */
+  --primary: var(--p-ink);                /* primary button fill, checked chip                 white on it 14.33 */
+  --primary-hover: var(--p-ink-1);        /* v1.3 board Primary-1                              white on it 10.50 */
+  --primary-active: var(--p-ink-900);     /*                                                   white on it 18.24 */
+  --primary-foreground: var(--p-white);
+  --brand: var(--p-gold);                 /* v1.3 Secondary: gold fills with ink on them (decision 58). Never text, never state */
+  --brand-foreground: var(--p-ink);       /*                                                   ink on gold 8.72 */
+  --brand-soft: var(--p-gold-6);          /* round 18d: calculator value boxes; ink on it 13.9 */
+  --accent: var(--p-light);               /* shadcn meaning: quiet hover fill (on white) */
+  --accent-foreground: var(--p-ink);
+  --border: var(--p-grey-200);            /* 1px hairlines on white (decorative); .theme-alt steps it up on Light */
+  --border-strong: var(--p-grey-300);     /* slider track (decorative) */
+  --rule: var(--p-ink);                   /* 2px item rules: facts row, steps, "What you own" */
+  --input: var(--p-grey-500);             /* control boundaries                                 4.76 white · 4.25 Light, ≥ 3:1 */
+  --ring: var(--p-ink);                   /* focus                                              14.33 */
+  --error: var(--p-error);                /* error borders and icons only                       3.76 white · 3.36 Light, ≥ 3:1 */
+  --success: var(--p-success);            /* v1.3: fills, icons, borders only, ink on it 5.65; never text on light (2.54). No class yet */
+  --warning: var(--p-warning);            /* v1.3: fills only, ink on it 9.36; never text, icon or border on light (1.53). No class yet */
+  --selection: var(--p-gold-6);           /* v1.3 Secondary-6                                  grey-900 on it 14.58 */
+  --data-us: var(--p-ink);                /* sleeve colours: always beside a text label */
+  --data-gold: var(--p-gold);
+  --data-oil: var(--p-grey-400);
+}
+.theme-light { background-color: var(--background); color: var(--foreground); }
+
+/* v1.3: the alternate (Light) sections. grey-200 hairlines are 1.10:1 on Light (they vanish), so they step up
+   to grey-300 (1.33 on Light, 1.48 on the white cards inside). A .theme-light island inside resets it. */
+.theme-alt {
+  --border: var(--p-grey-300);
+  background-color: var(--background-alt);
+}
+
+.theme-ink {
+  color-scheme: dark;
+  --background: var(--p-ink);
+  --background-alt: var(--p-ink-700);     /* round 18c: chips and pills on ink need a visible fill */
+  --card: var(--p-ink-800);
+  --muted: var(--p-ink-700);
+  --foreground: var(--p-white);           /* 14.33 */
+  --copy: var(--p-grey-300);              /* 9.65 */
+  --muted-foreground: var(--p-grey-300);  /* 9.65 (one light grey in the band; labels differ by size and case) */
+  --primary: var(--p-white);
+  --primary-hover: var(--p-grey-200);
+  --primary-active: var(--p-grey-300);
+  --primary-foreground: var(--p-ink);
+  --accent: var(--p-ink-700);
+  --accent-foreground: var(--p-white);
+  --border: var(--p-ink-600);             /* 1.73 decorative */
+  --border-strong: var(--p-ink-500);      /* 2.51 decorative */
+  --rule: var(--p-white);
+  --data-us: var(--p-white);              /* round 18: the US-stocks swatch would vanish on ink */
+  --input: var(--p-grey-400);             /* 5.59 */
+  --ring: var(--p-white);                 /* 14.33 */
+  /* --brand / --brand-foreground inherit from :root: gold on ink is 8.72, ink on gold 8.72 */
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Round 18 (owner: "bold brand blocks"): a gold block. Ink on gold is 8.72; ink-1 copy on gold 6.4. White cards
+   inside it stay white (--card), and middle money-path nodes use --muted (white). */
+.theme-gold {
+  color-scheme: light;
+  --background: var(--p-gold);
+  --background-alt: var(--p-gold);
+  --card: var(--p-white);
+  --muted: var(--p-white);
+  --foreground: var(--p-ink);
+  --copy: var(--p-ink);
+  --muted-foreground: var(--p-ink-1);
+  --primary: var(--p-ink);
+  --primary-hover: var(--p-ink-1);
+  --primary-active: var(--p-ink-900);
+  --primary-foreground: var(--p-white);
+  --accent: var(--p-gold-4);
+  --border: color-mix(in srgb, var(--p-ink) 22%, transparent);
+  --border-strong: color-mix(in srgb, var(--p-ink) 35%, transparent);
+  --rule: var(--p-ink);
+  --input: var(--p-ink-2);
+  --ring: var(--p-ink);
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* ── 3. Roles as classes. `inline` = read where used, so .theme-ink re-colours everything inside it ── */
 @theme inline {
-  --font-sans: var(--font-manrope), system-ui, sans-serif;
-  --font-heading: var(--font-manrope), system-ui, sans-serif;
-  --font-mono: var(--font-manrope), system-ui, sans-serif;
-
-  /* Main: the three gold swatches at the top of the file */
-  --color-main-1: #FFB000;
-  --color-main-2: #F2A900;
-  --color-main-3: #C68C0A;
-
-  /* Secondary #FDC037 and its "Colors Generator" tints (toward white) */
-  --color-gold-500: #FDC037;
-  --color-gold-400: #FDCB5E;
-  --color-gold-300: #FDD685;
-  --color-gold-200: #FEE2AC;
-  --color-gold-100: #FEEDD3;
-  --color-gold-50: #FFF8EA;
-  /* "Additional Colors" gold 600 → 900 */
-  --color-gold-600: #E5A823;
-  --color-gold-700: #BB861A;
-  --color-gold-800: #8E6414;
-  --color-gold-900: #5E450F;
-
-  /* Primary #272A33 and its ramp (Primary swatch + Additional dark 400 → 900) */
-  --color-ink: #272A33;
-  --color-ink-2: #3D4049;
-  --color-ink-3: #53565E;
-  --color-ink-4: #6A6C73;
-  --color-ink-5: #7F8187;
-  --color-ink-800: #1F2027;
-  --color-ink-900: #131416;
-
-  /* Light swatch */
-  --color-paper: #F2F2F2;
-
-  /* Greyscale 50 → 900 (exact) */
-  --color-grey-50: #F8F9FD;
-  --color-grey-100: #F1F5F9;
-  --color-grey-200: #E2E8F0;
-  --color-grey-300: #CBD5E1;
-  --color-grey-400: #94A3B8;
-  --color-grey-500: #64748B;
-  --color-grey-600: #475569;
-  --color-grey-700: #334155;
-  --color-grey-800: #1E293B;
-  --color-grey-900: #0F172A;
-
-  /* Alerts (exact). Used as fills, icons and borders, never as small text on white. */
-  --color-success: #10B981;
-  --color-warning: #FACC15;
-  --color-error: #EF4444;
-
-  /* semantic roles */
   --color-background: var(--background);
   --color-background-alt: var(--background-alt);
-  --color-foreground: var(--foreground);
   --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-foreground: var(--foreground);
+  --color-copy: var(--copy);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-placeholder: var(--placeholder);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
   --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-hover: var(--secondary-hover);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-faint: var(--faint);
+  --color-brand: var(--brand);                       /* v1.3: bg-brand, only where decision 58 allows (QA A23) */
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  --color-accent-soft: var(--accent-soft);
-  --color-destructive: var(--destructive);
-  --color-positive: var(--positive);
-  --color-negative: var(--negative);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
+  --color-rule: var(--rule);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  --color-error: var(--error);
+  /* --success and --warning get no --color-* alias until a component needs one (decision 62) */
+  --color-data-us: var(--data-us);
+  --color-data-gold: var(--data-gold);
+  --color-data-oil: var(--data-oil);
 
-  /* radius: the file's swatches and cards use soft 8 / 12 / 16 / 24 corners */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-2xl: 32px;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 
-  /* Body sizes, size/line: XLarge 18/29 (ledes) · Large 16/26 (body, inputs) · Medium 14/22 (support,
-     risk, legal) · Small 12/18 (table column labels only). Honesty, risk and legal text is never
-     below 14px, and the old 10px size is retired. */
-  --text-body-xl: 18px;
-  --text-body-xl--line-height: 29px;
-  --text-body-lg: 16px;
-  --text-body-lg--line-height: 26px;
-  --text-body-md: 14px;
-  --text-body-md--line-height: 22px;
-  --text-body-sm: 12px;
-  --text-body-sm--line-height: 18px;
-
-  /* elevation, tinted with Greyscale 900 so shadows stay in-palette */
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.05);
-  --shadow-lift: 0 2px 4px rgb(15 23 42 / 0.05), 0 16px 40px rgb(15 23 42 / 0.10);
-
-  /* motion */
-  --ease-out-soft: cubic-bezier(.23, 1, .32, 1);
+  --spacing-section: var(--section-y);
+  --spacing-head: var(--stack-head);
+  --spacing-gutter: var(--gutter);
+  --spacing-header: var(--header-h);
+  --spacing-readout: var(--readout-h);
 }
 
-/* The site is dark, like its references: near-black page, cards one step up, gold as the one accent.
-   Light cards opt out with surface-light, which puts the design file's light values back. */
+/* ── 4. Literal scales ── */
+@theme {
+  --font-weight-normal: 400;
+  --font-weight-semibold: 600;
+
+  --text-body-xl: 1.125rem; --text-body-xl--line-height: 1.75rem;   /* 18/28 ledes */
+  --text-body-lg: 1rem;     --text-body-lg--line-height: 1.625rem;  /* 16/26 body, inputs, buttons (lg) */
+  --text-body-md: 0.875rem; --text-body-md--line-height: 1.375rem;  /* 14/22 secondary, legal, tags, nav, buttons (md) */
+  --text-micro: 0.75rem;    --text-micro--line-height: 1rem;        /* 12/16 inside the phone mockup only (round 18) */
+
+  --radius-xs: 0.25rem;  /* 4  tags, checkbox, allocation bar outer corners */
+  --radius-sm: 0.5rem;   /* 8  buttons, inputs, chips, alerts, money-path nodes, mock notes */
+  --radius-md: 0.75rem;  /* 12 panels */
+  --radius-lg: 1rem;     /* 16 mock frames */
+  --radius-xl: 1.5rem;   /* 24 brand tiles and cards (round 18) */
+  --radius-2xl: 2rem;    /* 32 colour blocks (round 18) */
+  --radius-phone: 2.75rem; /* 44 the phone mockup's outer corner */
+  --radius-screen: 2.125rem; /* 34 the phone's screen */
+
+  --shadow-panel:
+    0 1px 2px 0 color-mix(in srgb, var(--p-grey-900) 6%, transparent),
+    0 16px 40px -12px color-mix(in srgb, var(--p-grey-900) 18%, transparent);
+  /* Round 18: things that float over a colour block (the phone, its detail cards, the form). */
+  --shadow-float:
+    0 2px 6px 0 color-mix(in srgb, var(--p-ink) 10%, transparent),
+    0 30px 60px -24px color-mix(in srgb, var(--p-ink) 45%, transparent);
+
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
+
+  --animate-spin: spin 1s linear infinite;   /* the "Sending…" icon only */
+  @keyframes spin { to { transform: rotate(360deg); } }
+}
+
+/* ── 5. Layout tokens (surface-independent, so safe on :root) ── */
 :root {
-  --background: #131416;         /* dark 900 */
-  --background-alt: #1F2027;     /* dark 800 */
-  --foreground: #FFFFFF;
-  --card: #1F2027;
-  --card-foreground: #FFFFFF;
-  --popover: #1F2027;
-  --popover-foreground: #FFFFFF;
-  --primary: #FDC037;            /* the main action on a dark page, with a dark label (8.7:1) */
-  --primary-hover: #FFB000;
-  --primary-foreground: #272A33;
-  --secondary: #FDC037;
-  --secondary-hover: #FFB000;
-  --secondary-foreground: #272A33;
-  --muted: #272A33;
-  --muted-foreground: #CBD5E1;   /* Greyscale 300: body text on the page */
-  --faint: #94A3B8;              /* Greyscale 400: captions on the page */
-  --accent: #FDCB5E;             /* gold 400: gold text on dark */
-  --accent-foreground: #272A33;
-  --accent-soft: #272A33;
-  --destructive: #EF4444;
-  --positive: #10B981;
-  --negative: #EF4444;
-  --border: #3D4049;
-  --border-strong: #53565E;
-  --input: #6A6C73;
-  --ring: #FDC037;               /* Primary would vanish on the dark page, so focus is gold */
-  --chart-1: #C68C0A;
-  --chart-2: #272A33;
-  --chart-3: #10B981;
-  --chart-4: #EF4444;
-  --chart-5: #94A3B8;
-  --radius: 12px;
+  --header-h: 4rem;      /* 64 at every width */
+  --readout-h: 3rem;     /* 48 mobile result readout */
+  --gutter: 1rem;        /* 16 */
+  --container: 75rem;    /* 1200 including gutters */
+  --section-y: 4rem;     /* 64 */
+  --stack-head: 2rem;    /* 32 section header → content */
+  @media (width >= 40rem) { --gutter: 1.5rem; }
+  @media (width >= 48rem) { --section-y: 6rem; --stack-head: 3rem; }
 }
 
-/* ---- Heading scale, size/line. h1 is the hero only, h2 section titles and big numbers, h4 card
-   titles, h6 risk titles and FAQ questions. The 48px limit is deliberate (proposal decision 5). ---- */
-@utility type-h1 {
-  font-size: 40px; line-height: 44px; font-weight: 700; letter-spacing: -0.025em;
-  @media (width < 22.5rem) { font-size: 32px; line-height: 37px; }
-  @media (width >= 48rem) { font-size: 48px; line-height: 53px; }
-}
-@utility type-h2 { font-size: 32px; line-height: 37px; font-weight: 700; letter-spacing: -0.02em; @media (width >= 48rem) { font-size: 40px; line-height: 46px; } }
-@utility type-h4 { font-size: 20px; line-height: 25px; font-weight: 700; letter-spacing: -0.01em; @media (width >= 48rem) { font-size: 24px; line-height: 30px; } }
-@utility type-h6 { font-size: 18px; line-height: 23px; font-weight: 700; }
-@utility num { font-variant-numeric: tabular-nums; }
-/* Dark Primary surface: white text, and a gold focus ring because the Primary ring vanishes on it. */
-@utility surface-ink { background-color: var(--color-ink); color: #FFFFFF; }
-/* A light card on the dark page. Everything inside reads the design file's light values. */
-@utility surface-light {
-  background-color: #FFFFFF; color: #0F172A; color-scheme: light;
-  --background: #FFFFFF; --background-alt: #F8F9FD; --foreground: #0F172A; --card: #FFFFFF; --card-foreground: #0F172A;
-  --primary: #272A33; --primary-hover: #3D4049; --primary-foreground: #FFFFFF;
-  --muted: #F1F5F9; --muted-foreground: #475569; --faint: #64748B; --accent: #8E6414;
-  --border: #E2E8F0; --border-strong: #CBD5E1; --input: #64748B; --ring: #272A33;
-}
-@utility container-page { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: 16px; @media (width >= 40rem) { padding-inline: 24px; } }
+@custom-variant tall (@media (height >= 37.5rem));   /* sticky things stick only on screens ≥ 600px tall */
 
-/* `tall:sticky` sticks only on screens at least 600px high, so 200% zoom and landscape phones
-   never have their content covered by something that won't scroll away. */
-@custom-variant tall (@media (height >= 600px));
+@utility container-page { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+@utility num { font-variant-numeric: tabular-nums lining-nums; }
 
-@keyframes land-tint { from { background-color: var(--color-ink-2); } }
-@keyframes scene-drift { to { transform: translateY(var(--drift)); } }
-@keyframes line-fill { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+/* Type roles. Headings are utilities because their size steps by breakpoint.
+   v1.3 (brand board): headings are Bold 700, as in the design file. 600 stays for UI emphasis (decision 61). */
+/* Round 18: the hero headline is the page's one big typographic moment (owner: the hero and type felt weak). */
+@utility type-display { font-size: 2.5rem; line-height: 2.75rem; font-weight: 700; letter-spacing: -0.035em; text-wrap: balance;
+  @media (width < 22.5rem) { font-size: 2.125rem; line-height: 2.375rem; }
+  @media (width >= 48rem) { font-size: 3.5rem; line-height: 3.75rem; }
+  @media (width >= 80rem) { font-size: 4.25rem; line-height: 4.5rem; } }
+@utility type-title { font-size: 2rem; line-height: 2.375rem; font-weight: 700; letter-spacing: -0.03em; text-wrap: balance;
+  @media (width >= 48rem) { font-size: 2.5rem; line-height: 2.875rem; }
+  @media (width >= 64rem) { font-size: 3rem; line-height: 3.25rem; } }
+/* Round 18: big numbers on brand tiles (basket weights, step numbers). */
+@utility type-numeral { font-size: 4.5rem; line-height: 1; font-weight: 700; letter-spacing: -0.05em; font-variant-numeric: tabular-nums lining-nums;
+  @media (width >= 64rem) { font-size: 8.5rem; } }
+/* Round 18f: the calculator's answer. Sized so ₹10,50,000 fits its panel at every width. Round 18h: one step
+   smaller, so the whole calculator fits a 900px-tall screen. */
+@utility type-result { font-size: 2.25rem; line-height: 1.05; font-weight: 700; letter-spacing: -0.04em; font-variant-numeric: tabular-nums lining-nums;
+  @media (width >= 64rem) { font-size: 2.75rem; } }
+/* Round 18h: the scenario's name in the "One at a time" card. */
+@utility type-scenario { font-size: 1.75rem; line-height: 2.125rem; font-weight: 700; letter-spacing: -0.025em; text-wrap: balance;
+  @media (width >= 64rem) { font-size: 2rem; line-height: 2.375rem; } }
+/* Round 18h: what a step took away, on the step-by-step bars. Decorative; the figures carry the meaning. */
+@utility bg-hatch { background-image: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--foreground) 55%, transparent) 0 1.5px, transparent 1.5px 4.5px); }
+@utility type-numeral-sm { font-size: 3.5rem; line-height: 1; font-weight: 700; letter-spacing: -0.045em; font-variant-numeric: tabular-nums lining-nums;
+  @media (width >= 64rem) { font-size: 4.75rem; } }
+@utility type-heading { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance;
+  @media (width >= 64rem) { font-size: 1.5rem; line-height: 2rem; } }
+@utility type-subhead { font-size: 1.125rem; line-height: 1.625rem; font-weight: 700; letter-spacing: -0.005em; }
+/* v1.3: the FAQ questions. The same metrics as type-subhead at 600: they're control labels in a list of nine, not headings */
+@utility type-question { font-size: 1.125rem; line-height: 1.625rem; font-weight: 600; letter-spacing: -0.005em; }
+@utility type-figure { font-size: 2rem; line-height: 2.375rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums;
+  @media (width >= 48rem) { font-size: 2.5rem; line-height: 2.875rem; } }
+@utility type-label { font-size: 0.75rem; line-height: 1rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
 
 @layer base {
-  * { @apply border-border outline-ring/50; }
-  html { @apply font-sans; scroll-behavior: smooth; scroll-padding-top: 88px; scrollbar-color: var(--color-grey-300) transparent; }
-  body { @apply bg-background text-foreground; font-size: 16px; line-height: 26px; -webkit-font-smoothing: antialiased; caret-color: var(--accent); }
-  p { text-wrap: pretty; }
-  :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 4px; }
-  ::selection { background: var(--color-gold-200); color: var(--color-grey-900); }
+  /* v1.2: the raw role variable, not the --color-border alias. Aliases from @theme inline resolve once on
+     :root, so only role variables re-colour inside .theme-ink. Rule for all plain CSS: read var(--role),
+     never var(--color-role). */
+  * { border-color: var(--border); }
+  html { font-family: var(--font-sans); scroll-padding-top: calc(var(--header-h) + 1rem); -webkit-text-size-adjust: 100%; }
+  /* v1.5: no CSS scroll-behavior. It animated cold loads with a hash (about 9,000px to #ask at 390), and
+     HashHandler owns every in-page click with an explicit behaviour (§5.3). */
+  body { background-color: var(--background); color: var(--foreground); font-size: 1rem; line-height: 1.625rem; -webkit-font-smoothing: antialiased; }
+  p, li, dt, dd, summary, figcaption, label, legend { text-wrap: pretty; }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  /* Headings, main and alerts receive focus only from script (after an anchor jump, a send, an error).
+     They aren't controls, so they get no ring. One rule for all of them (decision 21). */
+  [tabindex="-1"]:focus { outline: none; }
+  ::selection { background: var(--selection); color: var(--p-grey-900); }
+  ::placeholder { color: var(--placeholder); opacity: 1; }
+  /* v1.3 (D1 V7, D2 N2): the gloss is written out in words, and the tooltip does nothing on touch, so the dotted
+     underline only looks like a link. The title stays for screen readers and mouse hover. */
+  abbr[title] { text-decoration: none; }
+  .lucide { stroke-width: 1.75; }
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-delay: 0s !important;
-      transition-duration: 0.01ms !important;
-      transition-delay: 0s !important;
-    }
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+      animation-delay: 0s !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
   }
 }
 
-/* ---- Motion that has to live in CSS. Everything here starts from the finished state, so a page
-   with no JavaScript, an old browser or reduced motion simply shows everything. ---- */
+/* The slider (§4.14): the one piece of component CSS. Fill runs between --a and --b (0–1), set inline.
+   Literal radius/easing values on purpose: Tailwind may prune theme variables that no utility uses. */
 @layer components {
-  /* Reveal: components/paraa/reveal.tsx. The script sets data-reveal-state only on blocks still below
-     the fold, and only when motion is welcome. The markup alone never hides anything. */
-  [data-reveal-state="waiting"] { opacity: 0; transform: translateY(12px); }
-  [data-reveal-state="shown"] {
-    transition: opacity 500ms var(--ease-out-soft), transform 500ms var(--ease-out-soft);
-    transition-delay: var(--reveal-delay, 0ms);
+  .range {
+    --thumb: 1.5rem; --track: 0.5rem; /* round 18d: a firmer 8px track */
+    --pos-a: calc(var(--thumb) / 2 + (100% - var(--thumb)) * var(--a, 0));
+    --pos-b: calc(var(--thumb) / 2 + (100% - var(--thumb)) * var(--b, 0));
+    appearance: none; display: block; width: 100%; height: 2.75rem; margin: 0; background: transparent; cursor: pointer;
+    border-radius: 0.5rem;
   }
-
-  /* Mark: a gold stroke under a phrase, drawn in full by default. Its sweep runs once, 600ms. */
-  .mark {
-    background-image: linear-gradient(var(--color-secondary), var(--color-secondary));
-    background-repeat: no-repeat;
-    background-position: 0 92%;
-    background-size: 100% 0.2em;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
+  .range::-webkit-slider-runnable-track {
+    height: var(--track); border-radius: 0.25rem;
+    background: linear-gradient(to right, var(--border-strong) var(--pos-a), var(--foreground) var(--pos-a) var(--pos-b), var(--border-strong) var(--pos-b));
   }
-  .mark[data-reveal-state="waiting"] { opacity: 1; transform: none; background-size: 0% 0.2em; }
-  .mark[data-reveal-state="shown"] { transition: background-size 600ms var(--ease-out-soft) 150ms; }
-
-  /* A link landed here: a brief grey tint that fades away (the one 1.2s motion on the page). */
-  .land-target:target { animation: land-tint 1.2s var(--ease-out-soft); }
-
-  /* The money-path line: put it inside a grey track of the same size. Its tip follows the middle of
-     the screen, from the track's top reaching there to its bottom reaching there. CSS only; where
-     unsupported, or with reduced motion, the line is simply full. */
-  .scroll-line { transform-origin: top; }
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .scroll-line {
-        animation: line-fill linear both;
-        animation-timeline: view();
-        animation-range: cover 50vh cover calc(100% - 50vh);
-      }
-    }
+  .range::-moz-range-track {
+    height: var(--track); border-radius: 0.25rem;
+    background: linear-gradient(to right, var(--border-strong) var(--pos-a), var(--foreground) var(--pos-a) var(--pos-b), var(--border-strong) var(--pos-b));
   }
-
-  /* The hero's landscape: each layer drifts at its own speed as the page scrolls. Compositor only,
-     and where unsupported, or with reduced motion, the scene simply holds still. */
-  @supports (animation-timeline: scroll()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .scene-layer {
-        animation: scene-drift linear both;
-        animation-timeline: scroll();
-        animation-range: 0 100vh;
-        will-change: transform;
-      }
-    }
+  .range::-webkit-slider-thumb {
+    appearance: none; width: var(--thumb); height: var(--thumb); margin-top: calc((var(--track) - var(--thumb)) / 2);
+    border-radius: 9999px; background: var(--card); border: 2px solid var(--foreground);
+    transition: box-shadow 150ms cubic-bezier(.23, 1, .32, 1);
   }
+  .range::-moz-range-thumb {
+    width: var(--thumb); height: var(--thumb); border-radius: 9999px; background: var(--card); border: 2px solid var(--foreground);
+    transition: box-shadow 150ms cubic-bezier(.23, 1, .32, 1);
+  }
+  .range:hover::-webkit-slider-thumb, .range:active::-webkit-slider-thumb { box-shadow: 0 0 0 6px color-mix(in srgb, var(--foreground) 12%, transparent); }
+  .range:hover::-moz-range-thumb, .range:active::-moz-range-thumb { box-shadow: 0 0 0 6px color-mix(in srgb, var(--foreground) 12%, transparent); }
+  .range:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  @media (forced-colors: active) { .range { forced-color-adjust: auto; } }
+}
 
-  /* The arrow-led cards scroll sideways with no scrollbar: the arrows and swipe do the work. */
-  .no-scrollbar { scrollbar-width: none; }
-  .no-scrollbar::-webkit-scrollbar { display: none; }
+/* Round 18: the hero visual's entrance. Pure CSS, so it plays without JavaScript, runs once, and the global
+   reduced-motion rule cuts it to nothing. The h1 never animates (it's the LCP element). */
+@keyframes rise { from { opacity: 0; transform: translateY(1.5rem); } to { opacity: 1; transform: none; } }
+@keyframes pop { from { opacity: 0; transform: translateY(0.75rem) scale(0.96); } to { opacity: 1; transform: none; } }
+.enter-rise { animation: rise 800ms cubic-bezier(.23, 1, .32, 1) both; animation-delay: var(--delay, 0ms); }
+.enter-pop { animation: pop 600ms cubic-bezier(.23, 1, .32, 1) both; animation-delay: var(--delay, 0ms); }
 
-  @media print {
-    [data-reveal-state="waiting"] { opacity: 1; transform: none; }
-    .mark[data-reveal-state="waiting"] { background-size: 100% 0.2em; }
+/* Print the band light: browsers drop backgrounds on paper. Unlayered, so it beats .theme-ink. */
+@media print {
+  [data-reveal], [data-reveal] > * { opacity: 1 !important; transform: none !important; }
+  .theme-ink {
+    color-scheme: light;
+    --background: var(--p-white); --card: var(--p-white); --muted: var(--p-light);
+    --foreground: var(--p-ink); --copy: var(--p-grey-700); --muted-foreground: var(--p-grey-600);
+    --border: var(--p-grey-200); --border-strong: var(--p-grey-300); --rule: var(--p-ink);
+    --input: var(--p-grey-500); --ring: var(--p-ink);
   }
 }

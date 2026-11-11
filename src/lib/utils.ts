@@ -1,13 +1,13 @@
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 
-// tailwind-merge must know our custom design-file sizes (text-body-xl … text-body-sm) are
-// font sizes. Without this it treats them as text *colours* and silently drops a real colour
-// such as text-primary-foreground (it made the labels on gold buttons pale).
+// tailwind-merge must know our custom sizes (text-body-xl, -lg, -md) are font sizes (spec §2.3).
+// Without this it treats them as text *colours* and silently drops a real colour such as
+// text-primary-foreground, or a colour role such as text-copy.
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
-      "font-size": [{ text: ["body-xl", "body-lg", "body-md", "body-sm"] }],
+      "font-size": [{ text: ["body-xl", "body-lg", "body-md", "micro"] }],
     },
   },
 });

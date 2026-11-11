@@ -49,11 +49,11 @@ docs/
 |---|---|---|
 | Next.js 16 (App Router) | Pages, static prerendering, `next/font` | The homepage prerenders to static HTML. Manrope is self-hosted at build time, so visitors' browsers never call Google. |
 | Tailwind CSS 4 | Styling | The design file's tokens live once in `src/app/globals.css` (`@theme`); every component uses them. |
-| shadcn/ui | Button, the `cn()` helper | Source is copied in, not imported, so it is restyled to the design file. |
-| **Watermelon UI** | `AdaptiveSlider` | Installed with `npx shadcn add https://registry.watermelon.sh/r/<name>.json`, then adapted (see below). |
-| Motion | The form's states, the slider | `MotionConfig reducedMotion="user"` honours the OS "reduce motion" setting. The header and scroll reveals no longer use it: they are CSS plus small scripts (`components/site/header.tsx`, `components/paraa/reveal.tsx`), so the page is complete without JavaScript. |
-| @number-flow/react | Animated rupee figures in the what-if | Digits roll to the new value; screen readers get the plain formatted string. |
+| shadcn/ui | The `ui/` component pattern, the `cn()` helper | Source is copied in, not imported, so it is restyled to the design file. Tabs and Button are hand-built (round 17) to keep JavaScript small. |
 | lucide-react | Icons | One icon set. `react-icons` was removed. |
+| Motion, Magic UI, Aceternity, React Bits | **Installed, not used** | The owner chose "install only" (round 17). Nothing in `src` may import them until the spec says so (QA A4/A24). On this network, `npx shadcn add @aceternity/…` and `@react-bits/…` need `NODE_OPTIONS=--dns-result-order=ipv4first`. |
+
+**Round 17:** the homepage was rebuilt from `docs/redesign/design/spec.md`, the source of truth for design, copy and QA. Its fixes are tracked in `docs/redesign/design/fix-list.md`. NumberFlow, Base UI, the Radix accordion, `tw-animate-css` and the Watermelon slider were removed.
 
 Material UI was **not** used. Its look fights the design file and would add a second styling
 system; the brief said "may use".

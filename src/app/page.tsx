@@ -1,59 +1,47 @@
-// The homepage, in the shape of its references (Mercury, Wise, Plaid): one scene, then the product,
-// then what it is, how it works, our rules, what you get, the questions, and the
-// form. Only what we can state today is on it; docs/redesign/proposal.md section 9 lists the rest.
+// The homepage (spec §5.1): the sections in page order, one ink band (Security), alternating white and
+// the alternate light surface around it. The skip link comes first in <body> and lands on <main> (tabIndex -1, no ring). The
+// top sentinel is main's first child: ScrollState watches it to show the header's hairline. ScrollState
+// and HashHandler render nothing and mount once, after </main>.
 import type { Metadata } from "next";
-import { SiteHeader } from "@/components/site/header";
-import { SiteFooter } from "@/components/site/footer";
-import { RevealController } from "@/components/paraa/reveal-controller";
-import { Hero } from "@/components/home/hero";
-import { Basket } from "@/components/home/basket";
-import { WhatIf } from "@/components/home/what-if";
-import { HowMoneyMoves } from "@/components/home/how-money-moves";
-import { Tax } from "@/components/home/tax";
-import { Trust } from "@/components/home/trust";
-import { WhatYouGet } from "@/components/home/what-you-get";
-import { Faq } from "@/components/home/faq";
 import { Ask } from "@/components/home/ask";
+import { Basket } from "@/components/home/basket";
+import { Faq } from "@/components/home/faq";
+import { HashHandler } from "@/components/home/hash-handler";
+import { Hero } from "@/components/home/hero";
+import { HowItWorks } from "@/components/home/how-it-works";
+import { Security } from "@/components/home/security";
+import { Tools } from "@/components/home/tools";
+import { SiteFooter } from "@/components/site/footer";
+import { SiteHeader, SkipLink, TopSentinel } from "@/components/site/header";
+import { ScrollState } from "@/components/site/scroll-state";
 
-const DESCRIPTION =
-  "US stocks, gold and crude oil in one basket, bought in rupees and priced daily, for residents of India.";
-
+// Spec §6.0. No risk sentence here: owner decision 1 covers the hero cell only. openGraph (title,
+// description, site name) comes from the root layout, which holds the same §6.0 values; a page-level
+// openGraph would replace the layout's object rather than merge with it.
 export const metadata: Metadata = {
-  title: { absolute: "Paraa Capital: a basket that tracks US stocks, gold and crude oil, for residents of India" },
-  description: DESCRIPTION,
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "A basket that tracks US stocks, gold and crude oil",
-    description: DESCRIPTION,
-    url: "/",
-  },
+  title: { absolute: "Paraa Capital: a basket that follows US stocks, gold and crude oil, for residents of India" },
+  description:
+    "One basket that follows US stocks, gold and crude oil, for residents of India. You add money and withdraw in rupees.",
 };
 
 export default function Home() {
   return (
     <>
-      <a
-        href="#main"
-        className="sr-only z-[100] rounded-md bg-primary px-4 font-bold text-primary-foreground no-underline focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:inline-flex focus:min-h-11 focus:items-center"
-      >
-        Skip to content
-      </a>
+      <SkipLink />
       <SiteHeader />
-
-      <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
+      <main id="main" tabIndex={-1} className="flex-1 outline-none">
+        <TopSentinel />
         <Hero />
         <Basket />
-        <WhatIf />
-        <HowMoneyMoves />
-        <Tax />
-        <Trust />
-        <WhatYouGet />
+        <HowItWorks />
+        <Security />
+        <Tools />
         <Faq />
         <Ask />
       </main>
-
+      <ScrollState />
+      <HashHandler />
       <SiteFooter />
-      <RevealController />
     </>
   );
 }

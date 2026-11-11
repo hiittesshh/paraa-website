@@ -1,32 +1,52 @@
-// "Talk to a CA": the page ends on the action itself, as a white card on a full band of brand gold,
-// like the band Wise gives its calculator. Ready when seen, so no reveal.
+// "Ask a chartered accountant" (spec §6.8): what happens to a question, the CA-payment limit (from the
+// disclosure registry), and the form card. Below 1024 the form follows the text; from 1024 they sit side by
+// side (L3, 5 / 7).
+import { Disclosure } from "@/components/ui/disclosure";
+import { Reveal } from "@/components/motion/reveal";
+import { Panel } from "@/components/ui/panel";
+import { Section } from "@/components/ui/section";
 import { AskForm } from "./ask-form";
 
-const NEXT = ["Your question goes to our team.", "We contact you about it.", "You decide what to do next."];
+const NEXT_STEPS = ["A CA reads your question.", "We contact you about it.", "You decide what to do next."] as const;
 
 export function Ask() {
   return (
-    <section id="ask" aria-labelledby="ask-title" className="scroll-mt-16 bg-secondary py-20 text-ink md:py-28">
-      <div className="container-page grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center lg:gap-16">
+    <Section id="ask" labelledBy="ask-title" tone="gold">
+      <div className="lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start lg:gap-16">
         <div>
-          <h2 id="ask-title" className="type-h1 text-balance">
+          <h2 id="ask-title" tabIndex={-1} className="type-title max-w-[24ch]">
             Ask a chartered accountant before you decide
           </h2>
-          <p className="mt-4 text-body-xl">You don&rsquo;t need an account to ask.</p>
-          <ol className="mt-8 space-y-3">
-            {NEXT.map((step, i) => (
-              <li key={step} className="flex items-center gap-3 text-body-lg font-semibold">
-                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-ink text-body-md font-bold text-white num">{i + 1}</span>
-                {step}
+          <p className="mt-4 max-w-[52ch] text-body-xl text-muted-foreground">
+            You don’t need an account. Write your question, and we’ll contact you about it.
+          </p>
+          <h3 className="mt-10 type-subhead">What happens next</h3>
+          {/* Round 18b: the three steps as white cards on the gold band, numbered like How it works. */}
+          <Reveal as="ol" stagger={0.1} className="mt-4 space-y-3">
+            {NEXT_STEPS.map((step, i) => (
+              <li key={step} className="flex items-center gap-4 rounded-xl bg-card p-4">
+                <span
+                  aria-hidden
+                  className="grid size-10 shrink-0 place-items-center rounded-sm bg-primary text-body-lg font-semibold text-primary-foreground num"
+                >
+                  {i + 1}
+                </span>
+                <span className="text-body-lg font-semibold">{step}</span>
               </li>
             ))}
-          </ol>
-          <p className="mt-8 text-body-md">
-            Your CA may be paid by us.
-          </p>
+          </Reveal>
+          <div className="mt-6 space-y-1 border-t pt-5">
+            <Disclosure id="ca-paid-v1" as="p" className="text-body-lg text-copy" />
+            <p className="text-body-lg text-copy">We never ask for your OTP or PIN by call or message.</p>
+          </div>
         </div>
-        <AskForm />
+
+        {/* id="ask-form": the form's permalink target (§7.1), so a post lands with its outcome in view. */}
+        {/* theme-light: the card keeps the light roles (inputs, hairlines, errors) on the gold band. */}
+        <Panel id="ask-form" className="theme-light mt-10 border-0 shadow-float md:mt-12 lg:mt-0">
+          <AskForm />
+        </Panel>
       </div>
-    </section>
+    </Section>
   );
 }

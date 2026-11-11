@@ -10,14 +10,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
-  },
+  // Tailwind runs through PostCSS (postcss.config.mjs), the documented setup. The old custom
+  // `@tailwindcss/turbopack` loader rule missed source changes, so new classes didn't appear in dev.
 };
 
 export default function config(phase: string): NextConfig {
