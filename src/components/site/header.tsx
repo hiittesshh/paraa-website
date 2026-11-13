@@ -14,6 +14,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { NavLink } from "@/components/ui/link";
 import { BLOG_LINK, CTA, NAV } from "@/lib/nav";
 import { Brand } from "./brand";
+import { LookToggle } from "./look-toggle";
 import { MobileMenu } from "./mobile-menu";
 
 export function SiteHeader() {
@@ -46,6 +47,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <LookToggle />
           <ButtonLink variant="secondary" size="md" href={CTA.href}>
             {CTA.label}
           </ButtonLink>

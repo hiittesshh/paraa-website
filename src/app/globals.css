@@ -341,7 +341,7 @@ html, body { overflow-x: clip; }
 
 /* Owner, 13 Nov 2026: the nav bar and hero on beige "for now". Light roles (ink text), a warm ground. */
 .theme-beige {
-  --background: #F4EEE3;
+  --background: #DDCBA9; /* darker sand than the hero, so the gold logo reads (owner, 13 Nov 2026) */
   --background-alt: #EDE5D6;
   --muted: #EDE5D6;
   --accent: #EDE5D6;
@@ -349,3 +349,32 @@ html, body { overflow-x: clip; }
   background-color: var(--background);
   color: var(--foreground);
 }
+
+/* The dark look, from the header's toggle (html[data-look="dark"]): the header and hero back on ink. */
+html[data-look="dark"] :is([data-header], .hb-hero) {
+  color-scheme: dark;
+  --background: var(--p-ink);
+  --background-alt: var(--p-ink-700);
+  --card: var(--p-ink-800);
+  --muted: var(--p-ink-700);
+  --foreground: var(--p-white);
+  --copy: var(--p-grey-300);
+  --muted-foreground: var(--p-grey-300);
+  --primary: var(--p-white);
+  --primary-hover: var(--p-grey-200);
+  --primary-active: var(--p-grey-300);
+  --primary-foreground: var(--p-ink);
+  --accent: var(--p-ink-700);
+  --accent-foreground: var(--p-white);
+  --border: var(--p-ink-600);
+  --border-strong: var(--p-ink-500);
+  --rule: var(--p-white);
+  --input: var(--p-grey-400);
+  --ring: var(--p-white);
+  background-color: var(--p-ink);
+  color: var(--p-white);
+}
+html[data-look="dark"] [data-header] { border-bottom-color: rgb(255 255 255 / .08); }
+html[data-look="dark"] [data-top-sentinel] { background: var(--p-ink); }
+/* The gold logo on the light sand header: a hairline ink edge gives the letters definition. */
+html:not([data-look="dark"]) .theme-beige img { filter: drop-shadow(0 0 0.5px rgb(39 42 51 / .55)) drop-shadow(0 1px 1px rgb(39 42 51 / .25)); }

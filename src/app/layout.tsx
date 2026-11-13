@@ -36,7 +36,15 @@ export const viewport: Viewport = { themeColor: "#FFFFFF", colorScheme: "light" 
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-IN" className={`${manrope.variable} h-full`}>
+    <html lang="en-IN" className={`${manrope.variable} h-full`} suppressHydrationWarning>
+      <head>
+        {/* The header and hero look (owner, 13 Nov 2026): a saved "dark" choice is applied before first paint. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("paraa-look")==="dark")document.documentElement.dataset.look="dark"}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
