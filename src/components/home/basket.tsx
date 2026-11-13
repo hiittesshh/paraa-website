@@ -1,89 +1,129 @@
-// What you're buying (round 18, "bold brand blocks"): the basket as three colour tiles sized by their example
-// weight, each with its weight as a big number, what it is and why it moves. US stocks is the ink tile (half
-// the basket, the tallest), gold is the gold tile, crude oil the Light tile. The weights are an example and
-// say so above the tiles. The tiles rise in one after another the first time they scroll into view.
-import { Reveal } from "@/components/motion/reveal";
+// What you're buying (owner, 13 Nov 2026: the c3 concept's scrolling markets and liquid hover, on site B). On ink,
+// one market at a time: the section holds on screen while US stocks, gold and crude oil open in turn, each with its
+// example weight, what it is and why it moves, and its photograph fills the frame at the right, zooming slowly with
+// the scroll. Without JS, under reduced motion and below 1024 × 640 every market is a static row with its photograph.
+// Then "You hold units, not the assets" set very large, rippling under a moving mouse.
+import Image from "next/image";
+import { LiquidType } from "@/components/motion/liquid-type";
+import { PinnedScroll } from "@/components/motion/pinned-scroll";
 import { Disclosure } from "@/components/ui/disclosure";
-import { Section } from "@/components/ui/section";
-import { SectionHeader } from "@/components/ui/section-header";
 import { ExampleTag } from "@/components/ui/tag";
-import { SLEEVES, type SleeveId } from "@/lib/basket";
+import { SLEEVES } from "@/lib/basket";
 import { formatPct } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { PHOTOS } from "@/lib/photos";
 import { SLEEVE_INFO } from "./sleeve-info";
+import "./basket.css";
 
-// US stocks (half the basket) is the big ink tile with its weight as the page's largest number; gold and crude
-// oil are the two smaller tiles beside it, name and text on the left, their weight on the right.
-const TILE: Record<SleeveId, string> = {
-  us: "theme-ink lg:col-span-7 lg:row-span-2",
-  gold: "theme-gold lg:col-span-5",
-  oil: "theme-alt lg:col-span-5",
-};
+function Photo({ id, sizes }: { id: keyof typeof PHOTOS; sizes: string }) {
+  const p = PHOTOS[id];
+  return <Image src={p.src} alt={p.alt} width={p.width} height={p.height} sizes={sizes} />;
+}
 
 export function Basket() {
   return (
-    <Section id="basket" labelledBy="basket-title">
-      <SectionHeader
-        id="basket-title"
-        title="What you’re buying"
-        lede="Units of one basket that follows three markets. Each moves for its own reasons."
-        layout="split"
-      />
-
-      <div className="mb-4 flex items-center gap-3">
-        <ExampleTag className="shrink-0" />
-        <Disclosure id="basket-example-v1" as="p" className="text-body-md text-muted-foreground" />
-      </div>
-
-      <Reveal as="ul" stagger={0.12} className="grid gap-4 lg:grid-cols-12 lg:grid-rows-2">
-        {SLEEVES.map((sleeve) => {
-          const pct = formatPct(sleeve.weight, { digits: 0, signed: false });
-          const info = SLEEVE_INFO[sleeve.id];
-          const figure = (
-            <>
-              {pct}
-              <span className="sr-only"> of the example mix</span>
-            </>
-          );
-          // The tile's colour is the sleeve's colour, so it needs no swatch.
-          if (sleeve.id === "us") {
+    <PinnedScroll
+      id="basket"
+      labelledBy="basket-title"
+      count={SLEEVES.length}
+      className="mk theme-ink py-section"
+      frame={
+        <>
+          {SLEEVES.map((s, i) => (
+            <figure key={s.id} className="mk-shot" data-i={i} style={{ "--i": i } as React.CSSProperties}>
+              <Photo id={s.id} sizes="(min-width: 1440px) 720px, 56vw" />
+            </figure>
+          ))}
+          {/* The frame's furniture: which market of three, and its share of the example mix lit on the bar. */}
+          <div className="mk-count num">
+            {SLEEVES.map((s, i) => (
+              <span key={s.id} data-i={i}>
+                {String(i + 1).padStart(2, "0")}
+              </span>
+            ))}
+            <span className="mk-count-of">/ {String(SLEEVES.length).padStart(2, "0")}</span>
+          </div>
+          <div className="mk-bar">
+            {SLEEVES.map((s, i) => (
+              <span key={s.id} data-i={i} data-sleeve={s.id} style={{ flexGrow: s.weight }} />
+            ))}
+          </div>
+        </>
+      }
+      after={
+        <div className="container-page mk-units">
+          <div className="mk-units-head">
+            <p className="mk-eyebrow">What you own</p>
+            <LiquidType>
+              <h3 className="mk-units-title">
+                You hold units, <span className="mk-units-soft">not the assets.</span>
+              </h3>
+            </LiquidType>
+          </div>
+          {/* The chain from what you own to what you don't: one row on a desktop, a column on a phone. */}
+          <ol className="mk-chain" aria-label="How your units follow the markets">
+            <li className="mk-link mk-link-own">
+              <span className="mk-link-tag">You own</span>
+              <span className="mk-link-name">Units of the basket</span>
+              <span className="mk-link-body">What you buy with your rupees, and what you hold.</span>
+            </li>
+            <li className="mk-link">
+              <span className="mk-link-tag">Which follow, through</span>
+              <span className="mk-link-name">Derivative contracts</span>
+              <span className="mk-link-body">Agreements whose value follows a price.</span>
+            </li>
+            <li className="mk-link mk-link-not">
+              <span className="mk-link-tag">You don’t own</span>
+              <span className="mk-link-name">The shares, gold or oil</span>
+              <span className="mk-link-body">The basket follows their prices. You don’t own them directly.</span>
+            </li>
+          </ol>
+        </div>
+      }
+    >
+      <div className="mk-text">
+        <h2 id="basket-title" tabIndex={-1} className="type-title">
+          What you’re buying
+        </h2>
+        <div className="mk-example">
+          <ExampleTag className="shrink-0" />
+          <Disclosure id="basket-example-v1" as="p" className="text-body-md text-muted-foreground" />
+        </div>
+        <ol className="mk-steps">
+          {SLEEVES.map((s, i) => {
+            const info = SLEEVE_INFO[s.id];
             return (
-              <li key={sleeve.id} className={cn("flex flex-col justify-between gap-12 rounded-2xl p-6 sm:p-8 lg:p-10", TILE.us)}>
-                <h3 className="type-heading">{sleeve.name}</h3>
-                <div>
-                  <p className="type-numeral text-brand">{figure}</p>
-                  <p className="mt-6 max-w-[34ch] text-body-xl font-semibold text-foreground">{info.what}</p>
-                  <p className="mt-1 max-w-[40ch] text-body-lg text-copy">{info.why}</p>
+              <li key={s.id} className="mk-step" data-i={i} style={{ "--i": i } as React.CSSProperties}>
+                <div className="mk-head">
+                  <h3 className="mk-name">{s.name}</h3>
+                  <p className="mk-pct num">
+                    {formatPct(s.weight, { digits: 0, signed: false })}
+                    <span className="sr-only"> of the example mix</span>
+                  </p>
                 </div>
+                <div className="mk-body">
+                  <div className="mk-body-in">
+                    <p className="mk-what">{info.what}</p>
+                    <p className="mk-why">{info.why}</p>
+                  </div>
+                </div>
+                <figure className="mk-inline">
+                  <Photo id={s.id} sizes="(min-width: 640px) 50vw, 100vw" />
+                </figure>
               </li>
             );
-          }
-          return (
-            <li
-              key={sleeve.id}
-              className={cn("grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 rounded-2xl p-6 sm:p-8 lg:p-10", TILE[sleeve.id])}
-            >
-              <div>
-                <h3 className="type-heading">{sleeve.name}</h3>
-                <p className="mt-4 text-body-lg font-semibold text-foreground">{info.what}</p>
-                <p className="mt-1 text-body-md text-copy">{info.why}</p>
-              </div>
-              <p className="type-numeral-sm">{figure}</p>
-            </li>
-          );
-        })}
-      </Reveal>
-
-      <Reveal className="mt-4 grid gap-6 rounded-2xl border p-6 sm:p-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16 lg:p-10">
-        <div>
-          <p className="type-label text-muted-foreground">What you own</p>
-          <h3 className="mt-2 type-heading">You hold units, not the assets</h3>
+          })}
+        </ol>
+        {/* Live only: the market in hand's two lines, crossfading in one fixed place so the list above never moves.
+            The same lines stay in each step for screen readers (visually hidden when live). */}
+        <div className="mk-detail" aria-hidden>
+          {SLEEVES.map((s, i) => (
+            <div key={s.id} data-i={i} className="mk-detail-item">
+              <p className="mk-what">{SLEEVE_INFO[s.id].what}</p>
+              <p className="mk-why">{SLEEVE_INFO[s.id].why}</p>
+            </div>
+          ))}
         </div>
-        <p className="max-w-prose text-body-lg text-copy">
-          Units of the basket. The basket follows these markets through derivative contracts (agreements whose value
-          follows a price), so you don’t own the shares, gold or oil directly.
-        </p>
-      </Reveal>
-    </Section>
+      </div>
+    </PinnedScroll>
   );
 }

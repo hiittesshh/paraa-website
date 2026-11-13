@@ -31,9 +31,21 @@ export type DisclosureId =
   | "ca-paid-v1"
   | "otp-v1"
   | "no-shortcut-v1"
-  | "fiu-band-v1";
+  | "fiu-band-v1"
+  | "lose-money-v2"
+  | "hold-units-cell-v1"
+  | "otp-cell-v1";
 
 export const DISCLOSURES: Record<DisclosureId, (ctx: DisclosureContext) => ReactNode> = {
+  // Hero B (prototype v2, review 2), word for word from the v2 registry.
+  "lose-money-v2": () => (
+    <>
+      <strong>You can lose money.</strong> The funds, gold and oil in every basket can fall in price.
+    </>
+  ),
+  "hold-units-cell-v1": () => <>A unit follows its basket’s value. It isn’t a share in a fund, or a claim on gold or oil.</>,
+  "otp-cell-v1": () => <>Not by call, not by message. Anyone who asks isn’t us.</>,
+
   // Footer (owner-protected, unchanged).
   "global-risk-v3": () => (
     <>

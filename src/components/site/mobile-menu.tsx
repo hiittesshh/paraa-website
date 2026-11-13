@@ -86,7 +86,7 @@ export function MobileMenu({ className }: { className?: string }) {
       </summary>
 
       {/* Positioned against the header, so it spans the full width under it. */}
-      <div className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-var(--header-h))] overflow-y-auto border-b bg-background shadow-panel">
+      <div data-lenis-prevent className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-var(--header-h))] overflow-y-auto border-b bg-background shadow-panel">
         <nav aria-label="Main menu" className="container-page py-3">
           <ul className="divide-y">
             {ROWS.map((row) => (

@@ -7,13 +7,14 @@ import { Ask } from "@/components/home/ask";
 import { Basket } from "@/components/home/basket";
 import { Faq } from "@/components/home/faq";
 import { HashHandler } from "@/components/home/hash-handler";
-import { Hero } from "@/components/home/hero";
+import { HeroB } from "@/components/home/hero-b";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { Security } from "@/components/home/security";
 import { Tools } from "@/components/home/tools";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader, SkipLink, TopSentinel } from "@/components/site/header";
 import { ScrollState } from "@/components/site/scroll-state";
+import { SmoothScroll } from "@/components/motion/smooth-scroll";
 
 // Spec §6.0. No risk sentence here: owner decision 1 covers the hero cell only. openGraph (title,
 // description, site name) comes from the root layout, which holds the same §6.0 values; a page-level
@@ -31,7 +32,7 @@ export default function Home() {
       <SiteHeader />
       <main id="main" tabIndex={-1} className="flex-1 outline-none">
         <TopSentinel />
-        <Hero />
+        <HeroB />
         <Basket />
         <HowItWorks />
         <Security />
@@ -40,6 +41,7 @@ export default function Home() {
         <Ask />
       </main>
       <ScrollState />
+      <SmoothScroll />
       <HashHandler />
       <SiteFooter />
     </>

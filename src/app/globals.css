@@ -334,3 +334,7 @@
     --input: var(--p-grey-500); --ring: var(--p-ink);
   }
 }
+
+/* Owner, 13 Nov 2026: no sideways scrolling anywhere. `clip`, not `hidden`, so sticky sections keep working and no
+   new scroll container is made; the hero's tilted phone and glow can't push the page wider. */
+html, body { overflow-x: clip; }

@@ -2,6 +2,7 @@
 // legal text renders from the disclosure registry (R15); the ASCI line appears here and nowhere else
 // (R14). Registrations, company details, grievance officer and legal page links come back only when every
 // field is real (content-rules.md §0.2); they aren't built as empty slots.
+import { PHOTOS } from "@/lib/photos";
 import { cacheLife } from "next/cache";
 import { ButtonLink } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -66,6 +67,20 @@ export function SiteFooter() {
 
         <p className="mt-8 text-body-md text-muted-foreground">
           © <CurrentYear /> Paraa Capital.
+        </p>
+        {/* The stand-in photographs' credits (Wikimedia Commons, CC BY-SA): one line. */}
+        <p className="mt-2 text-body-md text-muted-foreground">
+          Photographs:{" "}
+          {Object.values(PHOTOS).map((p, i, all) => (
+            <span key={p.page}>
+              <a href={p.page} className="underline underline-offset-4" rel="noopener noreferrer license" target="_blank">
+                {p.by}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+              {i < all.length - 1 ? ", " : ""}
+            </span>
+          ))}
+          , Wikimedia Commons, CC BY-SA.
         </p>
       </div>
     </footer>

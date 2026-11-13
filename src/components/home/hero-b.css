@@ -1,0 +1,357 @@
+/* Hero B (v2 prototype, "Dark premium"), ported onto the round-18 site. Every value comes from the owner's brand
+   primitives in globals.css (--p-*); every class is prefixed hb- so nothing here touches the rest of the page.
+   The section is .theme-ink, so the site's own buttons, focus ring and text roles switch to their on-ink values. */
+
+.hb-hero { position: relative; overflow: clip; }
+.hb-hero::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(60% 70% at 78% 38%, rgb(255 255 255 / .07), transparent 70%); }
+.hb-hero > * { position: relative; }
+
+.hb-split { display: grid; gap: 48px; padding-block: 40px 56px; }
+@media (width >= 37.5rem) { .hb-split { padding-block: 64px 72px; } }
+@media (width >= 64rem) { .hb-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; padding-block: 72px 88px; } }
+@media (width >= 80rem) { .hb-split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
+
+/* Type: the v2 scale for this section only. */
+.hb-display { max-width: 21ch; color: var(--p-white); font-weight: 700; text-wrap: balance;
+  font-size: 34px; line-height: 38px; letter-spacing: -0.03em; }
+@media (width >= 22.5rem) { .hb-display { font-size: 38px; line-height: 42px; } }
+@media (width >= 37.5rem) { .hb-display { font-size: 48px; line-height: 52px; letter-spacing: -0.035em; } }
+@media (width >= 64rem) { .hb-display { font-size: 54px; line-height: 58px; } }
+@media (width >= 80rem) { .hb-display { font-size: 60px; line-height: 64px; } }
+
+.hb-lede { max-width: 54ch; margin-top: 24px; color: #C9CACD; font-size: 17px; line-height: 27px; letter-spacing: -0.01em; text-wrap: pretty; }
+@media (width >= 22.5rem) { .hb-lede { font-size: 18px; line-height: 28px; } }
+@media (width >= 37.5rem) { .hb-lede { font-size: 19px; line-height: 30px; } }
+@media (width >= 64rem) { .hb-lede { font-size: 20px; line-height: 32px; } }
+.hb-limit { margin-top: 16px; }
+.hb-limit strong { color: var(--p-white); font-weight: 700; }
+
+.hb-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-top: 36px; }
+@media (width < 37.5rem) { .hb-actions > .hb-cta { width: 100%; } }
+.hb-text-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--p-white); font-size: 15px; font-weight: 600;
+  text-decoration: underline 1px var(--p-ink-4); text-underline-offset: 5px; }
+@media (hover: hover) { .hb-text-link:hover { text-decoration-color: var(--p-white); text-decoration-thickness: 2px; } }
+.hb-small { margin-top: 16px; color: var(--p-ink-6); font-size: 15px; line-height: 22px; }
+.hb-caption { margin-top: 16px; }
+
+/* The stage and the device group: the card hangs off the phone's left edge over its frame only. */
+.hb-figure-wrap { margin: 0; }
+.hb-stage { display: grid; place-items: center; min-height: 500px; }
+@media (width >= 37.5rem) { .hb-stage { min-height: 600px; justify-items: end; padding-right: 32px; } }
+@media (width >= 64rem) { .hb-stage { padding-right: 24px; } }
+.hb-device { position: relative; }
+.hb-float { position: absolute; right: calc(100% - 14px); top: 9.5em; z-index: 2; }
+.hb-tag-phone { display: none !important; }
+@media (width < 37.5rem) { .hb-float { display: none; } .hb-tag-phone { display: inline-flex !important; } }
+
+/* The phone. Sized in em so one font-size scales the whole device. */
+.hb-phone { position: relative; width: 17.5em; height: 36.25em; padding: 0.625em; border-radius: 2.875em; background: var(--p-ink-900); font-size: 13px;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / .14), 0 40px 80px -20px rgb(0 0 0 / .55); }
+@media (width >= 37.5rem) { .hb-phone { font-size: 15px; } }
+@media (width >= 80rem) { .hb-phone { font-size: 16px; } }
+.hb-screen { position: relative; height: 100%; overflow: hidden; border-radius: 2.25em; background: var(--p-white); color: var(--p-ink); text-align: left; line-height: 1.35; }
+.hb-island { position: absolute; top: 0.6em; left: 50%; width: 5.4em; height: 1.55em; margin-left: -2.7em; border-radius: 1em; background: var(--p-ink-900); }
+.hb-status { display: flex; justify-content: space-between; align-items: center; height: 2.75em; padding: 0.35em 1.6em 0; font-size: 0.8125em; font-weight: 600; }
+.hb-signal { display: flex; align-items: flex-end; gap: 0.15em; }
+.hb-signal i { display: block; width: 0.22em; border-radius: 0.1em; background: currentColor; }
+.hb-signal i:nth-child(1) { height: 0.4em; } .hb-signal i:nth-child(2) { height: 0.6em; } .hb-signal i:nth-child(3) { height: 0.8em; } .hb-signal i:nth-child(4) { height: 1em; }
+.hb-body { padding: 0.5em 1.125em 0; }
+.hb-top { display: flex; align-items: center; justify-content: space-between; height: 2.25em; }
+.hb-top svg { width: 1.25em; height: 1.25em; }
+.hb-spacer { width: 1.25em; }
+@media (width < 37.5rem) { .hb-spacer { display: none; } }
+.hb-title { font-size: 1.0625em; font-weight: 700; }
+.hb-label { display: block; font-size: 0.75em; font-weight: 600; color: var(--p-ink-2); }
+.hb-card { display: block; margin-top: 0.875em; padding: 0.875em; border-radius: 0.875em; background: var(--p-grey-50); box-shadow: inset 0 0 0 1px rgb(39 42 51 / .12); }
+.hb-name { display: flex; justify-content: space-between; align-items: center; margin-top: 0.15em; font-size: 1em; font-weight: 700; }
+.hb-name svg { width: 1em; height: 1em; color: var(--p-ink-2); }
+.hb-meta { display: block; margin-top: 0.5em; font-size: 0.75em; font-weight: 500; color: var(--p-ink-2); }
+.hb-amount { margin-top: 1.25em; }
+.hb-figure { display: block; margin-top: 0.1em; font-size: 2.125em; line-height: 1.1; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.hb-quick { display: flex; gap: 0.4em; margin-top: 0.75em; }
+.hb-quick span { flex: 1; display: grid; place-items: center; height: 2.1em; border-radius: 0.6em; font-size: 0.75em; font-weight: 600; box-shadow: inset 0 0 0 1px rgb(39 42 51 / .22); }
+.hb-quick span[data-on] { box-shadow: inset 0 0 0 2px var(--p-ink); }
+.hb-rows { margin-top: 1em; border-top: 1px solid rgb(39 42 51 / .12); }
+.hb-rows div { display: flex; justify-content: space-between; gap: 0.75em; padding-block: 0.6em; border-bottom: 1px solid rgb(39 42 51 / .12); font-size: 0.8125em; }
+.hb-rows dt { color: var(--p-ink-2); }
+.hb-rows dd { font-weight: 600; text-align: right; }
+.hb-button { display: grid; place-items: center; height: 3.1em; margin-top: 1.1em; border-radius: 0.8em; background: var(--p-ink); color: var(--p-white); font-size: 0.9375em; font-weight: 700; }
+.hb-note { display: block; margin-top: 0.7em; text-align: center; font-size: 0.75em; color: var(--p-ink-2); }
+
+/* The composition bar: US funds ink, crude oil grey, gold gold, separated by 2px cuts. */
+.hb-bar { display: flex; gap: 2px; overflow: hidden; border-radius: 9999px; }
+.hb-bar > span { display: block; min-width: 0; }
+.hb-bar > [data-kind="us"] { background: var(--p-ink); }
+.hb-bar > [data-kind="oil"] { background: var(--p-ink-4); }
+.hb-bar > [data-kind="gold"] { background: var(--p-gold); }
+.hb-bar-phone { margin-top: 0.6em; height: 0.5em; }
+.hb-bar-slim { margin-top: 16px; height: 8px; }
+
+/* The floating basket card: the hero's one composition read-out, with the group's Example tag. */
+.hb-float { width: 13.5em; padding: 1.125em 1.25em 1.25em; border-radius: 16px; background: var(--p-white); color: var(--p-ink); font-size: 14px; text-align: left;
+  box-shadow: 0 1px 2px rgb(39 42 51 / .08), 0 24px 48px -16px rgb(0 0 0 / .45); }
+.hb-float-name { margin-top: 12px; font-weight: 700; }
+.hb-legend { display: grid; gap: 0.4em; margin-top: 0.875em; font-size: 0.875em; font-variant-numeric: tabular-nums; }
+.hb-legend li { display: flex; justify-content: space-between; gap: 1em; }
+.hb-legend [data-kind="us"], .hb-legend [data-kind="oil"] { color: var(--p-ink-2); }
+.hb-legend [data-kind="gold"] { color: var(--p-gold-800); font-weight: 600; }
+.hb-tag { display: inline-flex; align-items: center; height: 22px; padding-inline: 9px; border-radius: 9999px; color: var(--p-ink-1);
+  background: var(--p-light); box-shadow: inset 0 0 0 1px rgb(39 42 51 / .12); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
+
+/* The four facts along the hero's lower edge: whole-cell links. */
+.hb-facts-wrap { padding-bottom: 64px; }
+@media (width >= 37.5rem) { .hb-facts-wrap { padding-bottom: 80px; } }
+@media (width >= 64rem) { .hb-facts-wrap { padding-bottom: 96px; } }
+.hb-facts { display: grid; gap: 36px 32px; padding-top: 48px; border-top: 1px solid rgb(255 255 255 / .14); }
+@media (width >= 37.5rem) { .hb-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-top: 64px; } }
+@media (width >= 64rem) { .hb-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.hb-fact { display: flex; flex-direction: column; height: 100%; border-radius: 10px; color: var(--p-white); }
+@media (width < 37.5rem) { .hb-fact { position: relative; padding-left: 60px; } .hb-fact-icon { position: absolute; left: 0; top: 0; } }
+.hb-fact-icon { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 20px; border-radius: 12px;
+  background: rgb(255 255 255 / .08); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .1); }
+.hb-fact-icon svg { width: 20px; height: 20px; }
+.hb-claim { display: block; font-size: 18px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; }
+.hb-limit-text { display: block; margin-top: 8px; color: #C9CACD; font-size: 16px; line-height: 26px; }
+.hb-cue { align-self: flex-start; margin-top: auto; padding-top: 16px; font-size: 15px; font-weight: 600;
+  text-decoration: underline 1px var(--p-ink-4); text-underline-offset: 5px; }
+@media (hover: hover) {
+  .hb-fact:hover .hb-claim { text-decoration: underline 1px; text-underline-offset: 4px; }
+  .hb-fact:hover .hb-cue { text-decoration-color: var(--p-white); text-decoration-thickness: 2px; }
+}
+
+/* ───────── Premium pass (owner, 13 Nov 2026: "make the hero section look more premium") ─────────
+   The header is ink everywhere (header.tsx), so the hero runs from the top edge without a white bar.
+   The ground gets depth: a slow gold glow and faint rings behind the illustration, and a vignette at the edges.
+   The headline is larger, with its second half in a softer grey. The phone gets a rim of light and a deeper
+   shadow. Colour only; nothing here changes the hero's text or links. */
+
+/* The ground. */
+.hb-hero::before { display: none; }
+.hb-ground { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.hb-ground::before {
+  content: ""; position: absolute; inset: -10%;
+  background:
+    radial-gradient(34% 42% at 74% 44%, rgb(253 192 55 / .16), transparent 70%),
+    radial-gradient(60% 70% at 78% 38%, rgb(255 255 255 / .06), transparent 70%),
+    radial-gradient(120% 90% at 50% 120%, rgb(0 0 0 / .45), transparent 60%);
+}
+.hb-ground::after {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-radial-gradient(circle at 76% 44%, transparent 0 179px, rgb(255 255 255 / .07) 180px, transparent 181px 260px);
+  -webkit-mask-image: radial-gradient(42% 60% at 76% 44%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(42% 60% at 76% 44%, #000 20%, transparent 75%);
+}
+@media (width < 64rem) {
+  .hb-ground::before { background: radial-gradient(70% 40% at 50% 78%, rgb(253 192 55 / .14), transparent 70%), radial-gradient(120% 90% at 50% 120%, rgb(0 0 0 / .4), transparent 60%); }
+  .hb-ground::after { background: repeating-radial-gradient(circle at 50% 80%, transparent 0 139px, rgb(255 255 255 / .06) 140px, transparent 141px 200px);
+    -webkit-mask-image: radial-gradient(60% 40% at 50% 80%, #000 20%, transparent 75%); mask-image: radial-gradient(60% 40% at 50% 80%, #000 20%, transparent 75%); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hb-ground::before { animation: hb-breathe 9s ease-in-out infinite alternate; }
+}
+@keyframes hb-breathe { from { opacity: .75; transform: scale(1); } to { opacity: 1; transform: scale(1.04); } }
+
+/* The headline: larger, its second half softer. */
+.hb-split { padding-block: 48px 64px; }
+@media (width >= 64rem) { .hb-split { padding-block: 104px 96px; } }
+.hb-display { max-width: 20ch; }
+@media (width >= 64rem) { .hb-display-soft { display: block; } }
+@media (width >= 64rem) { .hb-display { font-size: 52px; line-height: 56px; letter-spacing: -0.038em; } }
+@media (width >= 80rem) { .hb-display { font-size: 64px; line-height: 68px; letter-spacing: -0.042em; } }
+.hb-display-soft { color: var(--p-ink-6); }
+.hb-lede { margin-top: 28px; color: #B9BBC0; }
+.hb-actions { margin-top: 40px; }
+
+/* The phone: a rim of light, a deeper shadow, and a faint gold reflection under it. */
+.hb-phone { box-shadow:
+  0 0 0 1px rgb(255 255 255 / .16),
+  inset 0 1px 0 rgb(255 255 255 / .12),
+  0 60px 120px -30px rgb(0 0 0 / .75),
+  0 0 140px -30px rgb(253 192 55 / .28); }
+.hb-float { box-shadow: 0 1px 2px rgb(39 42 51 / .08), 0 40px 80px -20px rgb(0 0 0 / .6), 0 0 0 1px rgb(255 255 255 / .5); }
+.hb-caption { color: var(--p-ink-5); font-size: 13px; text-align: right; }
+@media (width < 64rem) { .hb-caption { text-align: center; } }
+
+/* The facts: a quieter rule and glassier icons. */
+.hb-facts { border-top-color: rgb(255 255 255 / .1); }
+.hb-fact-icon { background: linear-gradient(180deg, rgb(255 255 255 / .1), rgb(255 255 255 / .03)); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .1), inset 0 1px 0 rgb(255 255 255 / .1); }
+
+/* The 1px scroll sentinel above the hero would show the white page through; it takes the hero's ink. */
+[data-top-sentinel]:has(+ .hb-hero) { background: var(--p-ink); }
+
+/* ───────── The phone, premium (owner, 13 Nov 2026: "make the mobile screen look premium, slightly tilt it") ─────────
+   A titanium bezel with side buttons, glass glare across the screen, a soft gold light under it, and the whole
+   device group turned slightly in 3D. It floats a few pixels, slowly; still under reduced motion. */
+.hb-stage { perspective: 1800px; }
+.hb-device { transform-style: preserve-3d; transform: rotateY(-16deg) rotateX(7deg) rotateZ(2.5deg); }
+@media (width < 37.5rem) { .hb-device { transform: rotateY(-10deg) rotateX(5deg) rotateZ(2deg); } }
+@media (prefers-reduced-motion: no-preference) {
+  .hb-device { animation: hb-float 7s ease-in-out infinite alternate; }
+}
+@keyframes hb-float {
+  from { transform: rotateY(-16deg) rotateX(7deg) rotateZ(2.5deg) translateY(0); }
+  to { transform: rotateY(-13deg) rotateX(6deg) rotateZ(2deg) translateY(-10px); }
+}
+@media (width < 37.5rem) and (prefers-reduced-motion: no-preference) {
+  @keyframes hb-float-sm { from { transform: rotateY(-10deg) rotateX(5deg) rotateZ(2deg) translateY(0); } to { transform: rotateY(-8deg) rotateX(4deg) rotateZ(1.5deg) translateY(-6px); } }
+  .hb-device { animation-name: hb-float-sm; }
+}
+
+/* Titanium: a brushed edge that catches the light on its upper left. */
+.hb-phone {
+  background:
+    linear-gradient(145deg, #8b8e96 0%, #3a3c43 12%, #18191d 34%, #0e0f12 62%, #2c2e34 86%, #6d7078 100%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / .18),
+    inset 0 0 0 3px rgb(0 0 0 / .55),
+    -30px 50px 90px -30px rgb(0 0 0 / .8),
+    0 90px 120px -60px rgb(0 0 0 / .9),
+    0 0 160px -30px rgb(253 192 55 / .3);
+}
+/* Side buttons: power on the right, volume on the left. */
+.hb-phone::before, .hb-phone::after { content: ""; position: absolute; width: 0.22em; border-radius: 0.2em; background: linear-gradient(90deg, #4a4c53, #1a1b1f); }
+.hb-phone::before { right: -0.16em; top: 8.5em; height: 4.2em; }
+.hb-phone::after { left: -0.16em; top: 7em; height: 2.6em; box-shadow: 0 3.4em 0 #2a2b30, 0 6.6em 0 #2a2b30; }
+/* Glass: a soft glare across the upper screen. */
+.hb-screen::after {
+  content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(118deg, rgb(255 255 255 / .38) 0%, rgb(255 255 255 / .08) 22%, transparent 38%, transparent 80%, rgb(255 255 255 / .06) 100%);
+  mix-blend-mode: soft-light;
+}
+/* The card in front: lifted further off the phone. */
+.hb-float { transform: translateZ(60px); }
+.hb-float.enter-pop { animation-name: hb-pop-3d; }
+@keyframes hb-pop-3d { from { opacity: 0; transform: translateZ(60px) translateY(0.75rem) scale(0.96); } to { opacity: 1; transform: translateZ(60px); } }
+/* A pool of light under the device. */
+.hb-stage { position: relative; }
+.hb-stage::after {
+  content: ""; position: absolute; left: 50%; bottom: 4%; width: 60%; height: 40px; translate: -30% 0; pointer-events: none;
+  background: radial-gradient(50% 50% at 50% 50%, rgb(253 192 55 / .22), transparent 70%); filter: blur(10px);
+}
+@media (width >= 37.5rem) { .hb-stage::after { left: auto; right: 10%; translate: 0 0; } }
+
+/* ───────── The phone's moving screens (owner, 13 Nov 2026) ─────────
+   Four screens stacked in one place; the one on screen slides in from the right while the last one slides out to
+   the left, with a soft fade. Dots along the foot show which. Under reduced motion the first stays. */
+.hb-panels { position: absolute; left: 0; right: 0; top: 2.75em; bottom: 2.6em; overflow: hidden; }
+.hb-panel { position: absolute; inset: 0; transition: transform 700ms cubic-bezier(.22, .8, .24, 1), opacity 500ms ease; will-change: transform, opacity; }
+.hb-panel[data-state="on"] { transform: none; opacity: 1; }
+.hb-panel[data-state="past"] { transform: translateX(-18%); opacity: 0; }
+.hb-panel[data-state="next"] { transform: translateX(22%); opacity: 0; transition: none; }
+.hb-dots { position: absolute; left: 0; right: 0; bottom: 1.05em; display: flex; justify-content: center; gap: 0.35em; }
+.hb-dots span { width: 0.4em; height: 0.4em; border-radius: 1em; background: rgb(39 42 51 / .2); transition: width 400ms ease, background-color 400ms ease; }
+.hb-dots span[data-on] { width: 1.4em; background: var(--p-ink); }
+@media (prefers-reduced-motion: reduce) { .hb-panel { transition: none; } }
+
+/* Screen parts. */
+.hb-section { margin-top: 1.4em; }
+.hb-duo { display: flex; gap: 0.5em; margin-top: 1em; }
+.hb-duo span { flex: 1; display: grid; place-items: center; height: 2.6em; border-radius: 0.8em; font-size: 0.8125em; font-weight: 700; box-shadow: inset 0 0 0 1px rgb(39 42 51 / .2); }
+.hb-duo span[data-on] { background: var(--p-ink); color: var(--p-white); box-shadow: none; }
+.hb-event { display: flex; align-items: center; gap: 0.7em; margin-top: 0.6em; padding-block: 0.7em; border-bottom: 1px solid rgb(39 42 51 / .12); }
+.hb-event-card { padding: 0.8em; border: 0; border-radius: 0.875em; background: var(--p-grey-50); box-shadow: inset 0 0 0 1px rgb(39 42 51 / .12); }
+.hb-event-icon { display: grid; place-items: center; width: 2.3em; height: 2.3em; border-radius: 999px; background: var(--p-light); flex: none; }
+.hb-event-icon svg { width: 1.1em; height: 1.1em; }
+.hb-event-text { display: grid; gap: 0.1em; flex: 1; min-width: 0; font-size: 0.8125em; }
+.hb-event-text b { font-weight: 700; }
+.hb-event-text span { color: var(--p-ink-2); }
+.hb-pill { padding: 0.25em 0.6em; border-radius: 1em; background: rgb(16 185 129 / .12); color: #047857; font-size: 0.6875em; font-weight: 700; }
+.hb-note-left { text-align: left; margin-top: 1em; }
+.hb-done { display: grid; justify-items: center; gap: 0.35em; margin-top: 1.2em; text-align: center; }
+.hb-done-mark { display: grid; place-items: center; width: 3.2em; height: 3.2em; border-radius: 999px; background: var(--p-ink); color: var(--p-gold); margin-bottom: 0.4em; }
+.hb-done-mark svg { width: 1.5em; height: 1.5em; }
+.hb-done b { font-size: 1.125em; }
+.hb-done span:last-child { max-width: 16em; font-size: 0.8125em; color: var(--p-ink-2); }
+.hb-button-quiet { background: var(--p-light); color: var(--p-ink-3); }
+
+/* The pause control under the phone, beside the caption. */
+.hb-caption { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px 16px; }
+@media (width < 64rem) { .hb-caption { justify-content: center; } }
+.hb-pause { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding-inline: 4px; color: var(--p-grey-300); font-size: 13px; font-weight: 600; }
+.hb-pause svg { width: 14px; height: 14px; }
+@media (hover: hover) { .hb-pause:hover { color: var(--p-white); } }
+.hb-pause:focus-visible { outline: 2px solid var(--p-white); outline-offset: 2px; border-radius: 4px; }
+
+/* ───────── A real phone, and its main screens (owner, 13 Nov 2026) ─────────
+   Real proportions (about 1 : 2.1), a thin bezel, a small Dynamic Island, a status bar with signal, Wi-Fi and
+   battery, a tab bar and the home indicator. The floating card beside it changes with the screen. */
+.hb-phone { width: 19.25em; height: 40.5em; padding: 0.5em; border-radius: 3.1em; }
+.hb-screen { border-radius: 2.6em; }
+.hb-stage { min-height: 560px; }
+@media (width >= 37.5rem) { .hb-stage { min-height: 660px; } }
+.hb-island { top: 0.55em; width: 6.4em; height: 1.85em; margin-left: -3.2em; border-radius: 1.2em; background: #050506; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .04); }
+.hb-island::after { content: ""; position: absolute; right: 0.6em; top: 50%; width: 0.6em; height: 0.6em; margin-top: -0.3em; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #2b3550, #0a0c12 60%); }
+.hb-status { height: 2.95em; padding: 0.55em 1.75em 0 2.1em; font-size: 0.875em; font-weight: 700; letter-spacing: -0.01em; }
+.hb-status-icons { display: flex; align-items: center; gap: 0.35em; }
+.hb-wifi { width: 1.05em; height: 0.8em; fill: currentColor; }
+.hb-battery { position: relative; display: block; width: 1.6em; height: 0.78em; padding: 0.1em; border-radius: 0.25em; box-shadow: inset 0 0 0 1px rgb(39 42 51 / .45); }
+.hb-battery::after { content: ""; position: absolute; right: -0.18em; top: 50%; width: 0.1em; height: 0.3em; margin-top: -0.15em; border-radius: 0 0.1em 0.1em 0; background: rgb(39 42 51 / .45); }
+.hb-battery i { display: block; width: 78%; height: 100%; border-radius: 0.12em; background: currentColor; }
+.hb-home-bar { position: absolute; z-index: 6; left: 50%; bottom: 0.45em; width: 7.5em; height: 0.3em; margin-left: -3.75em; border-radius: 1em; background: var(--p-ink); }
+
+.hb-panels { top: 2.95em; bottom: 0; }
+.hb-app { display: flex; flex-direction: column; height: 100%; }
+.hb-app > .hb-body { flex: 1; min-height: 0; }
+.hb-title-left { font-size: 1.375em; letter-spacing: -0.02em; }
+.hb-tabs { display: grid; grid-template-columns: repeat(4, 1fr); padding: 0.55em 0.5em 1.55em; border-top: 1px solid rgb(39 42 51 / .08); background: rgb(255 255 255 / .92); }
+.hb-tabs span { display: grid; justify-items: center; gap: 0.2em; color: var(--p-ink-5); font-size: 0.625em; font-weight: 600; }
+.hb-tabs svg { width: 1.9em; height: 1.9em; stroke-width: 1.75; }
+.hb-tabs span[data-on] { color: var(--p-ink); }
+
+/* Home. */
+.hb-hero-card { display: grid; gap: 0.2em; margin-top: 0.9em; padding: 1em; border-radius: 1em; color: var(--p-white);
+  background: radial-gradient(120% 120% at 100% 0%, rgb(253 192 55 / .28), transparent 55%), var(--p-ink); }
+.hb-label-on-ink { color: rgb(255 255 255 / .7); }
+.hb-hero-card .hb-figure { color: var(--p-white); }
+.hb-hero-card .hb-duo { margin-top: 0.8em; }
+.hb-hero-card .hb-duo span { box-shadow: inset 0 0 0 1px rgb(255 255 255 / .25); color: var(--p-white); }
+.hb-hero-card .hb-duo span[data-on] { background: var(--p-white); color: var(--p-ink); box-shadow: none; }
+.hb-holding { display: grid; gap: 0.1em; margin-top: 0.6em; padding: 0.9em; border-radius: 0.875em; background: var(--p-grey-50); box-shadow: inset 0 0 0 1px rgb(39 42 51 / .12); }
+.hb-holding-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5em; font-size: 0.875em; }
+.hb-holding-head span { color: var(--p-ink-2); font-size: 0.875em; font-variant-numeric: tabular-nums; }
+
+/* The basket. */
+.hb-meta-top { margin-top: 0.1em; }
+.hb-ring { position: relative; width: 9.5em; height: 9.5em; margin: 1.1em auto 0.4em; }
+.hb-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.hb-ring circle { fill: none; stroke-width: 5.2; }
+.hb-ring-us { stroke: var(--p-ink); }
+.hb-ring-oil { stroke: var(--p-ink-4); }
+.hb-ring-gold { stroke: var(--p-gold); }
+.hb-ring-mid { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1.1; }
+.hb-ring-mid b { font-size: 1.75em; }
+.hb-ring-mid span { color: var(--p-ink-2); font-size: 0.75em; }
+.hb-legend-phone { margin-top: 0.6em; font-size: 0.8125em; }
+
+/* Account. */
+.hb-check-list { display: grid; margin-top: 0.8em; border-top: 1px solid rgb(39 42 51 / .12); }
+.hb-check-row { display: flex; align-items: center; gap: 0.6em; padding-block: 0.75em; border-bottom: 1px solid rgb(39 42 51 / .12); font-size: 0.8125em; font-weight: 600; }
+.hb-check-row .hb-pill { margin-left: auto; }
+.hb-check-mark { display: grid; place-items: center; width: 1.7em; height: 1.7em; border-radius: 999px; background: var(--p-ink); color: var(--p-gold); flex: none; }
+.hb-check-mark svg { width: 1em; height: 1em; }
+
+/* The floating card: one per screen, stacked, the current one popping in. */
+.hb-float { width: 15em; padding: 0; border-radius: 0; background: none; box-shadow: none; display: grid; }
+.hb-float-slot { grid-area: 1 / 1; align-self: start; transition: opacity 450ms ease, transform 650ms cubic-bezier(.22, .8, .24, 1); }
+.hb-float-slot[data-state="off"] { opacity: 0; transform: translateY(10px) scale(.96); pointer-events: none; }
+.hb-float-card { padding: 1.125em 1.25em 1.25em; border-radius: 16px; background: var(--p-white); color: var(--p-ink); font-size: 14px; text-align: left;
+  box-shadow: 0 1px 2px rgb(39 42 51 / .08), 0 40px 80px -20px rgb(0 0 0 / .6), 0 0 0 1px rgb(255 255 255 / .5); }
+.hb-float-card .hb-event { border-bottom: 0; padding-bottom: 0; }
+.hb-steps-mini { display: grid; gap: 0.6em; margin-top: 0.8em; font-size: 0.875em; }
+.hb-steps-mini span { display: flex; align-items: center; gap: 0.5em; }
+.hb-steps-mini svg { width: 1.1em; height: 1.1em; flex: none; }
+.hb-steps-mini [data-done] svg { color: #047857; }
+.hb-steps-mini [data-wait] { color: var(--p-ink-2); }
+.hb-steps-mini [data-wait] svg { color: var(--p-gold-700); }
+.hb-float-shield { display: grid; place-items: center; width: 2.5em; height: 2.5em; margin-top: 0.8em; border-radius: 0.75em; background: var(--p-ink); color: var(--p-gold); }
+.hb-float-shield svg { width: 1.3em; height: 1.3em; }
+.hb-float-sub { margin-top: 0.35em; color: var(--p-ink-2); font-size: 0.875em; }
+@media (prefers-reduced-motion: reduce) { .hb-float-slot { transition: none; } }
+.hb-ask { display: flex; align-items: center; gap: 0.7em; margin-top: 0.9em; padding: 0.85em; border-radius: 0.875em; background: var(--p-gold-6); }
+.hb-ask-icon { display: grid; place-items: center; width: 2.3em; height: 2.3em; border-radius: 999px; background: var(--p-ink); color: var(--p-gold); flex: none; }
+.hb-ask-icon svg { width: 1.1em; height: 1.1em; }
+.hb-ask-go { width: 1em; height: 1em; color: var(--p-ink-2); }
+.hb-menu { display: grid; margin-top: 1em; border-top: 1px solid rgb(39 42 51 / .12); }
+.hb-menu span { display: flex; justify-content: space-between; align-items: center; padding-block: 0.8em; border-bottom: 1px solid rgb(39 42 51 / .12); font-size: 0.8125em; font-weight: 600; }
+.hb-menu svg { width: 1.1em; height: 1.1em; color: var(--p-ink-4); }

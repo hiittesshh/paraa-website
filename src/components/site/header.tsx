@@ -1,4 +1,4 @@
-// The site header (spec §4.19, §6.1), a Server Component: 64px at every width, solid white, sticky on screens at least
+// The site header (spec §4.19, §6.1), a Server Component: 64px at every width, solid ink (owner, 13 Nov 2026: "make the nav bar also dark"; .theme-ink re-colours the links, button and menu), sticky on screens at least
 // 600px tall (static on landscape phones and at 200% zoom). It stays white over the ink band. The
 // hairline appears once the page scrolls: ScrollState toggles data-at-top from a sentinel at the top of
 // <main>, and with JS off the hairline always shows.
@@ -21,7 +21,7 @@ export function SiteHeader() {
     // `relative` makes the header the menu panel's containing block when it isn't sticky (< 600px tall).
     <header
       data-header=""
-      className="relative top-0 z-40 h-header border-b border-border bg-background tall:sticky data-[at-top]:border-transparent"
+      className="theme-ink relative top-0 z-40 h-header border-b border-white/10 tall:sticky data-[at-top]:border-transparent"
     >
       <div className="container-page flex h-full items-center gap-6">
         <Brand />

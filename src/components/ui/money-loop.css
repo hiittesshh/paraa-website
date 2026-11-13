@@ -1,0 +1,67 @@
+/* Where your money goes, as a loop (owner, 13 Nov 2026). Below 1024: one column, the route down the icons. From
+   1024: the road in along the top (three steps), the turn at maturity on the right, the road back along the bottom
+   (two steps), and the step in hand set large in the middle. The route and coin are drawn by money-loop.tsx. */
+
+.ml { position: relative; }
+.ml-stage { --ml-wide: 0; --dot: 3.5rem; position: relative; }
+.ml-route { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 0; }
+.ml-track { fill: none; stroke: rgb(255 255 255 / .16); stroke-width: 1.5; stroke-dasharray: 2 7; stroke-linecap: round; }
+.ml-trail { fill: none; stroke: var(--p-gold); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 0 99999; }
+.ml-trail-glow { fill: none; stroke: var(--p-gold); stroke-width: 7; stroke-linecap: round; opacity: .55; stroke-dasharray: 0 99999; }
+.ml-coin { opacity: 0; transition: opacity 250ms ease; }
+.ml-coin-face { fill: var(--p-gold); stroke: rgb(255 255 255 / .75); stroke-width: 1.5; }
+.ml-coin-mark { fill: var(--p-ink); font-size: 13px; font-weight: 800; font-family: inherit; }
+
+.ml-list { position: relative; z-index: 1; display: grid; gap: 2rem; }
+.ml-step { display: grid; grid-template-columns: var(--dot) minmax(0, 1fr); column-gap: 1.25rem; align-items: center; }
+.ml-dot {
+  position: relative; display: grid; place-items: center; width: var(--dot); height: var(--dot); border-radius: 999px;
+  border: 1px solid var(--p-ink-600); background: var(--p-ink-800); color: var(--p-grey-300);
+  transition: border-color 450ms ease, color 450ms ease, box-shadow 600ms ease, transform 600ms cubic-bezier(.22, .8, .24, 1);
+}
+.ml-dot svg { width: 1.375rem; height: 1.375rem; }
+/* The ring that opens out once as the coin arrives. */
+.ml-dot::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; border: 1px solid var(--p-gold); opacity: 0; }
+.ml-text { display: grid; gap: 0.25rem; }
+.ml-name { color: var(--foreground); font-size: 1.0625rem; line-height: 1.5rem; font-weight: 700; text-wrap: balance; transition: color 450ms ease; }
+.ml-how { color: var(--copy); font-size: 0.9375rem; line-height: 1.375rem; text-wrap: pretty; }
+
+.ml-step[data-reached] .ml-dot { border-color: rgb(253 192 55 / .7); color: var(--p-gold); box-shadow: 0 0 0 4px rgb(253 192 55 / .08); }
+.ml-step[data-current] .ml-dot {
+  border-color: var(--p-gold); transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 0 0 6px rgb(253 192 55 / .12), 0 0 40px 4px rgb(253 192 55 / .35), 0 12px 24px -8px rgb(0 0 0 / .6);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ml-step[data-current] .ml-dot::after { animation: ml-ring 1100ms cubic-bezier(.22, .8, .24, 1) both; }
+}
+@keyframes ml-ring { from { opacity: .9; transform: scale(1); } to { opacity: 0; transform: scale(1.7); } }
+
+.ml-turn { display: none; }
+
+/* From 1024: the loop. */
+@media (width >= 64rem) {
+  .ml-stage { --ml-wide: 1; --dot: 4rem; padding-right: 5.5rem; }
+  .ml-turn { display: block; }
+  .ml-list { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 8.5rem; column-gap: 2rem; }
+  .ml-step { grid-template-columns: none; justify-items: center; row-gap: 1.125rem; align-items: start; align-content: start; text-align: center; }
+  .ml-text { max-width: 15rem; }
+  .ml-step:nth-child(1) { grid-area: 1 / 1; }
+  .ml-step:nth-child(2) { grid-area: 1 / 2; }
+  .ml-step:nth-child(3) { grid-area: 1 / 3; }
+  .ml-step:nth-child(4) { grid-area: 2 / 3; }
+  .ml-step:nth-child(5) { grid-area: 2 / 1; }
+
+  .ml-turn {
+    position: absolute; z-index: 1; right: 0; top: 50%; translate: 0 -50%; padding: 0.25rem 0.625rem; border-radius: 999px;
+    background: var(--p-ink); box-shadow: inset 0 0 0 1px rgb(253 192 55 / .45); color: var(--p-gold);
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+}
+
+/* The control: top right of the block from 1024, under it below. */
+.ml-pause { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; margin-top: 1.5rem; padding-inline: 0.25rem;
+  color: var(--p-grey-300); font-size: 0.9375rem; font-weight: 600; }
+.ml-pause svg { width: 1rem; height: 1rem; }
+@media (hover: hover) { .ml-pause:hover { color: var(--p-white); } }
+.ml-pause:focus-visible { outline: 2px solid var(--p-white); outline-offset: 2px; border-radius: 4px; }
+@media (width >= 64rem) { .ml-pause { position: absolute; right: 0; top: -4.75rem; margin-top: 0; } }
