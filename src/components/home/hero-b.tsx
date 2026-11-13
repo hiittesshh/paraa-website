@@ -11,6 +11,8 @@ import { Disclosure } from "@/components/ui/disclosure";
 import type { DisclosureId } from "@/content/disclosures";
 import { formatINR } from "@/lib/format";
 import { CTA } from "@/lib/nav";
+import { getImageProps } from "next/image";
+import LOGO from "@/assets/paraa-logo.png";
 import { HeroPhoneFigure } from "./hero-phone";
 import "./hero-b.css";
 
@@ -259,6 +261,24 @@ const FLOATS = [
   </Float>,
 ];
 
+// The phone's splash screen (owner, 13 Nov 2026: "before the other screens, play splash screen animation with
+// logo"): the app opening, once, on load. CSS runs it and takes it away (hero-b.css), so it can never stay stuck;
+// the screens start cycling once it has gone. Skipped under reduced motion.
+const SPLASH_LOGO = getImageProps({ src: LOGO, alt: "", loading: "eager" }).props;
+const SPLASH = (
+  <div className="hb-splash" style={{ "--logo": `url(${SPLASH_LOGO.src})` } as React.CSSProperties}>
+    <span className="hb-splash-mark">
+      {/* eslint-disable-next-line @next/next/no-img-element -- getImageProps() output, decorative */}
+      <img {...SPLASH_LOGO} alt="" />
+      <span className="hb-splash-shine" />
+    </span>
+    <span className="hb-splash-line">US funds · Gold · Crude oil</span>
+    <span className="hb-splash-load">
+      <i />
+    </span>
+  </div>
+);
+
 export function HeroB() {
   return (
     <section id="top" aria-labelledby="hero-title" className="hb-hero hb-beige">
@@ -286,6 +306,7 @@ export function HeroB() {
         <HeroPhoneFigure
           screens={SCREENS}
           floats={FLOATS}
+          splash={SPLASH}
           caption={<Disclosure id="mock-caption-v1" as="span" />}
         />
       </div>

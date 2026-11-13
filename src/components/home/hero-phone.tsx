@@ -10,12 +10,26 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const EVERY = 3600;
 
-export function HeroPhoneFigure({ screens, floats, caption }: { screens: ReactNode[]; floats: ReactNode[]; caption: ReactNode }) {
+// The splash (hero-b.css .hb-splash) runs for this long before the screens start to change.
+const SPLASH_MS = 3000;
+
+export function HeroPhoneFigure({
+  screens,
+  floats,
+  caption,
+  splash,
+}: {
+  screens: ReactNode[];
+  floats: ReactNode[];
+  caption: ReactNode;
+  splash?: ReactNode;
+}) {
   const phone = useRef<HTMLDivElement>(null);
   const [i, setI] = useState(0);
   const [moving, setMoving] = useState(false);
   const [paused, setPaused] = useState(false);
   const [away, setAway] = useState(false);
+  const [ready, setReady] = useState(!splash);
   const n = screens.length;
 
   useEffect(() => {
@@ -32,13 +46,20 @@ export function HeroPhoneFigure({ screens, floats, caption }: { screens: ReactNo
     };
   }, []);
 
+  // The screens wait for the splash to finish (it only plays when motion is welcome).
   useEffect(() => {
-    if (!moving || paused || away) return;
+    if (!moving || ready) return;
+    const t = setTimeout(() => setReady(true), SPLASH_MS);
+    return () => clearTimeout(t);
+  }, [moving, ready]);
+
+  useEffect(() => {
+    if (!moving || !ready || paused || away) return;
     const t = setInterval(() => {
       if (!document.hidden) setI((k) => (k + 1) % n);
     }, EVERY);
     return () => clearInterval(t);
-  }, [moving, paused, away, n]);
+  }, [moving, ready, paused, away, n]);
 
   return (
     <figure className="hb-figure-wrap">
@@ -71,11 +92,12 @@ export function HeroPhoneFigure({ screens, floats, caption }: { screens: ReactNo
                   </div>
                 ))}
               </div>
+              {splash}
               <span className="hb-home-bar" />
             </div>
           </div>
           {/* The card beside the phone: one per screen, changing with it. */}
-          <div className="hb-float enter-pop" style={{ "--delay": "200ms" } as React.CSSProperties} aria-hidden>
+          <div className="hb-float enter-pop" style={{ "--delay": splash ? "2600ms" : "200ms" } as React.CSSProperties} aria-hidden>
             {floats.map((f, k) => (
               <div key={k} className="hb-float-slot" data-state={k === i ? "on" : "off"}>
                 {f}

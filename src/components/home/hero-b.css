@@ -393,3 +393,38 @@ html:not([data-look="dark"]) .hb-beige .hb-cue { text-decoration-color: var(--p-
 html:not([data-look="dark"]) .hb-beige .hb-fact-icon { background: rgb(255 255 255 / .6); box-shadow: inset 0 0 0 1px rgb(39 42 51 / .1); }
 /* The 1px scroll sentinel above the hero takes the beige. */
 html:not([data-look="dark"]) [data-top-sentinel]:has(+ .hb-beige) { background: #F4EEE3; }
+
+/* ───────── The splash screen (owner, 13 Nov 2026) ─────────
+   The app opening, once: the logo scales in out of a blur on ink, a gold shine sweeps across it, a line and a thin
+   loading bar appear, then the splash lifts away to Home. Pure CSS with `forwards`, so it always ends hidden, with or
+   without JS; hero-phone.tsx starts the screens after it. Never shown under reduced motion. */
+.hb-splash {
+  position: absolute; inset: 0; z-index: 7; display: grid; place-content: center; justify-items: center; gap: 1.1em;
+  border-radius: inherit; color: var(--p-white);
+  background: radial-gradient(70% 45% at 50% 42%, rgb(253 192 55 / .22), transparent 70%), var(--p-ink);
+  animation: hb-splash-out 650ms cubic-bezier(.7, 0, .2, 1) 2350ms forwards;
+}
+.hb-splash-mark { position: relative; display: block; width: 10.5em; }
+.hb-splash-mark img { display: block; width: 100%; height: auto; opacity: 0; animation: hb-splash-in 900ms cubic-bezier(.22, .8, .24, 1) 150ms forwards; }
+/* The shine: a bright band masked to the logo's own shape, crossing it once. */
+.hb-splash-shine {
+  position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / .95) 50%, transparent 65%) no-repeat;
+  background-size: 250% 100%; background-position: 130% 0; opacity: 0;
+  animation: hb-splash-shine 1000ms ease-in-out 950ms forwards;
+}
+.hb-splash-line { font-size: 0.75em; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgb(255 255 255 / .7);
+  opacity: 0; animation: hb-splash-up 600ms ease 1050ms forwards; }
+.hb-splash-load { display: block; width: 5.5em; height: 0.18em; margin-top: 0.6em; border-radius: 1em; overflow: hidden; background: rgb(255 255 255 / .14);
+  opacity: 0; animation: hb-splash-up 400ms ease 1150ms forwards; }
+.hb-splash-load i { display: block; height: 100%; border-radius: inherit; background: var(--p-gold); transform: scaleX(0); transform-origin: left;
+  animation: hb-splash-load 1000ms cubic-bezier(.4, 0, .2, 1) 1250ms forwards; }
+
+@keyframes hb-splash-in { from { opacity: 0; transform: scale(.82); filter: blur(10px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes hb-splash-shine { 0% { opacity: 1; background-position: 130% 0; } 100% { opacity: 1; background-position: -30% 0; } }
+@keyframes hb-splash-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes hb-splash-load { to { transform: scaleX(1); } }
+@keyframes hb-splash-out { to { opacity: 0; transform: translateY(-6%) scale(1.04); visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .hb-splash { display: none; } }
+.hb-island { z-index: 8; }
