@@ -338,3 +338,14 @@
 /* Owner, 13 Nov 2026: no sideways scrolling anywhere. `clip`, not `hidden`, so sticky sections keep working and no
    new scroll container is made; the hero's tilted phone and glow can't push the page wider. */
 html, body { overflow-x: clip; }
+
+/* Owner, 13 Nov 2026: the nav bar and hero on beige "for now". Light roles (ink text), a warm ground. */
+.theme-beige {
+  --background: #F4EEE3;
+  --background-alt: #EDE5D6;
+  --muted: #EDE5D6;
+  --accent: #EDE5D6;
+  --border: rgb(39 42 51 / .12);
+  background-color: var(--background);
+  color: var(--foreground);
+}

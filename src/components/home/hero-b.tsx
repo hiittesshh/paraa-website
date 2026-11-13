@@ -261,7 +261,7 @@ const FLOATS = [
 
 export function HeroB() {
   return (
-    <section id="top" aria-labelledby="hero-title" className="theme-ink hb-hero">
+    <section id="top" aria-labelledby="hero-title" className="hb-hero hb-beige">
       {/* The ground: a gold glow and faint rings behind the illustration, a vignette at the edges (hero-b.css). */}
       <span className="hb-ground" aria-hidden />
       <div className="container-page hb-split">

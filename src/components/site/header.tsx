@@ -21,7 +21,7 @@ export function SiteHeader() {
     // `relative` makes the header the menu panel's containing block when it isn't sticky (< 600px tall).
     <header
       data-header=""
-      className="theme-ink relative top-0 z-40 h-header border-b border-white/10 tall:sticky data-[at-top]:border-transparent"
+      className="theme-beige relative top-0 z-40 h-header border-b border-border tall:sticky data-[at-top]:border-transparent"
     >
       <div className="container-page flex h-full items-center gap-6">
         <Brand />

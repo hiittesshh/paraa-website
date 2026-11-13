@@ -355,3 +355,41 @@
 .hb-menu { display: grid; margin-top: 1em; border-top: 1px solid rgb(39 42 51 / .12); }
 .hb-menu span { display: flex; justify-content: space-between; align-items: center; padding-block: 0.8em; border-bottom: 1px solid rgb(39 42 51 / .12); font-size: 0.8125em; font-weight: 600; }
 .hb-menu svg { width: 1.1em; height: 1.1em; color: var(--p-ink-4); }
+
+/* ───────── Beige hero (owner, 13 Nov 2026: "make the nav bar and hero section background beige for now") ─────────
+   The same layout on a warm beige with ink type; the light roles from :root (ink buttons, ink focus ring). */
+.hb-beige { --background: #F4EEE3; background-color: #F4EEE3; color: var(--p-ink); }
+.hb-beige .hb-display { color: var(--p-ink); }
+.hb-beige .hb-display-soft { color: var(--p-ink-4); }
+.hb-beige .hb-lede { color: var(--p-ink-2); }
+.hb-beige .hb-text-link { color: var(--p-ink); text-decoration-color: var(--p-ink-5); }
+@media (hover: hover) { .hb-beige .hb-text-link:hover { text-decoration-color: var(--p-ink); } }
+.hb-beige .hb-small, .hb-beige .hb-caption { color: var(--p-ink-2); }
+.hb-beige .hb-pause { color: var(--p-ink-2); }
+@media (hover: hover) { .hb-beige .hb-pause:hover { color: var(--p-ink); } }
+.hb-beige .hb-pause:focus-visible { outline-color: var(--p-ink); }
+/* The ground: a warm gold glow and faint ink rings instead of white light. */
+.hb-beige .hb-ground::before {
+  background:
+    radial-gradient(34% 42% at 74% 44%, rgb(253 192 55 / .22), transparent 70%),
+    radial-gradient(120% 90% at 50% 120%, rgb(140 102 18 / .10), transparent 60%);
+}
+.hb-beige .hb-ground::after { background: repeating-radial-gradient(circle at 76% 44%, transparent 0 179px, rgb(39 42 51 / .08) 180px, transparent 181px 260px); }
+@media (width < 64rem) {
+  .hb-beige .hb-ground::before { background: radial-gradient(70% 40% at 50% 78%, rgb(253 192 55 / .2), transparent 70%); }
+  .hb-beige .hb-ground::after { background: repeating-radial-gradient(circle at 50% 80%, transparent 0 139px, rgb(39 42 51 / .07) 140px, transparent 141px 200px); }
+}
+/* The phone on a light ground: a softer shadow. */
+.hb-beige .hb-phone { box-shadow:
+  inset 0 0 0 1px rgb(255 255 255 / .18), inset 0 0 0 3px rgb(0 0 0 / .55),
+  -24px 40px 70px -30px rgb(39 42 51 / .45), 0 70px 100px -60px rgb(39 42 51 / .55), 0 0 140px -40px rgb(253 192 55 / .35); }
+.hb-beige .hb-float-card { box-shadow: 0 1px 2px rgb(39 42 51 / .08), 0 30px 60px -20px rgb(39 42 51 / .35), 0 0 0 1px rgb(39 42 51 / .06); }
+/* The four facts along the foot. */
+.hb-beige .hb-facts { border-top-color: rgb(39 42 51 / .12); }
+.hb-beige .hb-fact { color: var(--p-ink); }
+.hb-beige .hb-limit-text { color: var(--p-ink-2); }
+.hb-beige .hb-cue { text-decoration-color: var(--p-ink-5); }
+@media (hover: hover) { .hb-beige .hb-fact:hover .hb-cue { text-decoration-color: var(--p-ink); } }
+.hb-beige .hb-fact-icon { background: rgb(255 255 255 / .6); box-shadow: inset 0 0 0 1px rgb(39 42 51 / .1); }
+/* The 1px scroll sentinel above the hero takes the beige. */
+[data-top-sentinel]:has(+ .hb-beige) { background: #F4EEE3; }
