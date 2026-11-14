@@ -12,7 +12,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const HOLD = 0.75; // screens of scroll per chapter
-const AUTOPLAY = false;
+const AUTOPLAY = true; // owner, 14 Nov 2026: back on, looping, as a slideshow
 
 export function PinnedScroll({
   id,

@@ -135,7 +135,7 @@
 }
 
 /* The slides' auto-play chip (pinned-scroll.tsx): says the site is advancing, with a pause. */
-.mk-auto { position: absolute; right: 0; bottom: 28px; z-index: 5; display: inline-flex; align-items: center; gap: 10px;
+.mk-auto { position: absolute; right: 28px; bottom: 76px; z-index: 5; display: inline-flex; align-items: center; gap: 10px;
   min-height: 40px; padding: 0 14px; border-radius: 999px; cursor: pointer;
   background: rgb(21 21 23 / .85); color: #F2F2F2; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .14); font-size: 13px; font-weight: 600; }
 .mk-auto:hover { box-shadow: inset 0 0 0 1px rgb(253 192 55 / .6); }
@@ -144,3 +144,15 @@
 .mk-auto-bar i { position: absolute; inset: 0; background: #FDC037; transform-origin: left; animation: mk-auto 1.5s linear forwards; }
 .mk-auto-icon { font-size: 10px; letter-spacing: -1px; color: #FDC037; }
 @keyframes mk-auto { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Owner, 14 Nov 2026: no side rail beside the list; the market in view is highlighted instead (white name, gold
+   share, a soft gold wash behind its row), in step with the picture on the right. */
+.mk[data-live] .mk-step::before, .mk[data-live] .mk-step::after { display: none; }
+.mk[data-live] .mk-step { padding-left: 20px; border-radius: 14px; transition: background-color 350ms ease; }
+.mk[data-live][data-step="0"] .mk-step[data-i="0"],
+.mk[data-live][data-step="1"] .mk-step[data-i="1"],
+.mk[data-live][data-step="2"] .mk-step[data-i="2"] { background: linear-gradient(90deg, rgb(253 192 55 / .14), rgb(253 192 55 / 0) 85%); }
+.mk[data-live][data-step="0"] .mk-step[data-i="0"] .mk-pct,
+.mk[data-live][data-step="1"] .mk-step[data-i="1"] .mk-pct,
+.mk[data-live][data-step="2"] .mk-step[data-i="2"] .mk-pct { color: var(--p-gold); }
+.mk[data-live] .mk-detail { padding-left: 20px; }
