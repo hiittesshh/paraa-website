@@ -14,6 +14,7 @@ import { Tools } from "@/components/home/tools";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader, SkipLink, TopSentinel } from "@/components/site/header";
 import { ScrollState } from "@/components/site/scroll-state";
+import { SectionEntrance } from "@/components/motion/section-entrance";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 
 // Spec §6.0. No risk sentence here: owner decision 1 covers the hero cell only. openGraph (title,
@@ -42,6 +43,7 @@ export default function Home() {
       </main>
       <ScrollState />
       <SmoothScroll />
+      <SectionEntrance />
       <HashHandler />
       <SiteFooter />
     </>

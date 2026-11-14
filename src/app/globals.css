@@ -378,3 +378,20 @@ html[data-look="dark"] [data-header] { border-bottom-color: rgb(255 255 255 / .0
 html[data-look="dark"] [data-top-sentinel] { background: var(--p-ink); }
 /* The gold logo on the light sand header: a hairline ink edge gives the letters definition. */
 html:not([data-look="dark"]) .theme-beige img { filter: drop-shadow(0 0 0.5px rgb(39 42 51 / .55)) drop-shadow(0 1px 1px rgb(39 42 51 / .25)); }
+
+/* Section entrance (section-entrance.tsx): the section's content rises into place and fades in, its heading block
+   first. Each section's direct children are what move, so section backgrounds stay put. */
+main > section[data-entrance] > * {
+  transition: opacity 900ms cubic-bezier(.22, 1, .36, 1), transform 1100ms cubic-bezier(.22, 1, .36, 1);
+}
+main > section[data-entrance="out"] > * { opacity: 0; transform: translateY(44px); }
+main > section[data-entrance="in"] > * { opacity: 1; transform: none; }
+/* Inside the usual container: the heading block leads, the rest follows. */
+main > section[data-entrance] > .container-page > * {
+  transition: opacity 800ms cubic-bezier(.22, 1, .36, 1), transform 1000ms cubic-bezier(.22, 1, .36, 1);
+}
+main > section[data-entrance="out"] > .container-page > * { opacity: 0; transform: translateY(28px); }
+main > section[data-entrance="in"] > .container-page > * { opacity: 1; transform: none; }
+main > section[data-entrance="in"] > .container-page > :nth-child(2) { transition-delay: 120ms; }
+main > section[data-entrance="in"] > .container-page > :nth-child(3) { transition-delay: 220ms; }
+main > section[data-entrance="in"] > .container-page > :nth-child(n + 4) { transition-delay: 300ms; }
