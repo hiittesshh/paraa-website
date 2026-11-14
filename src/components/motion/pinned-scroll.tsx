@@ -82,90 +82,119 @@ export function PinnedScroll({
     };
   }, [live, count]);
 
-  // Slow autoscroll (owner, 14 Nov 2026: "add smooth and slow autoscrolling in our What you're buying section").
-  // While the stage is pinned and the visitor has been idle for a few seconds, glide slowly to the next chapter, hold,
-  // and go on until the last one; any wheel, touch, key or pointer press hands control straight back. It never leaves
-  // the section. Live (desktop) only, so never under reduced motion.
+  // Slides (owner, 14 Nov 2026: the slow autoscroll confused people, "is it me or the site scrolling?"; "it should be
+  // faster, like a slideshow"). While the stage is pinned, one wheel gesture moves exactly one chapter, in a quick
+  // 0.6 s glide; past the last chapter (or before the first) the page scrolls on as normal. Left alone, it plays itself,
+  // about 2.5 s a slide, and says so with an Auto-play chip that can be paused. Desktop live mode only.
+  const [auto, setAuto] = useState<"off" | "playing" | "paused">("off");
+  const [tickKey, setTickKey] = useState(0);
+  const autoRef = useRef(auto);
+  useEffect(() => {
+    autoRef.current = auto;
+  }, [auto]);
   useEffect(() => {
     const tr = track.current;
     if (!live || !tr) return;
-    const IDLE = 900; // ms without input before it moves
-    const HOLD = 2000; // ms on each chapter before the next glide
-    const GLIDE = 1.4; // s per glide
-    let lastInput = performance.now();
-    let lastArrive = performance.now();
+    const GLIDE = 0.6;
+    const HOLD = 2500;
     let gliding = false;
     let pinned = false;
-    let raf = 0;
-    const lenis = () => (window as unknown as { __lenis?: { scrollTo: (y: number, o: object) => void; stop?: () => void } }).__lenis;
-    const onInput = () => {
-      lastInput = performance.now();
-      if (gliding) {
-        gliding = false;
-        if (raf) cancelAnimationFrame(raf);
-        raf = 0;
-      }
-    };
-    const glideTo = (y: number) => {
-      gliding = true;
-      const l = lenis();
-      const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-      if (l) {
-        l.scrollTo(y, { duration: GLIDE, easing: ease, onComplete: () => { gliding = false; lastArrive = performance.now(); } });
-        return;
-      }
-      const from = scrollY;
-      const start = performance.now();
-      const step = (now: number) => {
-        if (!gliding) return;
-        const t = Math.min(1, (now - start) / (GLIDE * 1000));
-        scrollTo(0, from + (y - from) * ease(t));
-        if (t < 1) raf = requestAnimationFrame(step);
-        else {
-          gliding = false;
-          lastArrive = performance.now();
-        }
-      };
-      raf = requestAnimationFrame(step);
-    };
-    const tick = setInterval(() => {
-      if (gliding || document.hidden) return;
-      const now = performance.now();
+    let timer = 0;
+    type L = { scrollTo: (y: number, o: object) => void };
+    const lenis = () => (window as unknown as { __lenis?: L }).__lenis;
+    const geom = () => {
       const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) * 16 || 64;
       const r = tr.getBoundingClientRect();
       const run = r.height - (innerHeight - header);
-      // pinned: the track's top has reached the header and its end is still below the screen's foot
-      if (run <= 0 || r.top > header + 4 || r.bottom < innerHeight - 4) {
-        pinned = false;
-        return;
-      }
-      // just arrived: hold on the chapter in view first
-      if (!pinned) {
-        pinned = true;
-        lastArrive = now;
-        return;
-      }
-      if (now - lastInput < IDLE || now - lastArrive < HOLD) return;
-      const p = Math.min(1, Math.max(0, (header - r.top) / run));
-      const at = Math.min(count - 1, Math.floor(p * count));
-      if (at >= count - 1) return;
       const top = scrollY + r.top - header;
-      glideTo(top + (run * (at + 1 + 0.5)) / count);
-    }, 400);
-    const opts = { passive: true } as AddEventListenerOptions;
-    addEventListener("wheel", onInput, opts);
-    addEventListener("touchstart", onInput, opts);
-    addEventListener("pointerdown", onInput, opts);
-    addEventListener("keydown", onInput);
+      const p = run > 0 ? Math.min(1, Math.max(0, (header - r.top) / run)) : 0;
+      const isPinned = run > 0 && r.top <= header + 4 && r.bottom >= innerHeight - 4;
+      return { run, top, at: Math.min(count - 1, Math.floor(p * count)), isPinned };
+    };
+    const yOf = (g: ReturnType<typeof geom>, i: number) => g.top + (g.run * (i + 0.5)) / count;
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    const go = (i: number) => {
+      const g = geom();
+      gliding = true;
+      const y = yOf(g, i);
+      const done = () => {
+        gliding = false;
+        schedule();
+      };
+      const l = lenis();
+      if (l) l.scrollTo(y, { duration: GLIDE, easing: ease, lock: true, onComplete: done });
+      else {
+        scrollTo({ top: y, behavior: "smooth" });
+        setTimeout(done, GLIDE * 1000);
+      }
+    };
+    const schedule = () => {
+      clearTimeout(timer);
+      const g = geom();
+      if (!g.isPinned || autoRef.current === "paused" || g.at >= count - 1) {
+        if (g.at >= count - 1 && autoRef.current === "playing") setAuto("off");
+        return;
+      }
+      setAuto("playing");
+      setTickKey((k) => k + 1);
+      timer = window.setTimeout(() => {
+        const now = geom();
+        if (now.isPinned && autoRef.current === "playing" && now.at < count - 1) go(now.at + 1);
+      }, HOLD);
+    };
+    const onWheel = (e: WheelEvent) => {
+      const g = geom();
+      if (!g.isPinned) return;
+      const down = e.deltaY > 0;
+      const next = down ? g.at + 1 : g.at - 1;
+      if (next < 0 || next > count - 1) return; // let the page carry on past the ends
+      // Ours: keep the smooth-scroll engine out of it and move one slide.
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (gliding || Math.abs(e.deltaY) < 4) return;
+      clearTimeout(timer);
+      go(next);
+    };
+    let lastY = scrollY;
+    const onScroll = () => {
+      const g = geom();
+      const down = scrollY >= lastY;
+      lastY = scrollY;
+      if (g.isPinned && !pinned) {
+        pinned = true;
+        // Arriving: land on the first slide from above, the last from below, whatever the scroll's momentum.
+        const want = down ? 0 : count - 1;
+        if (!gliding && g.at !== want) go(want);
+        else schedule();
+      } else if (!g.isPinned && pinned) {
+        pinned = false;
+        clearTimeout(timer);
+        setAuto("off");
+      }
+    };
+    addEventListener("wheel", onWheel, { capture: true, passive: false });
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    const onToggle = () => {
+      if (autoRef.current === "paused") schedule();
+      else clearTimeout(timer);
+    };
+    root.current?.addEventListener("paraa-autoplay", onToggle);
+    const rootEl = root.current;
     return () => {
-      clearInterval(tick);
-      if (raf) cancelAnimationFrame(raf);
-      removeEventListener("wheel", onInput);
-      removeEventListener("touchstart", onInput);
-      removeEventListener("pointerdown", onInput);
-      removeEventListener("keydown", onInput);
+      clearTimeout(timer);
+      removeEventListener("wheel", onWheel, { capture: true });
+      removeEventListener("scroll", onScroll);
+      rootEl?.removeEventListener("paraa-autoplay", onToggle);
     };
   }, [live, count]);
+
+  const toggleAuto = () => {
+    const next = auto === "paused" ? "playing" : "paused";
+    setAuto(next);
+    autoRef.current = next;
+    root.current?.dispatchEvent(new Event("paraa-autoplay"));
+  };
 
   return (
     <section
@@ -183,6 +212,18 @@ export function PinnedScroll({
             <div className="mk-frame" aria-hidden>
               {frame}
             </div>
+          ) : null}
+          {live && auto !== "off" ? (
+            <button type="button" className="mk-auto" aria-pressed={auto === "paused"} onClick={toggleAuto}>
+              <span className="mk-auto-label">{auto === "paused" ? "Paused" : "Auto-play"}</span>
+              <span className="mk-auto-bar" aria-hidden>
+                {auto === "playing" ? <i key={tickKey} /> : null}
+              </span>
+              <span className="mk-auto-icon" aria-hidden>
+                {auto === "paused" ? "▶" : "❚❚"}
+              </span>
+              <span className="sr-only">{auto === "paused" ? "Resume the slides" : "Pause the slides"}</span>
+            </button>
           ) : null}
         </div>
       </div>
