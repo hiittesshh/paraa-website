@@ -6,7 +6,9 @@
 // only, still under reduced motion. Decorative: each market's own text says what it is.
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+import { PumpjackScene, VaultScene } from "./scene-hero";
 import "./market-scenes.css";
+import "./scene-hero.css";
 
 export const GOLD_SCENES = [
   { id: "vault", label: "Vault door" },
@@ -52,19 +54,6 @@ const sparkle = (x: number, y: number, s = 10) =>
   `M${x} ${y - s}L${x + s * 0.18} ${y - s * 0.18}L${x + s} ${y}L${x + s * 0.18} ${y + s * 0.18}L${x} ${y + s}L${x - s * 0.18} ${y + s * 0.18}L${x - s} ${y}L${x - s * 0.18} ${y - s * 0.18}Z`;
 
 /** A gold bar seen from the front-right: top, front, side. */
-function Bar({ x, y, w = 150, u, k = 0 }: { x: number; y: number; w?: number; u: string; k?: number }) {
-  const h = w * 0.3;
-  const d = w * 0.22;
-  return (
-    <g transform={`translate(${x} ${y})`}>
-      <path d={`M${w * 0.1} 0H${w * 0.9}L${w * 0.9 + d} ${-d * 0.6}H${w * 0.1 + d}Z`} fill={`url(#g-top-${u})`} />
-      <path d={`M0 ${h}H${w}L${w * 0.9} 0H${w * 0.1}Z`} fill={`url(#g-front-${u})`} />
-      <path d={`M${w} ${h}L${w + d} ${h - d * 0.6}L${w * 0.9 + d} ${-d * 0.6}L${w * 0.9} 0Z`} fill={`url(#g-side-${u})`} />
-      <path d={`M${w * 0.1} 0H${w * 0.9}`} stroke="#FFF7DC" strokeWidth="1.5" opacity=".9" />
-      {k > 0 && null}
-    </g>
-  );
-}
 
 function GoldDefs({ u }: { u: string }) {
   return (
@@ -104,42 +93,6 @@ function GoldDefs({ u }: { u: string }) {
         <stop offset="1" stopColor="#FF8A1F" />
       </linearGradient>
     </defs>
-  );
-}
-
-// ── Gold 1: the vault door ──
-function Vault({ u }: { u: string }) {
-  const bolts = Array.from({ length: 12 }, (_, i) => (i * 360) / 12);
-  return (
-    <Frame className="ms-vault">
-      <GoldDefs u={u} />
-      {/* the room behind the door: light and bullion */}
-      <circle cx="300" cy="300" r="190" fill="#120D04" />
-      <circle className="ms-vault-light" cx="300" cy="300" r="185" fill={`url(#g-glow-${u})`} />
-      <g className="ms-vault-bars">
-        <Bar x={170} y={330} w={120} u={u} />
-        <Bar x={300} y={330} w={120} u={u} />
-        <Bar x={235} y={290} w={120} u={u} />
-      </g>
-      {/* the frame */}
-      <circle cx="300" cy="300" r="196" fill="none" stroke={`url(#g-steel-${u})`} strokeWidth="14" />
-      {/* the door, hinged on the left */}
-      <g className="ms-vault-door">
-        <circle cx="300" cy="300" r="186" fill={`url(#g-steel-${u})`} />
-        <circle cx="300" cy="300" r="160" fill="#2B2D34" stroke="#7D7F85" strokeWidth="3" />
-        <circle cx="300" cy="300" r="128" fill="none" stroke="#FDC037" strokeWidth="2" opacity=".7" />
-        {bolts.map((a) => (
-          <circle key={a} cx={300 + 172 * Math.cos((a * Math.PI) / 180)} cy={300 + 172 * Math.sin((a * Math.PI) / 180)} r="7" fill="#C9CACD" stroke="#272A33" />
-        ))}
-        <g className="ms-vault-wheel">
-          {[0, 60, 120].map((a) => (
-            <rect key={a} x="292" y="200" width="16" height="200" rx="8" fill="#FDC037" transform={`rotate(${a} 300 300)`} />
-          ))}
-          <circle cx="300" cy="300" r="34" fill="#FDC037" stroke="#8C6612" strokeWidth="4" />
-          <circle cx="300" cy="300" r="12" fill="#8C6612" />
-        </g>
-      </g>
-    </Frame>
   );
 }
 
@@ -250,44 +203,6 @@ function Ingot({ u }: { u: string }) {
         </g>
       </g>
       <path className="ms-spark" d={sparkle(430, 214, 16)} fill="#FFFFFF" />
-    </Frame>
-  );
-}
-
-// ── Oil 1: the pumpjack at dusk ──
-function Pumpjack({ u }: { u: string }) {
-  return (
-    <Frame className="ms-pump">
-      <defs>
-        <linearGradient id={`o-sky-${u}`} x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stopColor="#151517" />
-          <stop offset=".55" stopColor="#6B3F0A" />
-          <stop offset=".8" stopColor="#F0A417" />
-          <stop offset="1" stopColor="#FFE3A0" />
-        </linearGradient>
-      </defs>
-      <rect x="0" y="0" width="600" height="440" fill={`url(#o-sky-${u})`} />
-      <circle className="ms-sun" cx="420" cy="420" r="70" fill="#FFF1C2" opacity=".9" />
-      <rect x="0" y="430" width="600" height="170" fill="#0B0B0D" />
-      <path d="M0 440C120 420 220 432 320 424S520 414 600 428V440H0Z" fill="#0B0B0D" />
-      {/* the frame (samson post) */}
-      <path d="M232 432L282 250L332 432" fill="none" stroke="#050505" strokeWidth="14" strokeLinejoin="round" />
-      <path d="M248 372H316" stroke="#050505" strokeWidth="8" />
-      {/* the walking beam with the horse head, rocking on the post */}
-      <g className="ms-beam">
-        <rect x="140" y="238" width="280" height="22" rx="4" fill="#050505" />
-        <path d="M110 214Q160 248 132 300L120 304Q136 252 100 222Z" fill="#050505" />
-        <path d="M96 210H140V300Q118 306 100 300Z" fill="#050505" />
-      </g>
-      {/* the polished rod */}
-      <rect className="ms-rod" x="112" y="300" width="6" height="140" fill="#050505" />
-      {/* the crank and counterweight */}
-      <g className="ms-crank">
-        <circle cx="390" cy="370" r="12" fill="#050505" />
-        <path d="M390 370L452 392" stroke="#050505" strokeWidth="16" strokeLinecap="round" />
-        <circle cx="452" cy="392" r="26" fill="#050505" />
-      </g>
-      <rect x="370" y="380" width="40" height="52" fill="#050505" />
     </Frame>
   );
 }
@@ -459,7 +374,7 @@ export function GoldScene({ u }: { u: string }) {
   if (choice === "pour") return <Pour u={u} />;
   if (choice === "coins") return <Coins u={u} />;
   if (choice === "ingot") return <Ingot u={u} />;
-  return <Vault u={u} />;
+  return <VaultScene u={u} />;
 }
 
 export function OilScene({ u }: { u: string }) {
@@ -467,7 +382,7 @@ export function OilScene({ u }: { u: string }) {
   if (choice === "splash") return <Splash u={u} />;
   if (choice === "pipeline") return <Pipeline u={u} />;
   if (choice === "rig") return <Rig u={u} />;
-  return <Pumpjack u={u} />;
+  return <PumpjackScene u={u} />;
 }
 
 /** Review only: a small bar fixed to the bottom of the screen while "What you're buying" is on it. */
