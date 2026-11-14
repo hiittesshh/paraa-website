@@ -40,7 +40,7 @@ export function Basket() {
           </div>
           <div className="mk-bar">
             {SLEEVES.map((s, i) => (
-              <span key={s.id} data-i={i} data-sleeve={s.id} style={{ flexGrow: s.weight }} />
+              <span key={s.id} data-i={i} data-sleeve={s.id} style={{ flexGrow: 1 }} />
             ))}
           </div>
         </>

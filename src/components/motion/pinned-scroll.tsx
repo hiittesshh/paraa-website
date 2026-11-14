@@ -88,7 +88,6 @@ export function PinnedScroll({
   // 0.6 s glide; past the last chapter (or before the first) the page scrolls on as normal. Left alone, it plays itself,
   // about 2.5 s a slide, and says so with an Auto-play chip that can be paused. Desktop live mode only.
   const [auto, setAuto] = useState<"off" | "playing" | "paused">("off");
-  const [tickKey, setTickKey] = useState(0);
   const autoRef = useRef(auto);
   useEffect(() => {
     autoRef.current = auto;
@@ -99,6 +98,9 @@ export function PinnedScroll({
     const GLIDE = 0.35;
     const HOLD = 1500;
     let gliding = false;
+    let userGliding = false;
+    let arriving = false;
+    let quietUntil = 0;
     let pinned = false;
     let timer = 0;
     type L = { scrollTo: (y: number, o: object) => void };
@@ -120,10 +122,12 @@ export function PinnedScroll({
       const y = yOf(g, i);
       const done = () => {
         gliding = false;
+        if (arriving) quietUntil = performance.now() + 450;
+        arriving = false;
         schedule();
       };
       const l = lenis();
-      if (l) l.scrollTo(y, { duration: GLIDE, easing: ease, lock: true, onComplete: done });
+      if (l) l.scrollTo(y, { duration: GLIDE, easing: ease, force: true, onComplete: done });
       else {
         scrollTo({ top: y, behavior: "smooth" });
         setTimeout(done, GLIDE * 1000);
@@ -137,25 +141,47 @@ export function PinnedScroll({
       const g = geom();
       if (!g.isPinned || autoRef.current === "paused") return;
       setAuto("playing");
-      setTickKey((k) => k + 1);
       // Loops (owner, 14 Nov 2026): after the last market it goes back to the first.
       timer = window.setTimeout(() => {
         const now = geom();
         if (now.isPinned && autoRef.current === "playing") go(now.at >= count - 1 ? 0 : now.at + 1);
       }, HOLD);
     };
+    // Owner, 14 Nov 2026: while the section is in focus, one scroll moves on to the next part of the page (down) or back
+    // to the one before (up), not slide by slide; the slides play themselves.
+    let settleUntil = 0;
     const onWheel = (e: WheelEvent) => {
+      // While the visitor's own move runs, and just after it, the rest of that gesture is absorbed wherever it lands,
+      // so one scroll always ends in the same place.
+      if (userGliding || performance.now() < settleUntil) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return;
+      }
       const g = geom();
       if (!g.isPinned) return;
-      const down = e.deltaY > 0;
-      const next = down ? g.at + 1 : g.at - 1;
-      if (next < 0 || next > count - 1) return; // let the page carry on past the ends
-      // Ours: keep the smooth-scroll engine out of it and move one slide.
       e.preventDefault();
       e.stopImmediatePropagation();
-      if (gliding || Math.abs(e.deltaY) < 4) return;
+      // the rest of a gesture that just landed us here, or the visitor's own move already under way, is absorbed; an
+      // autoplay glide never blocks the visitor
+      if (userGliding || arriving || performance.now() < quietUntil || Math.abs(e.deltaY) < 4) return;
       clearTimeout(timer);
-      go(next);
+      const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) * 16 || 64;
+      const trackH = tr.getBoundingClientRect().height;
+      const y = e.deltaY > 0 ? g.top + trackH : Math.max(0, g.top - (innerHeight - header));
+      gliding = true;
+      userGliding = true;
+      const l = lenis();
+      const done = () => {
+        gliding = false;
+        userGliding = false;
+        settleUntil = performance.now() + 350;
+      };
+      if (l) l.scrollTo(y, { duration: 0.7, easing: ease, force: true, onComplete: done });
+      else {
+        scrollTo({ top: y, behavior: "smooth" });
+        setTimeout(done, 700);
+      }
     };
     let lastY = scrollY;
     const onScroll = () => {
@@ -166,7 +192,10 @@ export function PinnedScroll({
         pinned = true;
         // Arriving: land on the first slide from above, the last from below, whatever the scroll's momentum.
         const want = down ? 0 : count - 1;
-        if (!gliding && g.at !== want) go(want);
+        if (!gliding && g.at !== want) {
+          arriving = true;
+          go(want);
+        }
         else schedule();
       } else if (!g.isPinned && pinned) {
         pinned = false;
@@ -191,12 +220,6 @@ export function PinnedScroll({
     };
   }, [live, count]);
 
-  const toggleAuto = () => {
-    const next = auto === "paused" ? "playing" : "paused";
-    setAuto(next);
-    autoRef.current = next;
-    root.current?.dispatchEvent(new Event("paraa-autoplay"));
-  };
 
   return (
     <section
@@ -215,18 +238,7 @@ export function PinnedScroll({
               {frame}
             </div>
           ) : null}
-          {live && auto !== "off" ? (
-            <button type="button" className="mk-auto" aria-pressed={auto === "paused"} onClick={toggleAuto}>
-              <span className="mk-auto-label">{auto === "paused" ? "Paused" : "Auto-play"}</span>
-              <span className="mk-auto-bar" aria-hidden>
-                {auto === "playing" ? <i key={tickKey} /> : null}
-              </span>
-              <span className="mk-auto-icon" aria-hidden>
-                {auto === "paused" ? "▶" : "❚❚"}
-              </span>
-              <span className="sr-only">{auto === "paused" ? "Resume the slides" : "Pause the slides"}</span>
-            </button>
-          ) : null}
+          {/* The Auto-play chip was removed (owner, 14 Nov 2026). */}
         </div>
       </div>
       {after}

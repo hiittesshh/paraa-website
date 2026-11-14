@@ -111,81 +111,6 @@ function GoldDefs({ u }: { u: string }) {
 
 // ── Simple (owner, 14 Nov 2026: "make gold and crude oil simplistic: barrels for crude oil, a gold brick for gold, just
 // animate them simply"). The defaults. ──
-/** An illustrative price line, scrolling right to left, with a tag that says so. */
-function PriceLine({ u, colour, y }: { u: string; colour: string; y: number }) {
-  const wave =
-    "M0 40C40 30 60 52 100 44S160 10 200 22S260 60 300 48S360 18 400 30S460 56 500 40S560 30 600 40";
-  return (
-    <g>
-      <defs>
-        <linearGradient id={`pl-fade-${u}`} x1="0" x2="1">
-          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0" />
-          <stop offset=".15" stopColor="#FFFFFF" stopOpacity="1" />
-          <stop offset=".85" stopColor="#FFFFFF" stopOpacity="1" />
-          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
-        </linearGradient>
-        <mask id={`pl-mask-${u}`}>
-          <rect
-            x="0"
-            y={y - 40}
-            width="600"
-            height="140"
-            fill={`url(#pl-fade-${u})`}
-          />
-        </mask>
-      </defs>
-      <g mask={`url(#pl-mask-${u})`}>
-        <g transform={`translate(0 ${y})`}>
-          <g className="ms-line-scroll">
-            <path
-              d={wave}
-              fill="none"
-              stroke={colour}
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-            <path
-              d={wave}
-              transform="translate(600 0)"
-              fill="none"
-              stroke={colour}
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-            <path
-              d={wave}
-              fill="none"
-              stroke={colour}
-              strokeOpacity=".25"
-              strokeWidth="12"
-              strokeLinecap="round"
-            />
-            <path
-              d={wave}
-              transform="translate(600 0)"
-              fill="none"
-              stroke={colour}
-              strokeOpacity=".25"
-              strokeWidth="12"
-              strokeLinecap="round"
-            />
-          </g>
-        </g>
-      </g>
-      <text
-        x="56"
-        y={y + 92}
-        fontSize="12"
-        fontWeight="600"
-        letterSpacing="1.5"
-        fill="#7D7F85"
-      >
-        ILLUSTRATIVE
-      </text>
-    </g>
-  );
-}
-
 function SimpleGold({ u }: { u: string }) {
   // One brick (front A-B-C-D, top D-C-E-F, side B-G-E-C), with a chamfer, a stamped panel and a floor reflection.
   const front = "M0 110H300L262 12H38Z";
@@ -281,7 +206,6 @@ function SimpleGold({ u }: { u: string }) {
         </clipPath>
       </defs>
       <circle cx="300" cy="380" r="230" fill={`url(#sg-glow-${u})`} />
-      <PriceLine u={u} colour="#FDC037" y={270} />
       {/* the glossy floor and the brick's reflection in it */}
       <ellipse
         className="ms-s-shadow"
@@ -455,7 +379,6 @@ function SimpleOil({ u }: { u: string }) {
         </radialGradient>
       </defs>
       <circle cx="300" cy="400" r="240" fill={`url(#sb-glow-${u})`} />
-      <PriceLine u={u} colour="#E5A920" y={250} />
       <ellipse
         cx="300"
         cy="540"
