@@ -15,10 +15,13 @@ export function SmoothScroll() {
     const start = () => {
       if (lenis || q.matches) return;
       lenis = new Lenis({ autoRaf: true, lerp: 0.085, wheelMultiplier: 0.9, smoothWheel: true, syncTouch: false });
+      // Shared with the pinned section's slow autoscroll, so both move the page through one engine.
+      (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
     };
     const stop = () => {
       lenis?.destroy();
       lenis = null;
+      delete (window as unknown as { __lenis?: Lenis }).__lenis;
     };
     const sync = () => (q.matches ? stop() : start());
     sync();

@@ -82,6 +82,91 @@ export function PinnedScroll({
     };
   }, [live, count]);
 
+  // Slow autoscroll (owner, 14 Nov 2026: "add smooth and slow autoscrolling in our What you're buying section").
+  // While the stage is pinned and the visitor has been idle for a few seconds, glide slowly to the next chapter, hold,
+  // and go on until the last one; any wheel, touch, key or pointer press hands control straight back. It never leaves
+  // the section. Live (desktop) only, so never under reduced motion.
+  useEffect(() => {
+    const tr = track.current;
+    if (!live || !tr) return;
+    const IDLE = 2600; // ms without input before it moves
+    const HOLD = 3200; // ms on each chapter before the next glide
+    const GLIDE = 1.9; // s per glide
+    let lastInput = performance.now();
+    let lastArrive = performance.now();
+    let gliding = false;
+    let pinned = false;
+    let raf = 0;
+    const lenis = () => (window as unknown as { __lenis?: { scrollTo: (y: number, o: object) => void; stop?: () => void } }).__lenis;
+    const onInput = () => {
+      lastInput = performance.now();
+      if (gliding) {
+        gliding = false;
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
+    const glideTo = (y: number) => {
+      gliding = true;
+      const l = lenis();
+      const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      if (l) {
+        l.scrollTo(y, { duration: GLIDE, easing: ease, onComplete: () => { gliding = false; lastArrive = performance.now(); } });
+        return;
+      }
+      const from = scrollY;
+      const start = performance.now();
+      const step = (now: number) => {
+        if (!gliding) return;
+        const t = Math.min(1, (now - start) / (GLIDE * 1000));
+        scrollTo(0, from + (y - from) * ease(t));
+        if (t < 1) raf = requestAnimationFrame(step);
+        else {
+          gliding = false;
+          lastArrive = performance.now();
+        }
+      };
+      raf = requestAnimationFrame(step);
+    };
+    const tick = setInterval(() => {
+      if (gliding || document.hidden) return;
+      const now = performance.now();
+      const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) * 16 || 64;
+      const r = tr.getBoundingClientRect();
+      const run = r.height - (innerHeight - header);
+      // pinned: the track's top has reached the header and its end is still below the screen's foot
+      if (run <= 0 || r.top > header + 4 || r.bottom < innerHeight - 4) {
+        pinned = false;
+        return;
+      }
+      // just arrived: hold on the chapter in view first
+      if (!pinned) {
+        pinned = true;
+        lastArrive = now;
+        return;
+      }
+      if (now - lastInput < IDLE || now - lastArrive < HOLD) return;
+      const p = Math.min(1, Math.max(0, (header - r.top) / run));
+      const at = Math.min(count - 1, Math.floor(p * count));
+      if (at >= count - 1) return;
+      const top = scrollY + r.top - header;
+      glideTo(top + (run * (at + 1 + 0.5)) / count);
+    }, 400);
+    const opts = { passive: true } as AddEventListenerOptions;
+    addEventListener("wheel", onInput, opts);
+    addEventListener("touchstart", onInput, opts);
+    addEventListener("pointerdown", onInput, opts);
+    addEventListener("keydown", onInput);
+    return () => {
+      clearInterval(tick);
+      if (raf) cancelAnimationFrame(raf);
+      removeEventListener("wheel", onInput);
+      removeEventListener("touchstart", onInput);
+      removeEventListener("pointerdown", onInput);
+      removeEventListener("keydown", onInput);
+    };
+  }, [live, count]);
+
   return (
     <section
       ref={root}
