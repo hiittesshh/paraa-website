@@ -180,3 +180,5 @@
 @keyframes au-sweep { 0% { transform: skewX(-22deg) translateX(0); } 55%, 100% { transform: skewX(-22deg) translateX(1000px); } }
 @keyframes au-glint { 0%, 68%, 100% { opacity: 0; transform: scale(.2) rotate(0deg); } 80% { opacity: 1; transform: scale(1) rotate(45deg); } }
 @keyframes au-breathe { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+.m3-tick > span { display: inline-flex; align-items: center; gap: .4em; }
+.m3-mark { width: 1.2em; height: 1.2em; flex: none; }

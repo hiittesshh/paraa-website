@@ -63,3 +63,11 @@
 .b3-tag-move { font-size: 0.75rem; font-weight: 700; color: #FDC037; }
 .b3-tag-move.is-down { color: #A9AAAD; }
 @media (width < 40rem) { .b3-tag-name, .b3-tag-move { display: none; } }
+
+/* What you put in, kept visible on a gain (owner, 14 Nov 2026): a dashed ring round the block at its starting height,
+   and "from ₹…" on every label. */
+.b3-collar { position: absolute; left: 0; top: 0; border: .18em dashed #FFFFFF; border-radius: .3em;
+  box-shadow: 0 0 1.2em rgb(255 255 255 / .35); opacity: .9; }
+.b3-tag-from { font-size: 0.6875rem; font-weight: 600; color: #A9AAAD; }
+.b3-key-ghost { border-color: #FFFFFF; }
+@media (width < 40rem) { .b3-tag-from { display: block; } }

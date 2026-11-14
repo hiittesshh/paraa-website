@@ -8,6 +8,7 @@
 // no figures, no trend), the city swaying slowly. Gold: three solid bars stacked, turning slowly, light gliding over
 // the metal, gold dust rising. Crude oil: a glossy drop falls into a dark pool, splashes and sends rings of light out.
 import type { SleeveId } from "@/lib/basket";
+import { TICKER_MARKS } from "./ticker-marks";
 import "./market-art.css";
 
 type Style = React.CSSProperties & Record<`--${string}`, string | number>;
@@ -57,6 +58,32 @@ const TICKERS: Record<number, string> = {
   22: "S&P 500",
 };
 
+/** The brand mark beside a ticker (see ticker-marks.ts). */
+function TickerMark({ ticker }: { ticker: string }) {
+  const mark = TICKER_MARKS[ticker];
+  if (ticker === "MSFT")
+    return (
+      <svg viewBox="0 0 24 24" className="m3-mark" aria-hidden>
+        <rect x="1" y="1" width="10.5" height="10.5" fill="#F25022" />
+        <rect x="12.5" y="1" width="10.5" height="10.5" fill="#7FBA00" />
+        <rect x="1" y="12.5" width="10.5" height="10.5" fill="#00A4EF" />
+        <rect x="12.5" y="12.5" width="10.5" height="10.5" fill="#FFB900" />
+      </svg>
+    );
+  if (mark?.path)
+    return (
+      <svg viewBox="0 0 24 24" className="m3-mark" aria-hidden>
+        <path d={mark.path} fill={mark.fill} />
+      </svg>
+    );
+  // The S&P 500: an index, no product logo; a small rising-and-falling line.
+  return (
+    <svg viewBox="0 0 24 24" className="m3-mark" aria-hidden>
+      <path d="M2 17L8 11L12 14L18 6L22 9" fill="none" stroke="#FDC037" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function Stocks() {
   const cols = Array.from({ length: 25 }, (_, i) => ({
     gx: i % 5,
@@ -84,7 +111,10 @@ function Stocks() {
               </span>
               {TICKERS[i] && (
                 <span className="m3-tick">
-                  <span>{TICKERS[i]}</span>
+                  <span>
+                    <TickerMark ticker={TICKERS[i]} />
+                    {TICKERS[i]}
+                  </span>
                 </span>
               )}
             </span>

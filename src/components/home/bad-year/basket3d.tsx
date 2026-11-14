@@ -91,6 +91,14 @@ export function Basket3DPrototype({ m }: { m: BadYear }) {
                   <span className="b3-grow">
                     <Box w={b.w} d={DEPTH} h={HEIGHT} className="b3-solid" />
                   </span>
+                  {/* On a gain the block grows past its start, hiding the outline inside it: a ring at the starting
+                      height, wider than the block, keeps what you put in visible (owner, 14 Nov 2026). */}
+                  {s > 1 && (
+                    <span
+                      className="b3-collar"
+                      style={{ width: `${b.w + 2}em`, height: `${DEPTH + 2}em`, transform: `translate3d(-1em, -1em, ${HEIGHT}em)` }}
+                    />
+                  )}
                 </span>
               );
             })}
@@ -102,6 +110,7 @@ export function Basket3DPrototype({ m }: { m: BadYear }) {
               {p.label} · {Math.round(weight(p.key) * 100)}%
             </span>
             {formatINR(now(p.key, p.value))}
+            <span className="b3-tag-from">from {formatINR(before(p.key))}</span>
             <span className={cn("b3-tag-move", p.value < 0 && "is-down")}>{p.value === 0 ? "no change" : `${p.value > 0 ? "+" : "−"}${Math.abs(p.value)}%`}</span>
           </span>
         ))}
@@ -110,7 +119,7 @@ export function Basket3DPrototype({ m }: { m: BadYear }) {
             <i className="b3-key-solid" /> Now
           </span>
           <span>
-            <i className="b3-key-ghost" /> Where it started
+            <i className="b3-key-ghost" /> What you put in
           </span>
         </span>
       </div>
