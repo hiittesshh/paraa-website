@@ -11,12 +11,14 @@ import "./market-scenes.css";
 import "./scene-hero.css";
 
 export const GOLD_SCENES = [
+  { id: "brick", label: "Gold brick" },
   { id: "vault", label: "Vault door" },
   { id: "pour", label: "Molten pour" },
   { id: "coins", label: "Coin rain" },
   { id: "ingot", label: "Floating ingot" },
 ] as const;
 export const OIL_SCENES = [
+  { id: "barrels", label: "Barrels" },
   { id: "pumpjack", label: "Pumpjack" },
   { id: "splash", label: "Oil splash" },
   { id: "pipeline", label: "Pipeline" },
@@ -93,6 +95,69 @@ function GoldDefs({ u }: { u: string }) {
         <stop offset="1" stopColor="#FF8A1F" />
       </linearGradient>
     </defs>
+  );
+}
+
+// ── Simple (owner, 14 Nov 2026: "make gold and crude oil simplistic: barrels for crude oil, a gold brick for gold, just
+// animate them simply"). The defaults. ──
+function SimpleGold({ u }: { u: string }) {
+  return (
+    <Frame className="ms-simple">
+      <GoldDefs u={u} />
+      <circle cx="300" cy="300" r="200" fill={`url(#g-glow-${u})`} opacity=".7" />
+      <ellipse className="ms-s-shadow" cx="300" cy="420" rx="140" ry="14" fill="#000000" opacity=".5" />
+      <g className="ms-s-float">
+        <g transform="translate(150 255)">
+          <path d="M44 0H256L296 -40H84Z" fill={`url(#g-top-${u})`} />
+          <path d="M0 100H300L256 0H44Z" fill={`url(#g-front-${u})`} />
+          <path d="M300 100L340 60L296 -40L256 0Z" fill={`url(#g-side-${u})`} />
+          <clipPath id={`s-brick-${u}`}>
+            <path d="M0 100H300L256 0L296 -40H84L44 0Z M300 100L340 60L296 -40L256 0Z" />
+          </clipPath>
+          <g clipPath={`url(#s-brick-${u})`}>
+            <rect className="ms-sweep" x="-120" y="-60" width="60" height="200" fill="#FFFFFF" opacity=".4" transform="skewX(-20)" />
+          </g>
+        </g>
+      </g>
+    </Frame>
+  );
+}
+
+function SimpleBarrel({ x, u, k }: { x: number; u: string; k: number }) {
+  return (
+    <g className="ms-s-barrel" style={{ animationDelay: `${k * 0.5}s` }}>
+      <g transform={`translate(${x} 0)`}>
+        <rect x="-60" y="220" width="120" height="170" rx="12" fill={`url(#s-drum-${u})`} />
+        <rect x="-60" y="262" width="120" height="7" fill="#FDC037" />
+        <rect x="-60" y="340" width="120" height="7" fill="#FDC037" />
+        <ellipse cx="0" cy="222" rx="60" ry="14" fill="#3D3F47" stroke="#FDC037" strokeWidth="3" />
+        <circle cx="26" cy="220" r="5" fill="#151517" />
+      </g>
+    </g>
+  );
+}
+
+function SimpleOil({ u }: { u: string }) {
+  return (
+    <Frame className="ms-simple">
+      <defs>
+        <linearGradient id={`s-drum-${u}`} x1="0" x2="1">
+          <stop offset="0" stopColor="#0B0B0D" />
+          <stop offset=".3" stopColor="#52555C" />
+          <stop offset=".55" stopColor="#272A33" />
+          <stop offset="1" stopColor="#0B0B0D" />
+        </linearGradient>
+        <radialGradient id={`s-oilglow-${u}`}>
+          <stop offset="0" stopColor="#FDC037" stopOpacity=".28" />
+          <stop offset="1" stopColor="#FDC037" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <circle cx="300" cy="320" r="220" fill={`url(#s-oilglow-${u})`} />
+      <ellipse cx="300" cy="400" rx="230" ry="14" fill="#000000" opacity=".5" />
+      <SimpleBarrel x={160} u={u} k={0} />
+      <SimpleBarrel x={300} u={u} k={1} />
+      <SimpleBarrel x={440} u={u} k={2} />
+    </Frame>
   );
 }
 
@@ -370,25 +435,27 @@ function Rig({ u }: { u: string }) {
 }
 
 export function GoldScene({ u }: { u: string }) {
-  const choice = useChoice("gold", "vault");
+  const choice = useChoice("gold", "brick");
+  if (choice === "vault") return <VaultScene u={u} />;
   if (choice === "pour") return <Pour u={u} />;
   if (choice === "coins") return <Coins u={u} />;
   if (choice === "ingot") return <Ingot u={u} />;
-  return <VaultScene u={u} />;
+  return <SimpleGold u={u} />;
 }
 
 export function OilScene({ u }: { u: string }) {
-  const choice = useChoice("oil", "pumpjack");
+  const choice = useChoice("oil", "barrels");
+  if (choice === "pumpjack") return <PumpjackScene u={u} />;
   if (choice === "splash") return <Splash u={u} />;
   if (choice === "pipeline") return <Pipeline u={u} />;
   if (choice === "rig") return <Rig u={u} />;
-  return <PumpjackScene u={u} />;
+  return <SimpleOil u={u} />;
 }
 
 /** Review only: a small bar fixed to the bottom of the screen while "What you're buying" is on it. */
 export function ScenePicker() {
-  const gold = useChoice("gold", "vault");
-  const oil = useChoice("oil", "pumpjack");
+  const gold = useChoice("gold", "brick");
+  const oil = useChoice("oil", "barrels");
   const [show, setShow] = useState(false);
   useEffect(() => {
     // Live, the vault and the pumpjack are the scenes; the switcher shows only with ?scenes in the address.

@@ -102,3 +102,13 @@
 .ms-pick-btn[aria-pressed="true"] { background: #F2F2F2; color: #272A33; }
 .ms-pick-n { opacity: .6; font-variant-numeric: tabular-nums; }
 .ms-pick-btn:focus-visible { outline: 2px solid #FDC037; outline-offset: 2px; }
+
+/* The simple gold brick and barrels: a gentle float, a soft shine. */
+@media (prefers-reduced-motion: no-preference) {
+  .ms-s-float { animation: ms-s-float 5s ease-in-out infinite alternate; }
+  .ms-s-shadow { transform-origin: 50% 50%; animation: ms-s-shadow 5s ease-in-out infinite alternate; }
+  .ms-s-barrel { animation: ms-s-bob 3s ease-in-out infinite alternate; }
+}
+@keyframes ms-s-float { from { transform: translateY(0); } to { transform: translateY(-16px); } }
+@keyframes ms-s-shadow { from { transform: scaleX(1); opacity: .5; } to { transform: scaleX(.86); opacity: .32; } }
+@keyframes ms-s-bob { from { transform: translateY(0); } to { transform: translateY(-12px); } }
