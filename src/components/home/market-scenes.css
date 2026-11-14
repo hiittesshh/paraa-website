@@ -129,3 +129,6 @@
 }
 @keyframes ms-line { from { transform: translateX(0); } to { transform: translateX(-600px); } }
 @keyframes ms-ride { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-14px); } 60% { transform: translateY(8px); } 80% { transform: translateY(-6px); } }
+
+/* Without the caption the scene is centred: lift the drawing. */
+.ms-simple .ms-svg { transform: translateY(-9%); }

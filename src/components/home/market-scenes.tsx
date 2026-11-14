@@ -111,39 +111,6 @@ function GoldDefs({ u }: { u: string }) {
 
 // ── Simple (owner, 14 Nov 2026: "make gold and crude oil simplistic: barrels for crude oil, a gold brick for gold, just
 // animate them simply"). The defaults. ──
-/** The money tie-in (owner, 14 Nov 2026: the visuals should be "tied to the money"): the market's share of every unit,
- * what that is on an example ₹1,00,000, and an illustrative price line (no axis, no figures) that the object rides. */
-function MoneyCaption({
-  pct,
-  market,
-  rupees,
-}: {
-  pct: string;
-  market: string;
-  rupees: string;
-}) {
-  return (
-    <g>
-      <text
-        x="56"
-        y="132"
-        fontSize="92"
-        fontWeight="800"
-        letterSpacing="-4"
-        fill="#FDC037"
-      >
-        {pct}
-      </text>
-      <text x="58" y="170" fontSize="20" fontWeight="600" fill="#F2F2F2">
-        of every unit follows the {market} price
-      </text>
-      <text x="58" y="198" fontSize="16" fill="#A9AAAD">
-        {rupees} of an example ₹1,00,000
-      </text>
-    </g>
-  );
-}
-
 /** An illustrative price line, scrolling right to left, with a tag that says so. */
 function PriceLine({ u, colour, y }: { u: string; colour: string; y: number }) {
   const wave =
@@ -206,9 +173,8 @@ function PriceLine({ u, colour, y }: { u: string; colour: string; y: number }) {
         </g>
       </g>
       <text
-        x="544"
+        x="56"
         y={y + 92}
-        textAnchor="end"
         fontSize="12"
         fontWeight="600"
         letterSpacing="1.5"
@@ -315,7 +281,6 @@ function SimpleGold({ u }: { u: string }) {
         </clipPath>
       </defs>
       <circle cx="300" cy="380" r="230" fill={`url(#sg-glow-${u})`} />
-      <MoneyCaption pct="30%" market="gold" rupees="₹30,000" />
       <PriceLine u={u} colour="#FDC037" y={270} />
       {/* the glossy floor and the brick's reflection in it */}
       <ellipse
@@ -490,7 +455,6 @@ function SimpleOil({ u }: { u: string }) {
         </radialGradient>
       </defs>
       <circle cx="300" cy="400" r="240" fill={`url(#sb-glow-${u})`} />
-      <MoneyCaption pct="20%" market="crude oil" rupees="₹20,000" />
       <PriceLine u={u} colour="#E5A920" y={250} />
       <ellipse
         cx="300"
