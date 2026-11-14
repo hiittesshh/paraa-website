@@ -122,7 +122,7 @@ export function PinnedScroll({
       const y = yOf(g, i);
       const done = () => {
         gliding = false;
-        if (arriving) quietUntil = performance.now() + 450;
+        if (arriving) quietUntil = Math.max(quietUntil, performance.now() + 450);
         arriving = false;
         schedule();
       };
@@ -150,6 +150,8 @@ export function PinnedScroll({
     // Owner, 14 Nov 2026: while the section is in focus, one scroll moves on to the next part of the page (down) or back
     // to the one before (up), not slide by slide; the slides play themselves.
     let settleUntil = 0;
+    let lastWheel = 0;
+    let needFresh = false;
     const onWheel = (e: WheelEvent) => {
       // While the visitor's own move runs, and just after it, the rest of that gesture is absorbed wherever it lands,
       // so one scroll always ends in the same place.
@@ -162,6 +164,24 @@ export function PinnedScroll({
       if (!g.isPinned) return;
       e.preventDefault();
       e.stopImmediatePropagation();
+      const now = performance.now();
+      const sinceLast = now - lastWheel;
+      lastWheel = now;
+      if (!pinned) {
+        // the wheel got here before the scroll event: arrive now
+        pinned = true;
+        arriving = true;
+        needFresh = true;
+        quietUntil = now + 1100;
+        go(e.deltaY > 0 ? 0 : count - 1);
+        return;
+      }
+      // The gesture that brought the visitor here is absorbed to its end; only a fresh scroll (after a short pause)
+      // moves on.
+      if (needFresh) {
+        if (sinceLast < 650) return;
+        needFresh = false;
+      }
       // the rest of a gesture that just landed us here, or the visitor's own move already under way, is absorbed; an
       // autoplay glide never blocks the visitor
       if (userGliding || arriving || performance.now() < quietUntil || Math.abs(e.deltaY) < 4) return;
@@ -190,13 +210,15 @@ export function PinnedScroll({
       lastY = scrollY;
       if (g.isPinned && !pinned) {
         pinned = true;
-        // Arriving: land on the first slide from above, the last from below, whatever the scroll's momentum.
+        // Land on the first slide from above, the last from below.
         const want = down ? 0 : count - 1;
-        if (!gliding && g.at !== want) {
-          arriving = true;
-          go(want);
-        }
-        else schedule();
+        // Arriving: always settle on the slide, so the scroll engine's leftover momentum (its target may already be past
+        // the section) is replaced, and hold a moment before a scroll can move on (owner, 14 Nov 2026: "it instantly
+        // goes away from the screen").
+        arriving = true;
+        needFresh = true;
+        quietUntil = performance.now() + 1100;
+        go(want);
       } else if (!g.isPinned && pinned) {
         pinned = false;
         clearTimeout(timer);
