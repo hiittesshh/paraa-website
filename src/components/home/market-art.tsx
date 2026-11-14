@@ -8,6 +8,7 @@
 // no figures, no trend), with company signs and logos on top. Gold and crude oil: liquid metal (see below).
 import type { SleeveId } from "@/lib/basket";
 import { TICKER_MARKS } from "./ticker-marks";
+import { GoldScene, OilScene } from "./market-scenes";
 import "./market-art.css";
 
 type Style = React.CSSProperties & Record<`--${string}`, string | number>;
@@ -153,127 +154,12 @@ function City({ variant, signs, accent }: { variant: "us" | "gold" | "oil"; sign
 const US_SIGNS: Record<number, Sign> = Object.fromEntries(
   Object.entries(TICKERS).map(([i, t]) => [i, { label: t, mark: t === "S&P 500" ? "index" : "brand" }]),
 );
-// Gold and crude oil in the city's artistic language, with their own objects (owner, 14 Nov 2026: "like that, not
-// exactly that ... only the artistic way"). Same camera, glowing grid, lighting, dust and signs; gold is a vault floor
-// of bullion stacks (bars in crossed layers, as gold is stacked), crude oil a yard of steel drums. Both rise and fall
-// piece by piece: bars and drums appear and vanish on each pile's own clock (market-art.css, m3-pile-*).
-type Pile = { gx: number; gy: number; dur: number; delay: number; sign?: Sign };
-
-const GOLD_PILES: Pile[] = [
-  { gx: 0, gy: 0, dur: 7, delay: -1, sign: { label: "XAU", mark: "bar" } },
-  { gx: 1, gy: 0, dur: 9, delay: -4 },
-  { gx: 2, gy: 0, dur: 8, delay: -2.5, sign: { label: "LBMA", mark: "bar" } },
-  { gx: 0, gy: 1, dur: 10, delay: -6 },
-  { gx: 1, gy: 1, dur: 7.5, delay: -3, sign: { label: "999.9", mark: "bar" } },
-  { gx: 2, gy: 1, dur: 9.5, delay: -7 },
-  { gx: 0, gy: 2, dur: 8.5, delay: -5, sign: { label: "1 KG", mark: "bar" } },
-  { gx: 1, gy: 2, dur: 7, delay: -0.5 },
-  { gx: 2, gy: 2, dur: 9, delay: -3.5, sign: { label: "COMEX", mark: "bar" } },
-];
-const OIL_PILES: Pile[] = [
-  { gx: 0, gy: 0, dur: 8, delay: -2, sign: { label: "WTI", mark: "drop" } },
-  { gx: 1, gy: 0, dur: 10, delay: -5 },
-  { gx: 2, gy: 0, dur: 9, delay: -1, sign: { label: "BRENT", mark: "drop" } },
-  { gx: 0, gy: 1, dur: 7.5, delay: -6 },
-  { gx: 1, gy: 1, dur: 9.5, delay: -3, sign: { label: "OPEC", mark: "drop" } },
-  { gx: 2, gy: 1, dur: 8, delay: -4.5 },
-  { gx: 0, gy: 2, dur: 10, delay: -0.5, sign: { label: "DUBAI", mark: "drop" } },
-  { gx: 1, gy: 2, dur: 8.5, delay: -7 },
-  { gx: 2, gy: 2, dur: 9, delay: -2.5, sign: { label: "NYMEX", mark: "drop" } },
-];
-
-const LAYERS = 6; // bullion layers per stack
-const BAR = { w: 4.8, d: 2.3, h: 1.05 };
-
-function Sign3D({ sign, z }: { sign: Sign; z: number }) {
-  return (
-    <span className="m3-tick m3-tick-fixed" style={{ "--z": `${z}em` } as Style}>
-      <span>
-        <SignMark sign={sign} />
-        {sign.label}
-      </span>
-    </span>
-  );
-}
-
-/** One bullion stack: LAYERS layers of two bars, each layer turned 90 degrees on the one below. */
-function BullionStack({ pile }: { pile: Pile }) {
-  return (
-    <span
-      className="m3-pile"
-      style={{ "--px": `${(pile.gx - 1) * 7.6}em`, "--py": `${(pile.gy - 1) * 7.6}em`, "--dur": `${pile.dur}s`, "--delay": `${pile.delay}s` } as Style}
-    >
-      {Array.from({ length: LAYERS }, (_, k) => (
-        <span key={k} className={`m3-layer m3-layer-${k}`} style={{ "--z": `${k * (BAR.h + 0.08)}em`, "--rot": k % 2 ? "90deg" : "0deg" } as Style}>
-          {[0, 1].map((j) => (
-            <span key={j} className="m3-bar-at" style={{ "--by": `${j === 0 ? -BAR.d - 0.06 : 0.06}em` } as Style}>
-              <Box w={BAR.w} d={BAR.d} h={BAR.h} className="is-bullion" />
-            </span>
-          ))}
-        </span>
-      ))}
-      {pile.sign && <Sign3D sign={pile.sign} z={LAYERS * (BAR.h + 0.08) + 1.4} />}
-    </span>
-  );
-}
-
-/** A steel drum standing up: 14 lit faces round a circle, a lid with its rim and bung, two amber hoops. */
-const FACETS = 14;
-function Drum({ r, h }: { r: number; h: number }) {
-  const fw = ((2 * Math.PI * r) / FACETS) * 1.04;
-  return (
-    <span className="m3-drum" style={{ "--r": `${r}em`, "--h": `${h}em`, "--fw": `${fw}em` } as Style}>
-      {Array.from({ length: FACETS }, (_, k) => {
-        const ang = (k * 360) / FACETS;
-        // light from the upper left: faces turned that way are brighter
-        const lit = 0.5 + 0.5 * Math.cos(((ang - 135) * Math.PI) / 180);
-        return <span key={k} className="m3-drum-face" style={{ "--a": `${ang}deg`, "--lit": lit.toFixed(2) } as Style} />;
-      })}
-      <span className="m3-drum-lid" />
-    </span>
-  );
-}
-
-const DRUM = { r: 1.85, h: 4.2 };
-function DrumStack({ pile }: { pile: Pile }) {
-  return (
-    <span
-      className="m3-pile"
-      style={{ "--px": `${(pile.gx - 1) * 6.8}em`, "--py": `${(pile.gy - 1) * 6.8}em`, "--dur": `${pile.dur}s`, "--delay": `${pile.delay}s` } as Style}
-    >
-      {[0, 1, 2].map((k) => (
-        <span key={k} className={`m3-layer m3-drum-layer-${k}`} style={{ "--z": `${k * (DRUM.h + 0.12)}em` } as Style}>
-          <Drum r={DRUM.r} h={DRUM.h} />
-        </span>
-      ))}
-      {pile.sign && <Sign3D sign={pile.sign} z={3 * (DRUM.h + 0.12) + 1.2} />}
-    </span>
-  );
-}
-
-function Yard({ variant, piles }: { variant: "gold" | "oil"; piles: Pile[] }) {
-  return (
-    <div className={`m3 m3-us m3-yard m3-yard-${variant}`} aria-hidden>
-      <span className="m3-glow" />
-      <div className="m3-scene">
-        <div className="m3-world m3-city">
-          <span className="m3-floor" />
-          {piles.map((p, i) => (variant === "gold" ? <BullionStack key={i} pile={p} /> : <DrumStack key={i} pile={p} />))}
-        </div>
-      </div>
-      <Dust n={variant === "gold" ? 16 : 8} />
-    </div>
-  );
-}
-
 const Stocks = () => <City variant="us" signs={US_SIGNS} accent={(i) => i % 6 === 2} />;
-const Gold = () => <Yard variant="gold" piles={GOLD_PILES} />;
-const Oil = () => <Yard variant="oil" piles={OIL_PILES} />;
 
 /** `u` keeps the oil scene's gradient ids unique: the page holds two of each scene (the live frame and the static
  * row, one of them hidden), and an id that resolves into a hidden copy draws nothing. */
-export function MarketArt({ id }: { id: SleeveId; u?: string }) {
+export function MarketArt({ id, u = "a" }: { id: SleeveId; u?: string }) {
   if (id === "us") return <Stocks />;
-  if (id === "gold") return <Gold />;
-  return <Oil />;
+  if (id === "gold") return <GoldScene u={u} />;
+  return <OilScene u={u} />;
 }

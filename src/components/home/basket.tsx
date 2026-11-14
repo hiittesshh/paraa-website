@@ -11,6 +11,7 @@ import { ExampleTag } from "@/components/ui/tag";
 import { SLEEVES } from "@/lib/basket";
 import { formatPct } from "@/lib/format";
 import { MarketArt } from "./market-art";
+import { ScenePicker } from "./market-scenes";
 import { SLEEVE_INFO } from "./sleeve-info";
 import "./basket.css";
 
@@ -46,6 +47,7 @@ export function Basket() {
       }
       after={
         <div className="container-page mk-units">
+          <ScenePicker />
           <div className="mk-units-head">
             <p className="mk-eyebrow">What you own</p>
             <LiquidType>
