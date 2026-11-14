@@ -19,12 +19,11 @@ const SELECTOR = [
   ".container-page > *",
   ".mk-units > *",
   ".mk-chain > li",
-  ".mk-step",
 ].join(",");
 
 /** Where to look: every section below the hero; in What you're buying only the statement after the slides. */
 function candidates(): HTMLElement[] {
-  const roots = [...document.querySelectorAll<HTMLElement>("main > section:not(#top)")];
+  const roots = [...document.querySelectorAll<HTMLElement>("main > section:not(#top):not(#basket)")];
   const basketTail = document.querySelector<HTMLElement>("#basket .mk-units");
   const all = new Set<HTMLElement>();
   for (const r of roots) r.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => all.add(el));
@@ -38,7 +37,7 @@ function candidates(): HTMLElement[] {
 }
 
 const kind = (el: HTMLElement) =>
-  el.matches("h2, h3.type-title") ? "head" : el.matches(".mk-step") ? "row" : el.matches("li, details, .grid > *, [class*='rounded-2xl']") ? "card" : "block";
+  el.matches("h2, h3.type-title") ? "head" : el.matches("li, details, .grid > *, [class*='rounded-2xl']") ? "card" : "block";
 
 export function SectionEntrance() {
   useEffect(() => {

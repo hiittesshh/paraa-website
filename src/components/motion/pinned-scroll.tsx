@@ -38,9 +38,7 @@ export function PinnedScroll({
 
   useEffect(() => {
     const qs = [matchMedia("(min-width: 64rem)"), matchMedia("(min-height: 40rem)"), matchMedia("(prefers-reduced-motion: reduce)")];
-    // Owner, 14 Nov 2026: the pinned slides made the scroll feel off ("is it me or the site?"). The section is a normal
-    // scroll now: every market is its own row, at every width. The pinned mode stays in the code, switched off.
-    const sync = () => setLive(false && qs[0].matches && qs[1].matches && !qs[2].matches);
+    const sync = () => setLive(qs[0].matches && qs[1].matches && !qs[2].matches);
     sync();
     qs.forEach((q) => q.addEventListener("change", sync));
     return () => qs.forEach((q) => q.removeEventListener("change", sync));
