@@ -12,6 +12,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const HOLD = 0.75; // screens of scroll per chapter
+const AUTOPLAY = false;
 
 export function PinnedScroll({
   id,
@@ -95,7 +96,7 @@ export function PinnedScroll({
   useEffect(() => {
     const tr = track.current;
     if (!live || !tr) return;
-    const GLIDE = 0.45;
+    const GLIDE = 0.35;
     const HOLD = 1500;
     let gliding = false;
     let pinned = false;
@@ -130,6 +131,9 @@ export function PinnedScroll({
     };
     const schedule = () => {
       clearTimeout(timer);
+      // Autoplay is off (owner, 14 Nov 2026: "comment out the autoplay, let the user scroll, but scroll should be
+      // fast"). Set AUTOPLAY to true to bring it back.
+      if (!AUTOPLAY) return;
       const g = geom();
       if (!g.isPinned || autoRef.current === "paused") return;
       setAuto("playing");
