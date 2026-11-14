@@ -75,16 +75,16 @@ export function SectionEntrance() {
             return ra.top - rb.top || ra.left - rb.left;
           });
         arriving.forEach((el, i) => {
-          el.style.transitionDelay = `${Math.min(i * 130, 650)}ms`;
+          el.style.transitionDelay = `${Math.min(i * 85, 400)}ms`;
           el.setAttribute("data-landed", "");
           setTimeout(() => {
             el.removeAttribute("data-land");
             el.removeAttribute("data-landed");
             el.style.transitionDelay = "";
-          }, 1800 + Math.min(i * 130, 650));
+          }, 1600 + Math.min(i * 85, 400));
         });
       },
-      { rootMargin: "0px 0px -22% 0px", threshold: 0 },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0 },
     );
     watched.forEach((_, key) => io.observe(key));
     return () => io.disconnect();
