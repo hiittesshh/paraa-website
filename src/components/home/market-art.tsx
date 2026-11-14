@@ -49,13 +49,13 @@ export function Box({ w, d, h, className }: { w: number; d: number; h: number; c
 
 // Owner, 14 Nov 2026: "show details like the stock name ... on the buildings". Familiar US names as signs on a few
 // buildings, so the city reads as the US market. Illustrative only: not the basket's holdings.
+// On the front row (indices 20-24), so nothing stands in front of their signed walls.
 const TICKERS: Record<number, string> = {
-  2: "NVDA",
-  8: "AAPL",
-  10: "MSFT",
-  14: "AMZN",
-  16: "TSLA",
-  22: "S&P 500",
+  20: "NVDA",
+  21: "AAPL",
+  22: "MSFT",
+  23: "AMZN",
+  24: "TSLA",
 };
 
 /** The brand mark beside a ticker (see ticker-marks.ts). */
@@ -88,7 +88,8 @@ function Stocks() {
   const cols = Array.from({ length: 25 }, (_, i) => ({
     gx: i % 5,
     gy: Math.floor(i / 5),
-    lo: 0.25 + ((i * 17) % 30) / 100,
+    // A building with a sign never shrinks below the sign on its wall.
+    lo: TICKERS[i] ? Math.max(0.45, 0.25 + ((i * 17) % 30) / 100) : 0.25 + ((i * 17) % 30) / 100,
     hi: 0.7 + ((i * 29) % 30) / 100,
     dur: 2.4 + ((i * 7) % 12) / 4,
     delay: -((i * 13) % 25) / 5,
@@ -104,17 +105,26 @@ function Stocks() {
             <span
               key={i}
               className={`m3-col ${c.gold ? "is-gold" : ""}`}
-              style={{ "--gx": c.gx, "--gy": c.gy, "--lo": c.lo, "--hi": c.hi, "--dur": `${c.dur}s`, "--delay": `${c.delay}s` } as Style}
+              style={
+                {
+                  "--gx": c.gx,
+                  "--gy": c.gy,
+                  "--lo": c.lo,
+                  "--hi": c.hi,
+                  "--dur": `${c.dur}s`,
+                  "--delay": `${c.delay}s`,
+                  "--hw": TICKERS[i] ? "2.2em" : "1.6em",
+                } as Style
+              }
             >
               <span className="m3-col-in">
-                <Box w={3.2} d={3.2} h={11} />
+                <Box w={TICKERS[i] ? 4.4 : 3.2} d={3.2} h={11} />
               </span>
+              {/* The sign on the building's left wall (owner, 14 Nov 2026: "rather than on top, on the left side"). */}
               {TICKERS[i] && (
-                <span className="m3-tick">
-                  <span>
-                    <TickerMark ticker={TICKERS[i]} />
-                    {TICKERS[i]}
-                  </span>
+                <span className="m3-plate">
+                  <TickerMark ticker={TICKERS[i]} />
+                  <span>{TICKERS[i]}</span>
                 </span>
               )}
             </span>
@@ -126,35 +136,62 @@ function Stocks() {
   );
 }
 
-// Gold, as bullion (owner, 14 Nov 2026: "gold still doesn't seem like gold"). Box faces can't read as gold, so this is
-// an illustration of real ingots: tapered bars in a pyramid of six, each with mirror-polished faces (deep amber
-// shadow next to near-white highlight), a bevelled top edge, a light sweep
-// across the metal, glints, and the stack reflected in a dark glossy floor.
+// Gold, as cast bullion (owner, 14 Nov 2026, second pass: "gold still doesn't seem good"). Six tapered ingots in a
+// pyramid, seen from higher so their tops show. Each has a chamfered top edge, a recessed panel engraved "FINE GOLD
+// 999.9", and polished faces lit the way metal is: a white-hot highlight, rich amber, and dark brown where the faces
+// reflect the dark around them. A light sweep, glints and a floor reflection finish it.
+//
+// One ingot, in its own space (front-left of its base at 0,90): base A(0,90) B(220,90) C(260,54); top D(18,44)
+// E(202,44) F(234,8) G(50,8). Faces: front A-B-E-D, side B-C-F-E, top D-E-F-G.
 const INGOT = {
-  front: "M0 70L200 70L184 26L16 26Z",
-  side: "M200 70L240 40L220 4L184 26Z",
-  top: "M16 26L184 26L220 4L52 4Z",
+  front: "M0 90L220 90L202 44L18 44Z",
+  side: "M220 90L260 54L234 8L202 44Z",
+  top: "M18 44L202 44L234 8L50 8Z",
 };
 const INGOTS = [
-  [40, 380],
-  [250, 380],
-  [460, 380],
-  [145, 326],
-  [355, 326],
-  [250, 272],
+  [20, 420],
+  [260, 420],
+  [500, 420],
+  [156, 356],
+  [396, 356],
+  [292, 292],
 ] as const;
+
+function Ingot({ u }: { u: string }) {
+  const g = (n: string) => `url(#au-${n}-${u})`;
+  return (
+    <>
+      <path d={INGOT.front} fill={g("front")} />
+      {/* the front's reflection band: dark where it mirrors the room */}
+      <path d="M6 74L214 74L209 62L11 62Z" fill="#5A3204" fillOpacity=".38" />
+      <path d={INGOT.side} fill={g("side")} />
+      <path d={INGOT.top} fill={g("top")} />
+      {/* the chamfer: a thin bright strip along the top's front edge, a darker one along its right */}
+      <path d="M18 44L202 44L206 39L23 39Z" fill="#FFF6D8" fillOpacity=".95" />
+      <path d="M202 44L234 8L230 6L206 39Z" fill="#C9850F" fillOpacity=".8" />
+      {/* the engraved panel on the top */}
+      <g transform="translate(50 8) matrix(1.84 0 -0.8 0.9 0 0)">
+        <rect x="14" y="6" width="72" height="28" rx="3" fill="#B97A10" fillOpacity=".35" stroke="#7A4B07" strokeOpacity=".55" strokeWidth=".6" />
+        <rect x="14.6" y="6.6" width="70.8" height="1.2" fill="#FFF4CC" fillOpacity=".7" />
+        <text x="50" y="18" textAnchor="middle" fontSize="7.5" fontWeight="800" letterSpacing="1.4" fill="#6B4206" fillOpacity=".9">
+          FINE GOLD
+        </text>
+        <text x="50" y="29" textAnchor="middle" fontSize="7.5" fontWeight="800" letterSpacing="1.4" fill="#6B4206" fillOpacity=".9">
+          999.9
+        </text>
+      </g>
+      {/* hard base edge */}
+      <path d="M2 89H218" stroke="#3B2203" strokeWidth="1.5" opacity=".8" />
+    </>
+  );
+}
 
 function Ingots({ u }: { u: string }) {
   return (
     <>
       {INGOTS.map(([x, y], k) => (
         <g key={k} transform={`translate(${x} ${y})`}>
-          <path d={INGOT.front} fill={`url(#au-front-${u})`} />
-          <path d={INGOT.side} fill={`url(#au-side-${u})`} />
-          <path d={INGOT.top} fill={`url(#au-top-${u})`} stroke="#FFF4CF" strokeOpacity=".7" strokeWidth="1.2" strokeLinejoin="round" />
-          {/* the bevel: a bright line where the top meets the front */}
-          <path d="M18 27H182" stroke="#FFFBEA" strokeWidth="1.6" strokeLinecap="round" opacity=".9" />
-          <path d="M3 69H197" stroke="#4A2B02" strokeWidth="1.2" opacity=".7" />
+          <Ingot u={u} />
         </g>
       ))}
     </>
@@ -166,37 +203,39 @@ function Gold({ u }: { u: string }) {
   return (
     <div className="m3 m3-gold" aria-hidden>
       <span className="m3-glow" />
-      <svg viewBox="10 150 740 420" preserveAspectRatio="xMidYMid meet" className="m3-svg">
+      <svg viewBox="0 200 800 420" preserveAspectRatio="xMidYMid meet" className="m3-svg">
         <defs>
           <linearGradient id={id("front")} x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stopColor="#FFF3C4" />
-            <stop offset=".14" stopColor="#FFD75E" />
-            <stop offset=".42" stopColor="#F0A417" />
-            <stop offset=".7" stopColor="#B06C06" />
-            <stop offset="1" stopColor="#5C3402" />
+            <stop offset="0" stopColor="#FFEDB0" />
+            <stop offset=".12" stopColor="#FFC93C" />
+            <stop offset=".4" stopColor="#E89A12" />
+            <stop offset=".62" stopColor="#9C5A05" />
+            <stop offset=".82" stopColor="#D18A12" />
+            <stop offset="1" stopColor="#6A3C03" />
           </linearGradient>
           <linearGradient id={id("side")} x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0" stopColor="#D98E0E" />
-            <stop offset=".55" stopColor="#8E5604" />
-            <stop offset="1" stopColor="#4A2B02" />
+            <stop offset="0" stopColor="#E7A021" />
+            <stop offset=".45" stopColor="#9A5C06" />
+            <stop offset="1" stopColor="#3F2402" />
           </linearGradient>
           <linearGradient id={id("top")} x1="0" x2="1" y1="1" y2="0">
-            <stop offset="0" stopColor="#F2A81E" />
-            <stop offset=".3" stopColor="#FFE27E" />
-            <stop offset=".46" stopColor="#FFFBE8" />
-            <stop offset=".6" stopColor="#FFD24F" />
-            <stop offset="1" stopColor="#E09A16" />
+            <stop offset="0" stopColor="#D88B0E" />
+            <stop offset=".28" stopColor="#FFC93C" />
+            <stop offset=".44" stopColor="#FFF8DC" />
+            <stop offset=".56" stopColor="#FFD764" />
+            <stop offset=".8" stopColor="#F0A519" />
+            <stop offset="1" stopColor="#B97210" />
           </linearGradient>
           <linearGradient id={id("floor")} x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stopColor="#FFFFFF" stopOpacity=".3" />
-            <stop offset=".55" stopColor="#FFFFFF" stopOpacity="0" />
+            <stop offset="0" stopColor="#FFFFFF" stopOpacity=".28" />
+            <stop offset=".6" stopColor="#FFFFFF" stopOpacity="0" />
           </linearGradient>
           <mask id={id("fade")}>
-            <rect x="0" y="450" width="760" height="110" fill={`url(#${id("floor")})`} />
+            <rect x="0" y="510" width="800" height="110" fill={`url(#${id("floor")})`} />
           </mask>
           <linearGradient id={id("sweep")} x1="0" x2="1">
             <stop offset="0" stopColor="#FFFFFF" stopOpacity="0" />
-            <stop offset=".5" stopColor="#FFFFFF" stopOpacity=".75" />
+            <stop offset=".5" stopColor="#FFFFFF" stopOpacity=".65" />
             <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
           </linearGradient>
           <clipPath id={id("clip")}>
@@ -206,28 +245,26 @@ function Gold({ u }: { u: string }) {
           </clipPath>
         </defs>
 
-        {/* the floor and the stack's reflection in it */}
-        <ellipse cx="380" cy="452" rx="330" ry="26" fill="#000000" fillOpacity=".55" />
+        {/* the floor, its shadow and the stack's reflection */}
+        <ellipse cx="400" cy="512" rx="350" ry="24" fill="#000000" fillOpacity=".6" />
         <g mask={`url(#${id("fade")})`}>
-          <g transform="translate(0 900) scale(1 -1)">
-            <Ingots u={u} />
+          <g transform="translate(0 1022) scale(1 -1)">
+            <Ingots u={`${u}`} />
           </g>
         </g>
 
-        {/* the stack */}
         <g className="au-stack">
           <Ingots u={u} />
           <g clipPath={`url(#${id("clip")})`}>
-            <rect className="au-sweep" x="-160" y="240" width="120" height="240" fill={`url(#${id("sweep")})`} transform="skewX(-22)" />
+            <rect className="au-sweep" x="-160" y="280" width="110" height="260" fill={`url(#${id("sweep")})`} transform="skewX(-22)" />
           </g>
         </g>
 
-        {/* glints on the corners */}
         {[
-          [470, 276],
-          [296, 330],
-          [664, 384],
-          [92, 410],
+          [526, 300],
+          [420, 364],
+          [758, 430],
+          [64, 476],
         ].map(([x, y], i) => (
           <path
             key={i}
@@ -245,32 +282,42 @@ function Gold({ u }: { u: string }) {
 
 // Crude oil as barrels (owner, 14 Nov 2026: "make crude oil barrels there"): three steel drums stacked, "CRUDE OIL"
 // stencilled on each, light sliding across them, and oil dripping from the top drum's tap into a pool that ripples.
-function Barrel({ x, y, u, k }: { x: number; y: number; u: string; k: number }) {
+function Barrel({ x, y, u }: { x: number; y: number; u: string; k?: number }) {
   const W = 132;
   const H = 168;
+  const R = 14; // the ellipse's half-height: how much of the top we see
+  const g = (n: string) => `url(#m3-${n}-${u})`;
+  // A raised rolling hoop at height t (0 top, 1 bottom): a band with a lit top edge and a shadow under it.
+  const hoop = (t: number) => {
+    const yy = H * t;
+    return (
+      <g key={t}>
+        <path d={`M-1 ${yy - 5}A${W / 2 + 1} ${R} 0 0 0 ${W + 1} ${yy - 5}V${yy + 3}A${W / 2 + 1} ${R} 0 0 1 -1 ${yy + 3}Z`} fill={g("hoop")} />
+        <path d={`M-1 ${yy - 5}A${W / 2 + 1} ${R} 0 0 0 ${W + 1} ${yy - 5}`} fill="none" stroke="#C9CACD" strokeOpacity=".75" strokeWidth="1.2" />
+        <path d={`M0 ${yy + 5}A${W / 2} ${R} 0 0 0 ${W} ${yy + 5}`} fill="none" stroke="#000000" strokeOpacity=".55" strokeWidth="2.5" />
+      </g>
+    );
+  };
   return (
     <g transform={`translate(${x} ${y})`}>
-      {/* the body: a cylinder, lit from the left */}
-      <path d={`M0 14V${H - 14}A${W / 2} 14 0 0 0 ${W} ${H - 14}V14Z`} fill={`url(#m3-drum-${u})`} />
-      {/* the rolling hoops */}
-      {[0.33, 0.67].map((t) => (
-        <g key={t}>
-          <path d={`M0 ${H * t}A${W / 2} 14 0 0 0 ${W} ${H * t}`} fill="none" stroke="#0B0B0D" strokeWidth="7" />
-          <path d={`M0 ${H * t - 4}A${W / 2} 14 0 0 0 ${W} ${H * t - 4}`} fill="none" stroke="#7D7F85" strokeOpacity=".55" strokeWidth="1.5" />
-        </g>
-      ))}
-      {/* the stencil */}
-      <text x={W / 2} y={H * 0.53} textAnchor="middle" fontSize="15" fontWeight="800" letterSpacing="2" fill="#F2F2F2" fillOpacity=".8">
+      {/* the body: a steel cylinder, a broad highlight on the left and a sharper one on the right */}
+      <path d={`M0 ${R}V${H - R}A${W / 2} ${R} 0 0 0 ${W} ${H - R}V${R}Z`} fill={g("drum")} />
+      <path d={`M0 ${R}V${H - R}A${W / 2} ${R} 0 0 0 ${W} ${H - R}V${R}Z`} fill={g("drum-gloss")} />
+      {/* the painted label band, with its stencil */}
+      <path d={`M0 ${H * 0.42}A${W / 2} ${R} 0 0 0 ${W} ${H * 0.42}V${H * 0.6}A${W / 2} ${R} 0 0 1 0 ${H * 0.6}Z`} fill={g("band")} />
+      <text x={W / 2} y={H * 0.555} textAnchor="middle" fontSize="13.5" fontWeight="800" letterSpacing="2.4" fill="#FFFFFF" fillOpacity=".88">
         CRUDE OIL
       </text>
-      {/* the lid, with its bung */}
-      <ellipse cx={W / 2} cy="14" rx={W / 2} ry="14" fill={`url(#m3-lid-${u})`} stroke="#0B0B0D" strokeWidth="2" />
-      <ellipse cx={W / 2} cy="14" rx={W / 2 - 8} ry="9" fill="none" stroke="#7D7F85" strokeOpacity=".5" />
-      <ellipse cx={W * 0.72} cy="12" rx="7" ry="3" fill="#0B0B0D" />
-      {/* light sliding across the drum */}
-      <g clipPath={`url(#m3-drum-clip-${u})`}>
-        <rect className="m3-drum-shine" x="-60" y="0" width="34" height={H} fill="#FFFFFF" fillOpacity=".16" style={{ animationDelay: `${k * 0.6}s` }} />
-      </g>
+      {hoop(0.25)}
+      {hoop(0.78)}
+      {/* the rim and the lid, with two bung caps */}
+      <ellipse cx={W / 2} cy={R} rx={W / 2} ry={R} fill={g("rim")} />
+      <ellipse cx={W / 2} cy={R + 1} rx={W / 2 - 6} ry={R - 4} fill={g("lid")} />
+      <ellipse cx={W / 2} cy={R + 1} rx={W / 2 - 6} ry={R - 4} fill="none" stroke="#000000" strokeOpacity=".5" />
+      <ellipse cx={W * 0.73} cy={R} rx="8" ry="3.4" fill="#2B2D34" stroke="#A9AAAD" strokeOpacity=".7" />
+      <ellipse cx={W * 0.3} cy={R + 2} rx="5" ry="2.4" fill="#2B2D34" stroke="#A9AAAD" strokeOpacity=".6" />
+      {/* the base rim */}
+      <path d={`M0 ${H - R - 4}A${W / 2} ${R} 0 0 0 ${W} ${H - R - 4}`} fill="none" stroke="#000000" strokeOpacity=".6" strokeWidth="3" />
     </g>
   );
 }
@@ -283,15 +330,42 @@ function Oil({ u }: { u: string }) {
       <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet" className="m3-svg">
         <defs>
           <linearGradient id={id("drum")} x1="0" x2="1">
-            <stop offset="0" stopColor="#3D3F47" />
-            <stop offset=".22" stopColor="#686A70" />
-            <stop offset=".45" stopColor="#272A33" />
+            <stop offset="0" stopColor="#15161A" />
+            <stop offset=".1" stopColor="#3D3F47" />
+            <stop offset=".24" stopColor="#8A8C93" />
+            <stop offset=".34" stopColor="#4C4E57" />
+            <stop offset=".62" stopColor="#23252C" />
+            <stop offset=".8" stopColor="#3D3F47" />
+            <stop offset=".88" stopColor="#686A70" />
             <stop offset="1" stopColor="#0B0B0D" />
           </linearGradient>
-          <linearGradient id={id("lid")} x1="0" x2="1">
-            <stop offset="0" stopColor="#52555C" />
-            <stop offset="1" stopColor="#1F2027" />
+          <linearGradient id={id("drum-gloss")} x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stopColor="#FFFFFF" stopOpacity=".1" />
+            <stop offset=".5" stopColor="#FFFFFF" stopOpacity="0" />
+            <stop offset="1" stopColor="#000000" stopOpacity=".35" />
           </linearGradient>
+          <linearGradient id={id("band")} x1="0" x2="1">
+            <stop offset="0" stopColor="#3A1A10" />
+            <stop offset=".25" stopColor="#8E3B1F" />
+            <stop offset=".6" stopColor="#5E2614" />
+            <stop offset="1" stopColor="#2A120B" />
+          </linearGradient>
+          <linearGradient id={id("hoop")} x1="0" x2="1">
+            <stop offset="0" stopColor="#1F2027" />
+            <stop offset=".24" stopColor="#A9AAAD" />
+            <stop offset=".4" stopColor="#52555C" />
+            <stop offset=".85" stopColor="#686A70" />
+            <stop offset="1" stopColor="#151517" />
+          </linearGradient>
+          <linearGradient id={id("rim")} x1="0" x2="1">
+            <stop offset="0" stopColor="#52555C" />
+            <stop offset=".3" stopColor="#C9CACD" />
+            <stop offset="1" stopColor="#3D3F47" />
+          </linearGradient>
+          <radialGradient id={id("lid")} cx="40%" cy="40%" r="70%">
+            <stop offset="0" stopColor="#686A70" />
+            <stop offset="1" stopColor="#272A33" />
+          </radialGradient>
           <clipPath id={id("drum-clip")}>
             <rect x="0" y="0" width="132" height="168" rx="14" />
           </clipPath>
@@ -307,6 +381,8 @@ function Oil({ u }: { u: string }) {
         {[0, 1].map((i) => (
           <ellipse key={i} className="m3-ring" cx="480" cy="524" rx="26" ry="6" fill="none" stroke="#A9AAAD" strokeWidth="1.5" style={{ animationDelay: `${i * 0.25}s` }} />
         ))}
+        {/* where the top drum rests on the two below */}
+        <ellipse cx="301" cy="336" rx="70" ry="10" fill="#000000" fillOpacity=".55" />
         {/* the stack: two drums on the floor, one on top */}
         <Barrel x={160} y={330} u={u} k={0} />
         <Barrel x={310} y={330} u={u} k={1} />
