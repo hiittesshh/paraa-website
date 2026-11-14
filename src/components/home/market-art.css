@@ -166,3 +166,17 @@
 @keyframes m3-drip { 0% { opacity: 0; transform: translateY(-6px) scale(.4); } 35% { opacity: 1; transform: translateY(0) scale(1); } 80% { opacity: 1; transform: translateY(26px); } 82%, 100% { opacity: 0; transform: translateY(30px) scale(1.4, .3); } }
 @keyframes m3-ring2 { 0%, 80% { opacity: 0; transform: scale(.4); } 83% { opacity: .9; } 100% { opacity: 0; transform: scale(2.2); } }
 @keyframes m3-drum-shine { 0% { transform: translateX(0); } 60%, 100% { transform: translateX(240px); } }
+
+/* Gold as bullion (the SVG ingots). */
+.m3-gold .m3-glow { background:
+  radial-gradient(50% 42% at 50% 55%, rgb(253 192 55 / .32), transparent 70%),
+  radial-gradient(90% 70% at 50% 112%, rgb(0 0 0 / .55), transparent 70%); }
+.au-glint { transform-origin: 50% 50%; opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .au-sweep { animation: au-sweep 4.2s cubic-bezier(.45, 0, .25, 1) infinite; }
+  .au-glint { animation: au-glint 3.6s ease-in-out infinite; }
+  .au-stack { transform-origin: 50% 100%; animation: au-breathe 7s ease-in-out infinite alternate; }
+}
+@keyframes au-sweep { 0% { transform: skewX(-22deg) translateX(0); } 55%, 100% { transform: skewX(-22deg) translateX(1000px); } }
+@keyframes au-glint { 0%, 68%, 100% { opacity: 0; transform: scale(.2) rotate(0deg); } 80% { opacity: 1; transform: scale(1) rotate(45deg); } }
+@keyframes au-breathe { from { transform: translateY(0); } to { transform: translateY(-4px); } }

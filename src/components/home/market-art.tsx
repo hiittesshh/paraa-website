@@ -96,30 +96,119 @@ function Stocks() {
   );
 }
 
-function Gold() {
-  // A pyramid of six bars: three on the floor, two on them, one on top.
-  const bars = [
-    { x: -15.2, z: 0 },
-    { x: 0, z: 0 },
-    { x: 15.2, z: 0 },
-    { x: -7.6, z: 3.6 },
-    { x: 7.6, z: 3.6 },
-    { x: 0, z: 7.2 },
-  ];
+// Gold, as bullion (owner, 14 Nov 2026: "gold still doesn't seem like gold"). Box faces can't read as gold, so this is
+// an illustration of real ingots: tapered bars in a pyramid of six, each with mirror-polished faces (deep amber
+// shadow next to near-white highlight), a bevelled top edge, a light sweep
+// across the metal, glints, and the stack reflected in a dark glossy floor.
+const INGOT = {
+  front: "M0 70L200 70L184 26L16 26Z",
+  side: "M200 70L240 40L220 4L184 26Z",
+  top: "M16 26L184 26L220 4L52 4Z",
+};
+const INGOTS = [
+  [40, 380],
+  [250, 380],
+  [460, 380],
+  [145, 326],
+  [355, 326],
+  [250, 272],
+] as const;
+
+function Ingots({ u }: { u: string }) {
+  return (
+    <>
+      {INGOTS.map(([x, y], k) => (
+        <g key={k} transform={`translate(${x} ${y})`}>
+          <path d={INGOT.front} fill={`url(#au-front-${u})`} />
+          <path d={INGOT.side} fill={`url(#au-side-${u})`} />
+          <path d={INGOT.top} fill={`url(#au-top-${u})`} stroke="#FFF4CF" strokeOpacity=".7" strokeWidth="1.2" strokeLinejoin="round" />
+          {/* the bevel: a bright line where the top meets the front */}
+          <path d="M18 27H182" stroke="#FFFBEA" strokeWidth="1.6" strokeLinecap="round" opacity=".9" />
+          <path d="M3 69H197" stroke="#4A2B02" strokeWidth="1.2" opacity=".7" />
+        </g>
+      ))}
+    </>
+  );
+}
+
+function Gold({ u }: { u: string }) {
+  const id = (n: string) => `au-${n}-${u}`;
   return (
     <div className="m3 m3-gold" aria-hidden>
       <span className="m3-glow" />
-      <div className="m3-scene">
-        <div className="m3-world m3-stack">
-          <span className="m3-shadow" />
-          {bars.map((b, k) => (
-            <span key={k} className="m3-bar" style={{ "--bx": `${b.x}em`, "--bz": `${b.z}em`, "--k": k % 3 } as Style}>
-              <Box w={14.6} d={6.6} h={3.6} className="is-metal" />
-            </span>
-          ))}
-        </div>
-      </div>
-      <Dust n={18} />
+      <svg viewBox="10 150 740 420" preserveAspectRatio="xMidYMid meet" className="m3-svg">
+        <defs>
+          <linearGradient id={id("front")} x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stopColor="#FFF3C4" />
+            <stop offset=".14" stopColor="#FFD75E" />
+            <stop offset=".42" stopColor="#F0A417" />
+            <stop offset=".7" stopColor="#B06C06" />
+            <stop offset="1" stopColor="#5C3402" />
+          </linearGradient>
+          <linearGradient id={id("side")} x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stopColor="#D98E0E" />
+            <stop offset=".55" stopColor="#8E5604" />
+            <stop offset="1" stopColor="#4A2B02" />
+          </linearGradient>
+          <linearGradient id={id("top")} x1="0" x2="1" y1="1" y2="0">
+            <stop offset="0" stopColor="#F2A81E" />
+            <stop offset=".3" stopColor="#FFE27E" />
+            <stop offset=".46" stopColor="#FFFBE8" />
+            <stop offset=".6" stopColor="#FFD24F" />
+            <stop offset="1" stopColor="#E09A16" />
+          </linearGradient>
+          <linearGradient id={id("floor")} x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stopColor="#FFFFFF" stopOpacity=".3" />
+            <stop offset=".55" stopColor="#FFFFFF" stopOpacity="0" />
+          </linearGradient>
+          <mask id={id("fade")}>
+            <rect x="0" y="450" width="760" height="110" fill={`url(#${id("floor")})`} />
+          </mask>
+          <linearGradient id={id("sweep")} x1="0" x2="1">
+            <stop offset="0" stopColor="#FFFFFF" stopOpacity="0" />
+            <stop offset=".5" stopColor="#FFFFFF" stopOpacity=".75" />
+            <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
+          </linearGradient>
+          <clipPath id={id("clip")}>
+            {INGOTS.map(([x, y], k) => (
+              <path key={k} transform={`translate(${x} ${y})`} d={`${INGOT.front} ${INGOT.side} ${INGOT.top}`} />
+            ))}
+          </clipPath>
+        </defs>
+
+        {/* the floor and the stack's reflection in it */}
+        <ellipse cx="380" cy="452" rx="330" ry="26" fill="#000000" fillOpacity=".55" />
+        <g mask={`url(#${id("fade")})`}>
+          <g transform="translate(0 900) scale(1 -1)">
+            <Ingots u={u} />
+          </g>
+        </g>
+
+        {/* the stack */}
+        <g className="au-stack">
+          <Ingots u={u} />
+          <g clipPath={`url(#${id("clip")})`}>
+            <rect className="au-sweep" x="-160" y="240" width="120" height="240" fill={`url(#${id("sweep")})`} transform="skewX(-22)" />
+          </g>
+        </g>
+
+        {/* glints on the corners */}
+        {[
+          [470, 276],
+          [296, 330],
+          [664, 384],
+          [92, 410],
+        ].map(([x, y], i) => (
+          <path
+            key={i}
+            className="au-glint"
+            d={`M${x} ${y - 16}L${x + 3} ${y - 3}L${x + 16} ${y}L${x + 3} ${y + 3}L${x} ${y + 16}L${x - 3} ${y + 3}L${x - 16} ${y}L${x - 3} ${y - 3}Z`}
+            fill="#FFFFFF"
+            style={{ animationDelay: `${i * 0.9}s` }}
+          />
+        ))}
+      </svg>
+      <Dust n={14} />
     </div>
   );
 }
@@ -207,6 +296,6 @@ function Oil({ u }: { u: string }) {
  * row, one of them hidden), and an id that resolves into a hidden copy draws nothing. */
 export function MarketArt({ id, u }: { id: SleeveId; u: string }) {
   if (id === "us") return <Stocks />;
-  if (id === "gold") return <Gold />;
+  if (id === "gold") return <Gold u={u} />;
   return <Oil u={u} />;
 }
