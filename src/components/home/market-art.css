@@ -183,32 +183,11 @@
 .m3-tick > span { display: inline-flex; align-items: center; gap: .4em; }
 .m3-mark { width: 1.2em; height: 1.2em; flex: none; }
 
-/* Signs on the buildings' left walls (owner, 14 Nov 2026). A labelled building is wider (4.4em); its sign is a plaque
-   fixed to the wall that faces left, near the base, below the lowest the building ever gets, so it never moves. */
-.m3-col { left: calc((var(--gx) - 2) * 5em - var(--hw, 1.6em)); }
-.m3-plate {
-  position: absolute; left: .3em; top: calc(3.2em + .04em); width: 3.8em; height: 3.4em;
-  display: grid; place-content: center; justify-items: center; gap: .25em;
-  transform-origin: 0 0; transform: translateZ(4.3em) rotateX(-90deg);
-  border-radius: .25em; background: rgb(21 21 23 / .92); box-shadow: inset 0 0 0 .06em rgb(253 192 55 / .7), 0 0 .8em rgb(253 192 55 / .2);
-  color: #FFFFFF; font: 800 .62em/1 var(--font-sans, system-ui), sans-serif; letter-spacing: .03em; white-space: nowrap;
-  backface-visibility: hidden;
-}
-.m3-plate .m3-mark { width: 1.7em; height: 1.7em; }
-.m3-col.is-gold .m3-plate { color: #FDC037; }
-.m3-tick { display: none; }
-
-/* Bigger signs on the front row's walls. */
-.m3-plate { left: .25em; width: 3.9em; height: 3.6em; font-size: .82em; gap: .3em; }
-.m3-plate .m3-mark { width: 1.5em; height: 1.5em; }
-
-/* The signs on the left edge's outer walls (the x = 0 wall of the first column). A signed building is deeper (4.4em)
-   so the plaque fits along its wall; the plaque faces -x. */
-.m3-col { left: calc((var(--gx) - 2) * 5em - 1.6em); top: calc((var(--gy) - 2) * 5em - var(--hd, 1.6em)); }
-.m3-plate { left: -.04em; top: .25em; transform: translateZ(4.3em) rotateZ(90deg) rotateX(-90deg); }
-
-/* The drums on their sides: the drip falls from the bung to the pool (its distance in --fall). */
-@media (prefers-reduced-motion: no-preference) {
-  .m3-oil .m3-drip2 { animation: m3-drip2 2.4s cubic-bezier(.55, 0, 1, .45) infinite; }
-}
-@keyframes m3-drip2 { 0% { opacity: 0; transform: translateY(-4px) scale(.4); } 30% { opacity: 1; transform: translateY(0) scale(1); } 80% { opacity: 1; transform: translateY(var(--fall)); } 82%, 100% { opacity: 0; transform: translateY(var(--fall)) scale(1.4, .3); } }
+/* Liquid metal scenes (gold, crude oil). The gradient is the still frame under reduced motion or without WebGL; the
+   canvas fades in on its first frame. */
+.m3-liquid-gold { background: radial-gradient(80% 70% at 40% 35%, #FFE9A6, #F0A417 45%, #6B4A0E); }
+.m3-liquid-oil { background: radial-gradient(80% 70% at 40% 35%, #6E4A18, #1A1208 50%, #050505); }
+.m3-liquid-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 800ms ease; }
+.m3-liquid-canvas[data-ready] { opacity: 1; }
+.m3-liquid-shade { position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 95% at 50% 45%, transparent 55%, rgb(14 14 17 / .55)); }
