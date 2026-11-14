@@ -74,6 +74,6 @@
 
 /* A front-side view (owner, 14 Nov 2026: "change the top view to side or front view, in a 3D way"): the camera is
    lowered, so the blocks stand up as towers seen from the front at an angle. */
-.b3-scene { perspective: 70em; perspective-origin: 50% 35%; }
-.b3-world { transform: rotateX(78deg) rotateZ(-26deg) !important; top: 74%; }
-.b3-world { left: 58%; top: 70%; }
+.b3-scene { perspective: 70em; perspective-origin: 50% 45%; }
+.b3-world { transform: rotateX(84deg) rotateZ(-26deg) !important; top: 74%; }
+.b3-world { left: 58%; top: 74%; }
