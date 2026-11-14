@@ -26,7 +26,7 @@ export function QuestionPrompts({
 }) {
   return (
     <div>
-      <p className="mb-2 text-body-md text-muted-foreground">Not sure what to ask? Tap one to add it:</p>
+      <p className="mb-2 text-body-md text-muted-foreground">Not sure what to ask? Tap to add:</p>
       {/* Round 18b: wrapped Light chips instead of a full-width list. They stay buttons (they add text), not radios. */}
       <ul className="flex flex-wrap gap-2">
         {QUESTION_PROMPTS.map((prompt) => (
@@ -37,7 +37,7 @@ export function QuestionPrompts({
               size="md"
               aria-disabled={unavailable || undefined}
               onClick={() => onPick(prompt)}
-              className="min-h-11 justify-start rounded-lg border-transparent bg-background-alt px-3 text-left whitespace-normal hover:border-input hover:bg-background-alt"
+              className="min-h-10 justify-start rounded-full border-input/40 bg-background px-3.5 text-left text-body-md font-medium whitespace-normal hover:border-foreground hover:bg-background"
             >
               <Plus aria-hidden />
               {prompt}

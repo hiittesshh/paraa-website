@@ -428,3 +428,124 @@ html:not([data-look="dark"]) [data-top-sentinel]:has(+ .hb-beige) { background: 
 @keyframes hb-splash-out { to { opacity: 0; transform: translateY(-6%) scale(1.04); visibility: hidden; } }
 @media (prefers-reduced-motion: reduce) { .hb-splash { display: none; } }
 .hb-island { z-index: 8; }
+
+/* ───────── The logo's 3D entrance (owner, 13 Nov 2026) ─────────
+   The splash now: the logo starts out of the phone, large, turned and lifted towards the viewer (translateZ in the
+   device's 3D space), glides into the screen, settles with a small give and sits; then the shine crosses it, the
+   line fades in, and the splash lifts away to Home. No loading bar. CSS only, ending hidden; off under reduced motion. */
+.hb-splash { animation-delay: 3300ms; }
+.hb-splash-mark img { opacity: 0 !important; animation: none !important; }
+.hb-splash-shine, .hb-splash-load { display: none; }
+.hb-splash-line { animation-delay: 2150ms; }
+
+.hb-fly {
+  position: absolute; z-index: 3; left: 50%; top: 50%; width: 10.5em; margin-left: -5.25em;
+  /* the splash logo's own place: centred, raised by half the gap and line below it */
+  margin-top: calc(-0.5 * 10.5em * 92 / 235 - 1em);
+  font-size: 13px; pointer-events: none; transform-style: preserve-3d; opacity: 0;
+  animation:
+    hb-fly-in 1700ms cubic-bezier(.16, .84, .24, 1) 250ms forwards,
+    hb-fly-out 600ms cubic-bezier(.7, 0, .2, 1) 3300ms forwards;
+}
+@media (width >= 37.5rem) { .hb-fly { font-size: 15px; } }
+@media (width >= 80rem) { .hb-fly { font-size: 16px; } }
+.hb-fly img { display: block; width: 100%; height: auto; }
+.hb-fly-shine {
+  position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / .95) 50%, transparent 65%) no-repeat;
+  background-size: 250% 100%; background-position: 130% 0; opacity: 0;
+  animation: hb-splash-shine 900ms ease-in-out 2050ms forwards;
+}
+@keyframes hb-fly-in {
+  0% { opacity: 0; transform: translate3d(-55%, -35%, 720px) rotateY(34deg) rotateX(-16deg) rotateZ(-10deg);
+       filter: drop-shadow(0 50px 40px rgb(0 0 0 / .35)) drop-shadow(0 0 30px rgb(253 192 55 / .5)); }
+  14% { opacity: 1; }
+  70% { transform: translate3d(0, 0, 0) rotateY(0) rotateX(0) rotateZ(0); filter: drop-shadow(0 6px 8px rgb(0 0 0 / .25)) drop-shadow(0 0 18px rgb(253 192 55 / .35)); }
+  84% { transform: translate3d(0, 0, -16px) scale(.985); }
+  100% { opacity: 1; transform: none; filter: drop-shadow(0 0 0 transparent); }
+}
+@keyframes hb-fly-out { to { opacity: 0; transform: translate3d(0, -6%, 0) scale(1.04); visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .hb-fly { display: none; } }
+
+/* Smoother entrance (owner, 13 Nov 2026: "the animation feels laggy"). Only transform and opacity move, so the GPU
+   composites every frame and nothing is re-painted: the logo's glow is a soft halo behind it that only fades (no
+   animated drop-shadow filter), the hero glow breathes by opacity alone, and the device's slow float waits until the
+   splash is over. */
+.hb-fly { will-change: transform, opacity; backface-visibility: hidden;
+  animation:
+    hb-fly-in-2 1800ms cubic-bezier(.22, .9, .26, 1) 250ms forwards,
+    hb-fly-out 600ms cubic-bezier(.7, 0, .2, 1) 3300ms forwards; }
+.hb-fly::before {
+  content: ""; position: absolute; inset: -60% -25%; z-index: -1; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgb(253 192 55 / .45), transparent);
+  opacity: 0; animation: hb-fly-halo 1800ms ease-out 250ms forwards;
+}
+@keyframes hb-fly-in-2 {
+  0% { opacity: 0; transform: translate3d(-50%, -32%, 640px) rotateY(28deg) rotateX(-12deg) rotateZ(-8deg); }
+  12% { opacity: 1; }
+  78% { transform: translate3d(0, 0, 0) rotateY(0) rotateX(0) rotateZ(0); }
+  90% { transform: translate3d(0, 0, -10px); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes hb-fly-halo { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: .35; } }
+@keyframes hb-breathe { from { opacity: .7; } to { opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) {
+  .hb-device { animation-delay: 4000ms; }
+}
+
+/* The splash waits for the page (html.js, set before paint): its animations stay paused until hero-phone.tsx marks
+   the figure [data-go] after hydration, or the 2.5 s safety net in layout.tsx does. Without JS it plays at once. */
+html.js .hb-figure-wrap:not([data-go]) :is(.hb-splash, .hb-splash *, .hb-fly, .hb-fly *, .hb-fly::before, .hb-phone, .hb-float) {
+  animation-play-state: paused;
+}
+
+/* ───────── Ask a CA (owner, 14 Nov 2026: rebuilt) ───────── */
+.ask-band { background: #F4EEE3; color: var(--p-ink); }
+.ask-eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--p-gold-800); font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.ask-eyebrow::before { content: ""; width: 24px; height: 2px; background: var(--p-gold); }
+.ask-title { margin-top: 16px; max-width: 17ch; font-size: clamp(2.25rem, 3.4vw, 3rem); line-height: 1.06; font-weight: 700; letter-spacing: -0.04em; text-wrap: balance; }
+.ask-title-soft { color: var(--p-ink-4); }
+.ask-steps { display: grid; gap: 10px; margin-top: 32px; }
+@media (width >= 37.5rem) { .ask-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; } }
+.ask-steps li { position: relative; display: flex; align-items: center; gap: 10px; font-size: 0.9375rem; line-height: 1.25rem; font-weight: 600; }
+@media (width >= 37.5rem) {
+  .ask-steps li { flex-direction: column; align-items: flex-start; gap: 10px; padding-right: 12px; }
+  .ask-steps li:not(:last-child)::after { content: ""; position: absolute; left: 40px; right: 8px; top: 16px; height: 1px; background: rgb(39 42 51 / .2); }
+}
+.ask-step-n { display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: 999px; background: var(--p-ink); color: var(--p-gold); font-size: 0.875rem; font-weight: 700; }
+.ask-notes { display: grid; gap: 12px; margin-top: 32px; padding-top: 24px; border-top: 1px solid rgb(39 42 51 / .12); }
+.ask-notes li { display: flex; align-items: flex-start; gap: 10px; color: var(--p-ink-2); font-size: 0.9375rem; line-height: 1.375rem; }
+.ask-notes svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--p-gold-800); }
+.ask-card { position: relative; overflow: hidden; border: 0; border-radius: 20px; padding: 28px;
+  box-shadow: 0 1px 2px rgb(39 42 51 / .06), 0 30px 60px -30px rgb(39 42 51 / .35), 0 0 0 1px rgb(39 42 51 / .06); }
+@media (width >= 37.5rem) { .ask-card { padding: 36px; } }
+.ask-card::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: linear-gradient(90deg, var(--p-gold), var(--p-gold-700)); }
+
+/* The flicker as the logo landed (owner, 14 Nov 2026): the glide dipped to translateZ(-10px), behind the phone's
+   screen, so for a frame the logo hid behind the glass. It now comes to rest 2px in front of the screen and never
+   crosses it. */
+@keyframes hb-fly-in-2 {
+  0% { opacity: 0; transform: translate3d(-50%, -32%, 640px) rotateY(28deg) rotateX(-12deg) rotateZ(-8deg); }
+  12% { opacity: 1; }
+  100% { opacity: 1; transform: translate3d(0, 0, 2px); }
+}
+@keyframes hb-fly-out { from { opacity: 1; transform: translate3d(0, 0, 2px); } to { opacity: 0; transform: translate3d(0, -6%, 2px) scale(1.04); visibility: hidden; } }
+.ask-title-soft { display: block; }
+
+/* Ask a CA, second pass (owner, 14 Nov 2026): topics on the left, a dark two-step card on the right. */
+.ask-title { max-width: 18ch; }
+.ask-topics { display: grid; gap: 12px; margin-top: 28px; }
+@media (width >= 37.5rem) { .ask-topics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ask-topics li { display: grid; align-content: start; gap: 4px; padding: 18px; border-radius: 16px; background: rgb(255 255 255 / .7); box-shadow: inset 0 0 0 1px rgb(39 42 51 / .08); }
+.ask-topic-icon { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 10px; border-radius: 12px; background: var(--p-ink); color: var(--p-gold); }
+.ask-topic-icon svg { width: 20px; height: 20px; }
+.ask-topic-title { font-size: 1.0625rem; line-height: 1.5rem; font-weight: 700; }
+.ask-topic-body { color: var(--p-ink-2); font-size: 0.9375rem; line-height: 1.375rem; }
+.ask-steps { display: none; }
+
+.ask-card.theme-ink { background:
+    radial-gradient(80% 50% at 100% 0%, rgb(253 192 55 / .16), transparent 60%),
+    var(--p-ink);
+  box-shadow: 0 40px 80px -30px rgb(39 42 51 / .6), 0 0 0 1px rgb(255 255 255 / .06); }
+.ask-step-title { font-size: 1.375rem; line-height: 1.75rem; font-weight: 700; letter-spacing: -0.02em; color: var(--foreground); }

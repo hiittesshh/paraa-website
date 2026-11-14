@@ -28,7 +28,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
-import { CircleCheck } from "lucide-react";
+import { ArrowRight, CircleCheck, Plus } from "lucide-react";
 import { askCa } from "@/app/actions";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -73,7 +73,8 @@ const useHydrated = () =>
   );
 
 const valuesOf = (state: AskState): AskValues => ("values" in state ? state.values : EMPTY);
-const firstInvalid = (errors: FieldErrors) => FIELD_ORDER.find((key) => errors[key]);
+// The question is on step 1 (owner, 14 Nov 2026: a two-step form), so its error is focused first.
+const firstInvalid = (errors: FieldErrors) => (errors.question ? "question" : FIELD_ORDER.find((key) => errors[key]));
 
 /** One field's message from validateRequest, given all the values. */
 function fieldError(key: FieldKey, values: AskValues): string | undefined {
@@ -109,6 +110,12 @@ export function AskForm() {
   const [stillSendingFor, setStillSendingFor] = useState(-1);
   const [status, setStatus] = useState("");
   const [noRoom, setNoRoom] = useState(false);
+  // Email is optional, so it waits behind "Add an email" (owner: the form was too long). It shows once opened, when
+  // it has a value or an error, and always without JS (the server-rendered form has no button to open it).
+  const [emailOpened, setEmailOpened] = useState(false);
+  // Two steps (owner, 14 Nov 2026: "too many things at once"): the question, then how to reach you. Both stay in the
+  // DOM (hidden, not removed), and without JS both show as one form.
+  const [step, setStep] = useState<1 | 2>(1);
 
   const formRef = useRef<HTMLFormElement>(null);
   const questionRef = useRef<HTMLTextAreaElement>(null);
@@ -220,10 +227,32 @@ export function AskForm() {
   }
 
   function askAnother() {
+    setStep(1);
     setValues((v) => ({ ...v, question: "", consent: false }));
     setErrors({});
     setStatus("");
     setDismissed(state);
+    focusField("question");
+  }
+
+  const showEmail = !hydrated || emailOpened || values.email !== "" || Boolean(errors.email);
+  // 0 = both (no JS). A question error always brings step 1 back.
+  const shown: 0 | 1 | 2 = !hydrated ? 0 : errors.question ? 1 : step;
+
+  function next() {
+    const error = fieldError("question", values);
+    if (error) {
+      setErrors((e) => ({ ...e, question: error }));
+      focusField("question");
+      return;
+    }
+    setErrors((e) => ({ ...e, question: undefined }));
+    setStep(2);
+    focusField("name");
+  }
+
+  function back() {
+    setStep(1);
     focusField("question");
   }
 
@@ -310,126 +339,177 @@ export function AskForm() {
             </Alert>
           ) : null}
 
-          <Field id={FIELD_ID.name} label="Your name" error={errors.name}>
-            {(control) => (
-              <Input
-                {...control}
-                name="name"
-                autoComplete="name"
-                maxLength={LIMITS.name}
-                value={values.name}
-                readOnly={pending}
-                onChange={(e) => change("name", e.target.value)}
-                onBlur={() => blur("name")}
-              />
-            )}
-          </Field>
-
-          <Field
-            id={FIELD_ID.phone}
-            label="Mobile number"
-            helper="Indian mobile, 10 digits. We’ll use it to contact you about this question."
-            error={errors.phone}
-          >
-            {(control) => (
-              <PhoneInput
-                {...control}
-                name="phone"
-                value={values.phone}
-                readOnly={pending}
-                onChange={(e) => change("phone", e.target.value)}
-                onBlur={() => blur("phone")}
-              />
-            )}
-          </Field>
-
-          <Field id={FIELD_ID.email} label="Email (optional)" error={errors.email}>
-            {(control) => (
-              <Input
-                {...control}
-                name="email"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                spellCheck={false}
-                maxLength={LIMITS.email}
-                value={values.email}
-                readOnly={pending}
-                onChange={(e) => change("email", e.target.value)}
-                onBlur={() => blur("email")}
-              />
-            )}
-          </Field>
-
-          {hydrated && view.kind !== "not_configured" && (
-            <QuestionPrompts onPick={addPrompt} unavailable={pending} note={noRoom ? NO_ROOM : null} />
+          {/* Progress: two short bars, the step in hand lit. Not shown without JS (one form then). */}
+          {hydrated && (
+            <div className="flex items-center gap-3">
+              <span className="num text-body-md font-semibold text-muted-foreground">Step {shown === 2 ? 2 : 1} of 2</span>
+              <span aria-hidden className="flex flex-1 gap-1.5">
+                <span className="h-1 flex-1 rounded-full bg-brand" />
+                <span className={cn("h-1 flex-1 rounded-full transition-colors", shown === 2 ? "bg-brand" : "bg-border-strong")} />
+              </span>
+            </div>
           )}
 
-          <Field
-            id={FIELD_ID.question}
-            label="Your question"
-            helper="At least 10 characters."
-            error={errors.question}
-            after={<CharacterCounter length={values.question.length} max={LIMITS.question} />}
-          >
-            {(control) => (
-              <Textarea
-                {...control}
-                ref={questionRef}
-                name="question"
-                rows={4}
-                maxLength={LIMITS.question}
-                value={values.question}
-                readOnly={pending}
-                onChange={(e) => change("question", e.target.value)}
-                onBlur={() => blur("question")}
-              />
+          {/* Step 1: the question. */}
+          <div hidden={shown === 2} className="space-y-5">
+            <p className="ask-step-title">What would you like to ask?</p>
+          {hydrated && view.kind !== "not_configured" && (
+              <QuestionPrompts onPick={addPrompt} unavailable={pending} note={noRoom ? NO_ROOM : null} />
             )}
-          </Field>
 
-          <CheckboxField
-            id={FIELD_ID.consent}
-            name="consent"
-            label="Paraa Capital can contact me about this question."
-            error={errors.consent}
-            checked={values.consent}
-            aria-readonly={pending || undefined}
-            onChange={(e) => {
-              if (!pending) change("consent", e.target.checked);
-            }}
-          />
+            <Field
+              id={FIELD_ID.question}
+              label="Your question"
+              error={errors.question}
+              after={<CharacterCounter length={values.question.length} max={LIMITS.question} />}
+            >
+              {(control) => (
+                <Textarea
+                  {...control}
+                  ref={questionRef}
+                  name="question"
+                  rows={3}
+                  maxLength={LIMITS.question}
+                  value={values.question}
+                  readOnly={pending}
+                  onChange={(e) => change("question", e.target.value)}
+                  onBlur={() => blur("question")}
+                />
+              )}
+            </Field>
 
-          {/* Honeypot: off-screen, out of the tab order, and hidden from assistive tech. People never fill it. */}
-          <div aria-hidden className="sr-only">
-            <label>
-              Website
-              <input ref={websiteRef} name="website" tabIndex={-1} autoComplete="off" defaultValue="" />
-            </label>
-          </div>
 
-          <div>
-            {view.kind === "not_configured" && offline === 0 ? null : (
-              <Button type="submit" variant="primary" size="lg" block loading={pending}>
-                {pending ? "Sending…" : "Send my question"}
+            {hydrated && (
+              <Button type="button" variant="primary" size="lg" block className="sm:w-full" onClick={next}>
+                Next: how to reach you
+                <ArrowRight aria-hidden />
               </Button>
             )}
-            {stillSending ? <p className="mt-2 text-body-md text-muted-foreground">{STILL_SENDING}</p> : null}
-            <p
-              className={cn(
-                "text-body-md text-muted-foreground",
-                // With no submit above it (503), the privacy line is the block's first line.
-                view.kind === "not_configured" && offline === 0 ? null : "mt-3",
+          </div>
+
+          {/* Step 2: how to reach you, then send. */}
+          <div hidden={shown === 1} className="space-y-5">
+            {hydrated && (
+              <div className="flex items-start justify-between gap-4 rounded-xl bg-background-alt p-4">
+                <p className="min-w-0 text-body-md">
+                  <span className="block font-semibold text-muted-foreground">Your question</span>
+                  <span className="line-clamp-2 text-foreground">{values.question}</span>
+                </p>
+                <button type="button" onClick={back} className="inline-flex min-h-11 shrink-0 items-center text-body-md font-semibold underline underline-offset-4">
+                  Edit
+                </button>
+              </div>
+            )}
+            <p className="ask-step-title">How should we reach you?</p>
+          <div className="grid gap-5 sm:grid-cols-2 sm:gap-4">
+              <Field id={FIELD_ID.name} label="Your name" error={errors.name}>
+                {(control) => (
+                  <Input
+                    {...control}
+                    name="name"
+                    autoComplete="name"
+                    maxLength={LIMITS.name}
+                    value={values.name}
+                    readOnly={pending}
+                    onChange={(e) => change("name", e.target.value)}
+                    onBlur={() => blur("name")}
+                  />
+                )}
+              </Field>
+
+              <Field id={FIELD_ID.phone} label="Mobile number" error={errors.phone}>
+                {(control) => (
+                  <PhoneInput
+                    {...control}
+                    name="phone"
+                    value={values.phone}
+                    readOnly={pending}
+                    onChange={(e) => change("phone", e.target.value)}
+                    onBlur={() => blur("phone")}
+                  />
+                )}
+              </Field>
+            </div>
+
+            {showEmail ? (
+              <Field id={FIELD_ID.email} label="Email (optional)" error={errors.email}>
+                {(control) => (
+                  <Input
+                    {...control}
+                    name="email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    spellCheck={false}
+                    maxLength={LIMITS.email}
+                    value={values.email}
+                    readOnly={pending}
+                    autoFocus={emailOpened}
+                    onChange={(e) => change("email", e.target.value)}
+                    onBlur={() => blur("email")}
+                  />
+                )}
+              </Field>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setEmailOpened(true);
+                }}
+                className="inline-flex min-h-11 items-center gap-1.5 text-body-md font-semibold text-foreground underline decoration-input underline-offset-4 hover:decoration-foreground"
+              >
+                <Plus aria-hidden className="size-4" />
+                Add an email (optional)
+              </button>
+            )}
+
+            <CheckboxField
+              id={FIELD_ID.consent}
+              name="consent"
+              label="Paraa Capital can contact me about this question."
+              error={errors.consent}
+              checked={values.consent}
+              aria-readonly={pending || undefined}
+              onChange={(e) => {
+                if (!pending) change("consent", e.target.checked);
+              }}
+            />
+
+            {/* Honeypot: off-screen, out of the tab order, and hidden from assistive tech. People never fill it. */}
+            <div aria-hidden className="sr-only">
+              <label>
+                Website
+                <input ref={websiteRef} name="website" tabIndex={-1} autoComplete="off" defaultValue="" />
+              </label>
+            </div>
+
+
+          <div>
+              {view.kind === "not_configured" && offline === 0 ? null : (
+                <Button type="submit" variant="primary" size="lg" block loading={pending} className="sm:w-full">
+                  {pending ? "Sending…" : "Send my question"}
+                  <ArrowRight aria-hidden />
+                </Button>
               )}
-            >
-              Your name, mobile number, email and question go to Paraa Capital, so a CA can read your question and we
-              can contact you about it.
-              {isLive(PRIVACY_HREF) && (
-                <>
-                  {" "}
-                  <TextLink href={PRIVACY_HREF}>Read our privacy notice.</TextLink>
-                </>
-              )}
-            </p>
+              {stillSending ? <p className="mt-2 text-body-md text-muted-foreground">{STILL_SENDING}</p> : null}
+              <p
+                className={cn(
+                  "text-body-md text-muted-foreground",
+                  // With no submit above it (503), the privacy line is the block's first line.
+                  view.kind === "not_configured" && offline === 0 ? null : "mt-3",
+                )}
+              >
+                Your name, mobile number, email and question go to Paraa Capital, so a CA can read your question and we
+                can contact you about it.
+                {isLive(PRIVACY_HREF) && (
+                  <>
+                    {" "}
+                    <TextLink href={PRIVACY_HREF}>Read our privacy notice.</TextLink>
+                  </>
+                )}
+              </p>
+            </div>
+
           </div>
         </form>
       )}

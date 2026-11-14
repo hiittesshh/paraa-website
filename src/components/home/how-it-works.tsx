@@ -66,7 +66,7 @@ export function HowItWorks() {
       {/* Owner, 13 Nov 2026: on ink, so the gold pulses from the c1 concept can glow along the path. */}
       <Reveal className="theme-ink mt-4 rounded-2xl p-6 sm:p-8 lg:p-12">
         <h3 className="type-heading">Where your money goes</h3>
-        <MoneyLoop className="mt-8 lg:mt-24" />
+        <MoneyLoop className="mt-6 lg:mt-14" />
         <div className="mt-8 grid gap-4 border-t pt-6 lg:grid-cols-2 lg:gap-16">
           <Disclosure id="no-shortcut-v1" as="p" className="max-w-prose text-body-lg text-copy" />
           <p className="text-body-lg text-copy">

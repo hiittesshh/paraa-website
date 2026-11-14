@@ -24,13 +24,14 @@ import {
 import { CTA } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 import { AMOUNTS, useBadYear } from "./bad-year/model";
+import { GuidedPrototype } from "./bad-year/guided";
 import { StepperPrototype } from "./bad-year/stepper";
 import { TilesPrototype } from "./bad-year/tiles";
 
 const noSubscribe = () => () => {};
 const readQuery = () => window.location.search;
 
-const PROTOTYPE = { tiles: TilesPrototype, stepper: StepperPrototype } as const;
+const PROTOTYPE = { tiles: TilesPrototype, stepper: StepperPrototype, guided: GuidedPrototype } as const;
 
 /**
  * Review only: a small bar fixed to the bottom of the screen while the calculator is on it, so it never adds to
@@ -119,14 +120,17 @@ export function WhatIf() {
           </h3>
           <Disclosure id="scenarios-v1" as="p" className="mt-1 max-w-[62ch] text-body-md text-muted-foreground" />
         </div>
-        <ChoiceChips
-          className="shrink-0"
-          legend="If you invest"
-          name="what-if-amount"
-          options={AMOUNTS}
-          value={String(m.amount)}
-          onValueChange={(v) => m.setAmount(Number(v))}
-        />
+        {/* The guided prototype asks for the amount itself, as its step 1. */}
+        {prototype !== "guided" && (
+          <ChoiceChips
+            className="shrink-0"
+            legend="If you invest"
+            name="what-if-amount"
+            options={AMOUNTS}
+            value={String(m.amount)}
+            onValueChange={(v) => m.setAmount(Number(v))}
+          />
+        )}
       </div>
 
       <Body m={m} />

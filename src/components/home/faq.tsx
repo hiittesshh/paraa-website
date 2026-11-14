@@ -64,11 +64,7 @@ const ITEMS: readonly { slug: string; question: string; answer: ReactNode }[] = 
         It depends on how this income is classified. If it’s business income, profit is taxed at your slab rate plus{" "}
         <span className="num">4%</span> cess. If the basket counts as a virtual digital asset, it’s a flat{" "}
         <span className="num">30%</span> plus cess, and a loss can’t be set off against other income or carried
-        forward.{" "}
-        <TextLink href="/#tax" className="whitespace-nowrap">
-          Try the tax estimate
-        </TextLink>
-        , and ask a CA about your own tax.
+        forward. Ask a CA about your own tax.
       </>
     ),
   },
@@ -87,7 +83,7 @@ const ITEMS: readonly { slug: string; question: string; answer: ReactNode }[] = 
     answer: (
       <>
         We never ask you to share your OTP or PIN by call or message, or to pay into a personal account. If someone
-        does, it isn’t us. See <TextLink href="/#security-fakes">how to spot a fake</TextLink>.
+        does, it isn’t us. See <TextLink href="/#security">how we protect you</TextLink>.
       </>
     ),
   },

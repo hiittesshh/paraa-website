@@ -38,10 +38,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en-IN" className={`${manrope.variable} h-full`} suppressHydrationWarning>
       <head>
-        {/* The header and hero look (owner, 13 Nov 2026): a saved "dark" choice is applied before first paint. */}
+        {/* Before first paint (owner, 13 Nov 2026): a saved "dark" look; html.js so the hero splash waits for the page to
+            finish loading (hero-phone.tsx starts it), with a 2.5 s safety net that starts it anyway. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.getItem("paraa-look")==="dark")document.documentElement.dataset.look="dark"}catch(e){}`,
+            __html: `try{if(localStorage.getItem("paraa-look")==="dark")document.documentElement.dataset.look="dark"}catch(e){}document.documentElement.classList.add("js");setTimeout(function(){var f=document.querySelector(".hb-figure-wrap");if(f)f.setAttribute("data-go","")},2500);`,
           }}
         />
       </head>

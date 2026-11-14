@@ -1,35 +1,19 @@
 // How we protect your account (round 18b, in the language of the hero and basket: contained colour tiles on
 // white). Four tiles, one per promise, each with a small visual of what it means: withdrawals (ink, with an
 // example withdraw card), the OTP/PIN rule (gold, six masked code boxes), payment checks (Light, a verified
-// chip) and the FIU-IND registration with its limit (outlined). Then one ink block, "How to spot a fake",
+// chip) and the FIU-IND registration with its limit (outlined). (Owner, 14 Nov 2026: "How to spot a fake" removed.)
 // with the scam lines drawn as message bubbles and the truth under each.
 //
 // The tile headings keep their anchor ids for the hero's fact cells and the FAQ (#security-withdrawals,
-// #security-otp, #security-checks, #security-registration, #security-fakes); each takes focus from script.
+// #security-otp, #security-checks, #security-registration, and the retired #security-fakes forwards to #security); each takes focus from script.
 import { Check } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { Disclosure } from "@/components/ui/disclosure";
-import { TextLink } from "@/components/ui/link";
 import { Section } from "@/components/ui/section";
 import { SectionHeader } from "@/components/ui/section-header";
 import { ExampleTag, Tag } from "@/components/ui/tag";
-import { FIU_REG_NO, SHOW_CYBERCRIME_HELPLINE } from "@/lib/links";
+import { FIU_REG_NO } from "@/lib/links";
 import { cn } from "@/lib/utils";
-
-const FAKES = [
-  {
-    scam: "Your withdrawal is on hold. Share the OTP we just sent to release it.",
-    truth: "We never ask for an OTP or PIN.",
-  },
-  {
-    scam: "Pay the processing fee to my personal account and your units will be released.",
-    truth: "We never ask you to pay into a personal account.",
-  },
-  {
-    scam: "I can send your withdrawal to a different account for you.",
-    truth: "Withdrawals go only to a verified bank account in your name.",
-  },
-] as const;
 
 const TILE = "flex flex-col rounded-2xl p-6 sm:p-8 lg:p-10";
 
@@ -132,43 +116,6 @@ export function Security() {
         </li>
       </Reveal>
 
-      {/* How to spot a fake: one ink block, the scam lines as message bubbles. */}
-      <Reveal className="theme-ink mt-4 rounded-2xl p-6 sm:p-8 lg:p-12">
-        <h3 id="security-fakes" tabIndex={-1} className="type-title max-w-[20ch]">
-          How to spot a fake
-        </h3>
-        <dl className="mt-8 grid gap-8 lg:mt-10 lg:grid-cols-3 lg:gap-6">
-          {FAKES.map((fake) => (
-            <div key={fake.scam}>
-              <dt className="theme-light rounded-2xl rounded-bl-xs bg-card p-5 text-body-lg text-foreground">
-                “{fake.scam}”
-              </dt>
-              <dd className="mt-4 text-body-lg text-copy">
-                {/* The verdict tag: ink on gold (decision 58). In forced colours it falls back to plain text. */}
-                <strong className="mr-2 rounded-xs bg-brand px-2 py-0.5 font-semibold text-brand-foreground">
-                  Not Paraa.
-                </strong>
-                {fake.truth}
-              </dd>
-            </div>
-          ))}
-        </dl>
-        <p className="mt-10 max-w-prose border-t pt-6 text-body-lg text-copy">
-          If someone contacts you claiming to be Paraa, don’t share any code and don’t pay. If you’ve already shared a
-          code or paid someone, call your bank straight away.
-          {/* Off until compliance approves it (spec §12 #12; links.ts records the source and date when it's on). */}
-          {SHOW_CYBERCRIME_HELPLINE && (
-            <>
-              {" "}
-              To report fraud in India, call <TextLink href="tel:1930">1930</TextLink> or go to{" "}
-              <TextLink href="https://cybercrime.gov.in" external>
-                cybercrime.gov.in
-              </TextLink>
-              .
-            </>
-          )}
-        </p>
-      </Reveal>
     </Section>
   );
 }

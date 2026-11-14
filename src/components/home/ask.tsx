@@ -1,52 +1,65 @@
-// "Ask a chartered accountant" (spec §6.8): what happens to a question, the CA-payment limit (from the
-// disclosure registry), and the form card. Below 1024 the form follows the text; from 1024 they sit side by
-// side (L3, 5 / 7).
+// "Ask a chartered accountant" (spec §6.8). Owner, 14 Nov 2026: the form was "too many things at once", "plain or
+// generic", and the left side "weak or empty". Now: on the left, the offer and what a CA can help with as four clear
+// topics, then the two limits that must stay (the CA may be paid by Paraa; we never ask for an OTP or PIN). On the
+// right, a dark card with the form in two steps. Below 1024 the form follows the text.
+import { BadgeIndianRupee, Clock4, Landmark, Layers, ReceiptIndianRupee, ShieldCheck, type LucideIcon } from "lucide-react";
 import { Disclosure } from "@/components/ui/disclosure";
-import { Reveal } from "@/components/motion/reveal";
 import { Panel } from "@/components/ui/panel";
-import { Section } from "@/components/ui/section";
 import { AskForm } from "./ask-form";
 
-const NEXT_STEPS = ["A CA reads your question.", "We contact you about it.", "You decide what to do next."] as const;
+const TOPICS: readonly { title: string; body: string; Icon: LucideIcon }[] = [
+  { title: "Tax on your profit", body: "How gains are taxed, and what to keep for filing.", Icon: ReceiptIndianRupee },
+  { title: "Fees and charges", body: "What you pay, and when.", Icon: BadgeIndianRupee },
+  { title: "How a basket works", body: "Units, the daily price and the rupee.", Icon: Layers },
+  { title: "Getting money out", body: "Maturity, redeeming and withdrawing.", Icon: Landmark },
+];
 
 export function Ask() {
   return (
-    <Section id="ask" labelledBy="ask-title" tone="gold">
-      <div className="lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start lg:gap-16">
+    <section id="ask" aria-labelledby="ask-title" className="ask-band py-section">
+      <div className="container-page lg:grid lg:grid-cols-[minmax(0,6fr)_minmax(0,6fr)] lg:items-start lg:gap-16">
         <div>
-          <h2 id="ask-title" tabIndex={-1} className="type-title max-w-[24ch]">
-            Ask a chartered accountant before you decide
+          <p className="ask-eyebrow">No account needed</p>
+          <h2 id="ask-title" tabIndex={-1} className="ask-title">
+            Ask a chartered accountant <span className="ask-title-soft">before you decide.</span>
           </h2>
-          <p className="mt-4 max-w-[52ch] text-body-xl text-muted-foreground">
-            You don’t need an account. Write your question, and we’ll contact you about it.
+          <p className="mt-5 max-w-[46ch] text-body-xl text-copy">
+            Write your question and we’ll contact you about it. A CA can help you with:
           </p>
-          <h3 className="mt-10 type-subhead">What happens next</h3>
-          {/* Round 18b: the three steps as white cards on the gold band, numbered like How it works. */}
-          <Reveal as="ol" stagger={0.1} className="mt-4 space-y-3">
-            {NEXT_STEPS.map((step, i) => (
-              <li key={step} className="flex items-center gap-4 rounded-xl bg-card p-4">
-                <span
-                  aria-hidden
-                  className="grid size-10 shrink-0 place-items-center rounded-sm bg-primary text-body-lg font-semibold text-primary-foreground num"
-                >
-                  {i + 1}
+
+          <ul className="ask-topics">
+            {TOPICS.map(({ title, body, Icon }) => (
+              <li key={title}>
+                <span className="ask-topic-icon" aria-hidden>
+                  <Icon />
                 </span>
-                <span className="text-body-lg font-semibold">{step}</span>
+                <span className="ask-topic-title">{title}</span>
+                <span className="ask-topic-body">{body}</span>
               </li>
             ))}
-          </Reveal>
-          <div className="mt-6 space-y-1 border-t pt-5">
-            <Disclosure id="ca-paid-v1" as="p" className="text-body-lg text-copy" />
-            <p className="text-body-lg text-copy">We never ask for your OTP or PIN by call or message.</p>
-          </div>
+          </ul>
+
+          <ul className="ask-notes">
+            <li>
+              <Clock4 aria-hidden />
+              <span>A CA reads your question, we contact you, and you decide what to do next.</span>
+            </li>
+            <li>
+              <BadgeIndianRupee aria-hidden />
+              <Disclosure id="ca-paid-v1" as="span" />
+            </li>
+            <li>
+              <ShieldCheck aria-hidden />
+              <span>We never ask for your OTP or PIN by call or message.</span>
+            </li>
+          </ul>
         </div>
 
         {/* id="ask-form": the form's permalink target (§7.1), so a post lands with its outcome in view. */}
-        {/* theme-light: the card keeps the light roles (inputs, hairlines, errors) on the gold band. */}
-        <Panel id="ask-form" className="theme-light mt-10 border-0 shadow-float md:mt-12 lg:mt-0">
+        <Panel id="ask-form" className="theme-ink ask-card mt-10 md:mt-12 lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:mt-0">
           <AskForm />
         </Panel>
       </div>
-    </Section>
+    </section>
   );
 }

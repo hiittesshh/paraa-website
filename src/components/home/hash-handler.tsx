@@ -21,8 +21,10 @@ import { useEffect } from "react";
 
 type Mode = "load" | "hashchange" | "click";
 
-const TAB_HASHES = new Set(["what-if", "tax"]);
-const RENAMED: Record<string, string> = { tour: "top", trust: "security" };
+// No tabs since the tax estimate was removed (owner, 14 Nov 2026): #tax forwards to the calculator section.
+const TAB_HASHES = new Set<string>([]);
+// "security-fakes": the "How to spot a fake" block was removed (owner, 14 Nov 2026); old links land on Security.
+const RENAMED: Record<string, string> = { tour: "top", trust: "security", "security-fakes": "security", tax: "numbers" };
 const LEFT_TO_THE_PAGE = new Set(["ask-form"]);
 const NATIVELY_FOCUSABLE = "a[href], button, input, select, textarea, summary";
 

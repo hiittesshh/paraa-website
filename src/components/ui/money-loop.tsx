@@ -29,11 +29,11 @@ const STEPS: readonly Step[] = [
 
 // The clock (ms): rest at the start, then for each leg a move and a rest at its step, then a hold with the whole
 // route lit, then the trail fades and it starts again.
-const START = 700;
-const MOVE = 1500;
-const REST = 650;
-const HOLD = 1600;
-const FADE = 700;
+const START = 450;
+const MOVE = 950;
+const REST = 420;
+const HOLD = 1100;
+const FADE = 500;
 const LEGS = STEPS.length - 1;
 const CYCLE = START + LEGS * (MOVE + REST) + HOLD + FADE;
 
@@ -95,7 +95,7 @@ export function MoneyLoop({ className }: { className?: string }) {
         return { x: r.left - box.left + r.width / 2, y: r.top - box.top + r.height / 2 };
       });
       const wide = el.dataset.layout === "loop" && getComputedStyle(el).getPropertyValue("--ml-wide").trim() === "1";
-      const R = Math.max(100, (p[3].y - p[2].y) * 0.78);
+      const R = Math.max(70, (p[3].y - p[2].y) * 0.8);
       const segs = p.slice(0, -1).map((a, k) => {
         const b = p[k + 1];
         if (wide && k === 2) return `M ${a.x} ${a.y} C ${a.x + R} ${a.y} ${b.x + R} ${b.y} ${b.x} ${b.y}`;

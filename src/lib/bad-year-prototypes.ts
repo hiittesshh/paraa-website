@@ -5,12 +5,13 @@
 export const BAD_YEAR_PROTOTYPES = [
   { id: "tiles", label: "Tiles + step by step" },
   { id: "stepper", label: "One at a time" },
+  { id: "guided", label: "Guided, 3 steps" },
 ] as const;
 
 export type BadYearPrototype = (typeof BAD_YEAR_PROTOTYPES)[number]["id"];
 
 /** What visitors see unless a ?badyear= link says otherwise. */
-export const BAD_YEAR_PROTOTYPE: BadYearPrototype = "tiles";
+export const BAD_YEAR_PROTOTYPE: BadYearPrototype = "guided"; // owner, 14 Nov 2026
 
 export const isBadYearPrototype = (value: unknown): value is BadYearPrototype =>
   BAD_YEAR_PROTOTYPES.some((p) => p.id === value);

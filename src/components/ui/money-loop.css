@@ -3,7 +3,7 @@
    (two steps), and the step in hand set large in the middle. The route and coin are drawn by money-loop.tsx. */
 
 .ml { position: relative; }
-.ml-stage { --ml-wide: 0; --dot: 3.5rem; position: relative; }
+.ml-stage { --ml-wide: 0; --dot: 3rem; position: relative; }
 .ml-route { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 0; }
 .ml-track { fill: none; stroke: rgb(255 255 255 / .16); stroke-width: 1.5; stroke-dasharray: 2 7; stroke-linecap: round; }
 .ml-trail { fill: none; stroke: var(--p-gold); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 0 99999; }
@@ -12,7 +12,7 @@
 .ml-coin-face { fill: var(--p-gold); stroke: rgb(255 255 255 / .75); stroke-width: 1.5; }
 .ml-coin-mark { fill: var(--p-ink); font-size: 13px; font-weight: 800; font-family: inherit; }
 
-.ml-list { position: relative; z-index: 1; display: grid; gap: 2rem; }
+.ml-list { position: relative; z-index: 1; display: grid; gap: 1.25rem; }
 .ml-step { display: grid; grid-template-columns: var(--dot) minmax(0, 1fr); column-gap: 1.25rem; align-items: center; }
 .ml-dot {
   position: relative; display: grid; place-items: center; width: var(--dot); height: var(--dot); border-radius: 999px;
@@ -40,9 +40,9 @@
 
 /* From 1024: the loop. */
 @media (width >= 64rem) {
-  .ml-stage { --ml-wide: 1; --dot: 4rem; padding-right: 5.5rem; }
+  .ml-stage { --ml-wide: 1; --dot: 3.5rem; padding-right: 5.5rem; }
   .ml-turn { display: block; }
-  .ml-list { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 8.5rem; column-gap: 2rem; }
+  .ml-list { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 4rem; column-gap: 2rem; }
   .ml-step { grid-template-columns: none; justify-items: center; row-gap: 1.125rem; align-items: start; align-content: start; text-align: center; }
   .ml-text { max-width: 15rem; }
   .ml-step:nth-child(1) { grid-area: 1 / 1; }

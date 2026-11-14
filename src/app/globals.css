@@ -341,7 +341,7 @@ html, body { overflow-x: clip; }
 
 /* Owner, 13 Nov 2026: the nav bar and hero on beige "for now". Light roles (ink text), a warm ground. */
 .theme-beige {
-  --background: #DDCBA9; /* darker sand than the hero, so the gold logo reads (owner, 13 Nov 2026) */
+  --background: #F4EEE3; /* the hero's beige (owner, 13 Nov 2026: "make the nav bar color and hero bg same") */
   --background-alt: #EDE5D6;
   --muted: #EDE5D6;
   --accent: #EDE5D6;

@@ -35,7 +35,7 @@ const FACTS: readonly { claim: string; limit: DisclosureId; cue: string; href: s
   { claim: "You hold units, not the funds, gold or oil.", limit: "hold-units-cell-v1", cue: "What you’re buying", href: "#basket", Icon: Layers },
   { claim: "Priced once a day, in US dollars.", limit: "rupee-both-v1", cue: "How the rupee affects it", href: "#faq-rupee", Icon: CalendarClock },
   { claim: "Withdrawals go only to you.", limit: "withdraw-cell-v1", cue: "How money comes out", href: "#security-withdrawals", Icon: Landmark },
-  { claim: "We never ask for your OTP or PIN.", limit: "otp-cell-v1", cue: "How to spot a fake", href: "#security-fakes", Icon: ShieldCheck },
+  { claim: "We never ask for your OTP or PIN.", limit: "otp-cell-v1", cue: "How we protect you", href: "#security-otp", Icon: ShieldCheck },
 ];
 
 function Bar({ className }: { className?: string }) {
@@ -261,22 +261,29 @@ const FLOATS = [
   </Float>,
 ];
 
-// The phone's splash screen (owner, 13 Nov 2026: "before the other screens, play splash screen animation with
-// logo"): the app opening, once, on load. CSS runs it and takes it away (hero-b.css), so it can never stay stuck;
-// the screens start cycling once it has gone. Skipped under reduced motion.
+// The phone's splash screen (owner, 13 Nov 2026): the app opening, once, on load. CSS runs it and takes it away
+// (hero-b.css), so it can never stay stuck; the screens start cycling once it has gone. Skipped under reduced motion.
 const SPLASH_LOGO = getImageProps({ src: LOGO, alt: "", loading: "eager" }).props;
 const SPLASH = (
-  <div className="hb-splash" style={{ "--logo": `url(${SPLASH_LOGO.src})` } as React.CSSProperties}>
-    <span className="hb-splash-mark">
+  <div className="hb-splash">
+    {/* Holds the logo's place (the visible logo is FLY, below), so the line sits under it. */}
+    <span className="hb-splash-mark" aria-hidden>
       {/* eslint-disable-next-line @next/next/no-img-element -- getImageProps() output, decorative */}
       <img {...SPLASH_LOGO} alt="" />
-      <span className="hb-splash-shine" />
     </span>
     <span className="hb-splash-line">US funds · Gold · Crude oil</span>
-    <span className="hb-splash-load">
-      <i />
-    </span>
   </div>
+);
+
+// The logo's 3D entrance (owner, 13 Nov 2026): it starts out of the phone, large and turned in front of it, glides
+// into the screen and settles; then the shine crosses it and the splash carries on. It lives beside the phone in the
+// same 3D space (hero-b.css .hb-fly), so it can come from in front of the glass.
+const FLY = (
+  <span className="hb-fly" aria-hidden style={{ "--logo": `url(${SPLASH_LOGO.src})` } as React.CSSProperties}>
+    {/* eslint-disable-next-line @next/next/no-img-element -- getImageProps() output, decorative */}
+    <img {...SPLASH_LOGO} alt="" />
+    <span className="hb-fly-shine" />
+  </span>
 );
 
 export function HeroB() {
@@ -307,6 +314,7 @@ export function HeroB() {
           screens={SCREENS}
           floats={FLOATS}
           splash={SPLASH}
+          fly={FLY}
           caption={<Disclosure id="mock-caption-v1" as="span" />}
         />
       </div>

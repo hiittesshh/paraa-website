@@ -1,10 +1,9 @@
-// "Run the numbers" (spec §6.6): the server shell around the two calculators. The header, the no-JS line and
-// the no-JS tab style are static; the tabs and the tools are the client island ToolsTabs.
+// "Run the numbers" (spec §6.6): the server shell around the bad-year calculator. Owner, 14 Nov 2026: the tax
+// estimate ("Tax on your profit") was removed, so there are no tabs; old #tax links land here (hash-handler.tsx).
 import { Alert } from "@/components/ui/alert";
 import { Section } from "@/components/ui/section";
 import { SectionHeader } from "@/components/ui/section-header";
-import { TabsNoScript } from "@/components/ui/tabs";
-import { ToolsTabs } from "./tools-tabs";
+import { WhatIf } from "./what-if";
 
 export function Tools() {
   return (
@@ -13,15 +12,14 @@ export function Tools() {
         id="numbers-title"
         layout="split"
         title="Run the numbers"
-        lede="Two calculators with made-up inputs you can change. Neither is a forecast."
+        lede="A calculator with made-up inputs you can change. It isn’t a forecast."
       />
       <noscript>
         <Alert variant="info">
-          The calculators need JavaScript to update. The figures shown are for the starting values.
+          The calculator needs JavaScript to update. The figures shown are for the starting values.
         </Alert>
       </noscript>
-      <TabsNoScript />
-      <ToolsTabs />
+      <WhatIf />
     </Section>
   );
 }

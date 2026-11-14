@@ -1,23 +1,18 @@
 // What you're buying (owner, 13 Nov 2026: the c3 concept's scrolling markets and liquid hover, on site B). On ink,
 // one market at a time: the section holds on screen while US stocks, gold and crude oil open in turn, each with its
-// example weight, what it is and why it moves, and its photograph fills the frame at the right, zooming slowly with
-// the scroll. Without JS, under reduced motion and below 1024 × 640 every market is a static row with its photograph.
+// example weight, what it is and why it moves, and its motion graphic fills the frame at the right (market-art.tsx;
+// owner, 14 Nov 2026: in place of the stand-in photographs). Without JS, under reduced motion and below 1024 × 640
+// every market is a static row with its graphic.
 // Then "You hold units, not the assets" set very large, rippling under a moving mouse.
-import Image from "next/image";
 import { LiquidType } from "@/components/motion/liquid-type";
 import { PinnedScroll } from "@/components/motion/pinned-scroll";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ExampleTag } from "@/components/ui/tag";
 import { SLEEVES } from "@/lib/basket";
 import { formatPct } from "@/lib/format";
-import { PHOTOS } from "@/lib/photos";
+import { MarketArt } from "./market-art";
 import { SLEEVE_INFO } from "./sleeve-info";
 import "./basket.css";
-
-function Photo({ id, sizes }: { id: keyof typeof PHOTOS; sizes: string }) {
-  const p = PHOTOS[id];
-  return <Image src={p.src} alt={p.alt} width={p.width} height={p.height} sizes={sizes} />;
-}
 
 export function Basket() {
   return (
@@ -30,7 +25,7 @@ export function Basket() {
         <>
           {SLEEVES.map((s, i) => (
             <figure key={s.id} className="mk-shot" data-i={i} style={{ "--i": i } as React.CSSProperties}>
-              <Photo id={s.id} sizes="(min-width: 1440px) 720px, 56vw" />
+              <MarketArt id={s.id} u="frame" />
             </figure>
           ))}
           {/* The frame's furniture: which market of three, and its share of the example mix lit on the bar. */}
@@ -107,7 +102,7 @@ export function Basket() {
                   </div>
                 </div>
                 <figure className="mk-inline">
-                  <Photo id={s.id} sizes="(min-width: 640px) 50vw, 100vw" />
+                  <MarketArt id={s.id} u="row" />
                 </figure>
               </li>
             );
