@@ -101,37 +101,118 @@ function GoldDefs({ u }: { u: string }) {
 // ── Simple (owner, 14 Nov 2026: "make gold and crude oil simplistic: barrels for crude oil, a gold brick for gold, just
 // animate them simply"). The defaults. ──
 function SimpleGold({ u }: { u: string }) {
+  // One brick (front A-B-C-D, top D-C-E-F, side B-G-E-C), with a chamfer, a stamped panel and a floor reflection.
+  const front = "M0 110H300L262 12H38Z";
+  const top = "M38 12H262L300 -30H76Z";
+  const side = "M300 110L338 68L300 -30L262 12Z";
+  const brick = (
+    <>
+      <path d={front} fill={`url(#sg-front-${u})`} />
+      <path d={side} fill={`url(#sg-side-${u})`} />
+      <path d={top} fill={`url(#sg-top-${u})`} />
+      {/* the chamfer along the top's front edge, and the bright edge on the side */}
+      <path d="M38 12H262L267 6H43Z" fill="#FFF8DE" />
+      <path d="M262 12L300 -30L303 -24L267 6Z" fill="#FFE7A0" opacity=".8" />
+      <path d="M2 109H298" stroke="#5A3806" strokeWidth="2" opacity=".7" />
+      {/* the stamped panel on top */}
+      <g transform="translate(76 -30) matrix(1 0 -0.905 1 0 0)">
+        <rect x="58" y="10" width="110" height="24" rx="3" fill="#C98A14" fillOpacity=".35" stroke="#8C5A08" strokeOpacity=".55" />
+        <rect x="58.6" y="10.6" width="108.8" height="1.4" fill="#FFF4CC" fillOpacity=".8" />
+      </g>
+      <text x="168" y="-6" textAnchor="middle" fontSize="15" fontWeight="800" letterSpacing="3" fill="#7A4B07" fillOpacity=".75" transform="skewX(-38) translate(4 0)">
+        999.9
+      </text>
+    </>
+  );
   return (
     <Frame className="ms-simple">
-      <GoldDefs u={u} />
-      <circle cx="300" cy="300" r="200" fill={`url(#g-glow-${u})`} opacity=".7" />
-      <ellipse className="ms-s-shadow" cx="300" cy="420" rx="140" ry="14" fill="#000000" opacity=".5" />
+      <defs>
+        <linearGradient id={`sg-front-${u}`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stopColor="#FFE9A6" />
+          <stop offset=".18" stopColor="#FDC037" />
+          <stop offset=".55" stopColor="#D08A10" />
+          <stop offset=".8" stopColor="#F1B232" />
+          <stop offset="1" stopColor="#8C5A08" />
+        </linearGradient>
+        <linearGradient id={`sg-top-${u}`} x1="0" x2="1" y1="1" y2="0">
+          <stop offset="0" stopColor="#E9A821" />
+          <stop offset=".4" stopColor="#FFE38A" />
+          <stop offset=".52" stopColor="#FFFBEA" />
+          <stop offset=".64" stopColor="#FFD764" />
+          <stop offset="1" stopColor="#E9A821" />
+        </linearGradient>
+        <linearGradient id={`sg-side-${u}`} x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stopColor="#D08A10" />
+          <stop offset=".6" stopColor="#8C5A08" />
+          <stop offset="1" stopColor="#4A2B02" />
+        </linearGradient>
+        <radialGradient id={`sg-glow-${u}`}>
+          <stop offset="0" stopColor="#FDC037" stopOpacity=".34" />
+          <stop offset="1" stopColor="#FDC037" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id={`sg-fade-${u}`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stopColor="#FFFFFF" stopOpacity=".32" />
+          <stop offset=".7" stopColor="#FFFFFF" stopOpacity="0" />
+        </linearGradient>
+        <mask id={`sg-mask-${u}`}>
+          <rect x="0" y="380" width="600" height="140" fill={`url(#sg-fade-${u})`} />
+        </mask>
+        <clipPath id={`sg-clip-${u}`}>
+          <path d={`${front} ${top} ${side}`} />
+        </clipPath>
+      </defs>
+      <circle cx="300" cy="300" r="230" fill={`url(#sg-glow-${u})`} />
+      {/* the glossy floor and the brick's reflection in it */}
+      <ellipse className="ms-s-shadow" cx="318" cy="384" rx="170" ry="12" fill="#000000" opacity=".6" />
+      <g mask={`url(#sg-mask-${u})`}>
+        <g transform="translate(150 768) scale(1 -1)">{brick}</g>
+      </g>
       <g className="ms-s-float">
-        <g transform="translate(150 255)">
-          <path d="M44 0H256L296 -40H84Z" fill={`url(#g-top-${u})`} />
-          <path d="M0 100H300L256 0H44Z" fill={`url(#g-front-${u})`} />
-          <path d="M300 100L340 60L296 -40L256 0Z" fill={`url(#g-side-${u})`} />
-          <clipPath id={`s-brick-${u}`}>
-            <path d="M0 100H300L256 0L296 -40H84L44 0Z M300 100L340 60L296 -40L256 0Z" />
-          </clipPath>
-          <g clipPath={`url(#s-brick-${u})`}>
-            <rect className="ms-sweep" x="-120" y="-60" width="60" height="200" fill="#FFFFFF" opacity=".4" transform="skewX(-20)" />
+        <g transform="translate(150 274)">
+          {brick}
+          <g clipPath={`url(#sg-clip-${u})`}>
+            <rect className="ms-sweep" x="-140" y="-60" width="70" height="220" fill="#FFFFFF" opacity=".42" transform="skewX(-20)" />
           </g>
         </g>
+        <path className="ms-spark" d={sparkle(452, 244, 15)} fill="#FFFFFF" />
       </g>
     </Frame>
   );
 }
 
-function SimpleBarrel({ x, u, k }: { x: number; u: string; k: number }) {
+/** A steel drum, front view: curved top and base, raised hoops, a rimmed lid with a bung. */
+function SimpleBarrel({ x, y, s = 1, u, k }: { x: number; y: number; s?: number; u: string; k: number }) {
+  const W = 128;
+  const H = 172;
+  const r = 14;
+  const hoop = (t: number) => {
+    const yy = H * t;
+    return (
+      <g key={t}>
+        <path d={`M0 ${yy}A${W / 2} ${r} 0 0 0 ${W} ${yy}V${yy + 7}A${W / 2} ${r} 0 0 1 0 ${yy + 7}Z`} fill={`url(#sb-hoop-${u})`} />
+        <path d={`M0 ${yy}A${W / 2} ${r} 0 0 0 ${W} ${yy}`} fill="none" stroke="#FFE7A0" strokeOpacity=".8" strokeWidth="1.2" />
+      </g>
+    );
+  };
   return (
-    <g className="ms-s-barrel" style={{ animationDelay: `${k * 0.5}s` }}>
-      <g transform={`translate(${x} 0)`}>
-        <rect x="-60" y="220" width="120" height="170" rx="12" fill={`url(#s-drum-${u})`} />
-        <rect x="-60" y="262" width="120" height="7" fill="#FDC037" />
-        <rect x="-60" y="340" width="120" height="7" fill="#FDC037" />
-        <ellipse cx="0" cy="222" rx="60" ry="14" fill="#3D3F47" stroke="#FDC037" strokeWidth="3" />
-        <circle cx="26" cy="220" r="5" fill="#151517" />
+    <g className="ms-s-barrel" style={{ animationDelay: `${k * 0.6}s` }}>
+      <g transform={`translate(${x - (W * s) / 2} ${y}) scale(${s})`}>
+        <path d={`M0 ${r}V${H - r}A${W / 2} ${r} 0 0 0 ${W} ${H - r}V${r}Z`} fill={`url(#sb-body-${u})`} />
+        {hoop(0.3)}
+        {hoop(0.68)}
+        {/* the lid: rim, recess, bung */}
+        <ellipse cx={W / 2} cy={r} rx={W / 2} ry={r} fill={`url(#sb-rim-${u})`} />
+        <ellipse cx={W / 2} cy={r + 1.5} rx={W / 2 - 7} ry={r - 4.5} fill="#1F2027" />
+        <ellipse cx={W * 0.7} cy={r + 1} rx="7" ry="2.6" fill="#0B0B0D" stroke="#FDC037" strokeOpacity=".7" />
+        {/* the base rim */}
+        <path d={`M0 ${H - r - 3}A${W / 2} ${r} 0 0 0 ${W} ${H - r - 3}`} fill="none" stroke="#000000" strokeOpacity=".55" strokeWidth="3" />
+        {k === 2 && (
+          <>
+            {/* a thin line of oil running down from the lid */}
+            <path className="ms-s-drip" d={`M${W * 0.78} ${r + 8}C${W * 0.79} ${H * 0.35} ${W * 0.76} ${H * 0.6} ${W * 0.78} ${H - r}`} fill="none" stroke="#050505" strokeWidth="5" strokeLinecap="round" />
+            <path className="ms-s-drip" d={`M${W * 0.78 + 1} ${r + 10}C${W * 0.79 + 1} ${H * 0.35} ${W * 0.76 + 1} ${H * 0.6} ${W * 0.78 + 1} ${H - r}`} fill="none" stroke="#FDC037" strokeOpacity=".5" strokeWidth="1.2" strokeLinecap="round" />
+          </>
+        )}
       </g>
     </g>
   );
@@ -141,22 +222,45 @@ function SimpleOil({ u }: { u: string }) {
   return (
     <Frame className="ms-simple">
       <defs>
-        <linearGradient id={`s-drum-${u}`} x1="0" x2="1">
+        <linearGradient id={`sb-body-${u}`} x1="0" x2="1">
           <stop offset="0" stopColor="#0B0B0D" />
-          <stop offset=".3" stopColor="#52555C" />
-          <stop offset=".55" stopColor="#272A33" />
+          <stop offset=".18" stopColor="#3D3F47" />
+          <stop offset=".3" stopColor="#8A8C93" />
+          <stop offset=".42" stopColor="#3D3F47" />
+          <stop offset=".75" stopColor="#1F2027" />
+          <stop offset=".9" stopColor="#3D3F47" />
           <stop offset="1" stopColor="#0B0B0D" />
         </linearGradient>
-        <radialGradient id={`s-oilglow-${u}`}>
-          <stop offset="0" stopColor="#FDC037" stopOpacity=".28" />
+        <linearGradient id={`sb-hoop-${u}`} x1="0" x2="1">
+          <stop offset="0" stopColor="#8C5A08" />
+          <stop offset=".3" stopColor="#FFE7A0" />
+          <stop offset=".5" stopColor="#FDC037" />
+          <stop offset="1" stopColor="#6E4508" />
+        </linearGradient>
+        <linearGradient id={`sb-rim-${u}`} x1="0" x2="1">
+          <stop offset="0" stopColor="#52555C" />
+          <stop offset=".35" stopColor="#C9CACD" />
+          <stop offset="1" stopColor="#3D3F47" />
+        </linearGradient>
+        <radialGradient id={`sb-glow-${u}`}>
+          <stop offset="0" stopColor="#FDC037" stopOpacity=".24" />
           <stop offset="1" stopColor="#FDC037" stopOpacity="0" />
         </radialGradient>
+        <radialGradient id={`sb-pool-${u}`} cx="45%" cy="40%" r="70%">
+          <stop offset="0" stopColor="#3D3F47" />
+          <stop offset=".6" stopColor="#0B0B0D" />
+          <stop offset="1" stopColor="#020203" />
+        </radialGradient>
       </defs>
-      <circle cx="300" cy="320" r="220" fill={`url(#s-oilglow-${u})`} />
-      <ellipse cx="300" cy="400" rx="230" ry="14" fill="#000000" opacity=".5" />
-      <SimpleBarrel x={160} u={u} k={0} />
-      <SimpleBarrel x={300} u={u} k={1} />
-      <SimpleBarrel x={440} u={u} k={2} />
+      <circle cx="300" cy="300" r="240" fill={`url(#sb-glow-${u})`} />
+      <ellipse cx="300" cy="420" rx="250" ry="16" fill="#000000" opacity=".55" />
+      {/* back barrel first, then the two in front */}
+      <SimpleBarrel x={300} y={228} s={0.9} u={u} k={1} />
+      <SimpleBarrel x={196} y={252} u={u} k={0} />
+      <SimpleBarrel x={404} y={252} u={u} k={2} />
+      {/* the puddle under the drip */}
+      <ellipse className="ms-s-pool" cx="440" cy="428" rx="44" ry="7" fill={`url(#sb-pool-${u})`} />
+      <ellipse className="ms-s-pool" cx="440" cy="427" rx="38" ry="5" fill="none" stroke="#FDC037" strokeOpacity=".35" />
     </Frame>
   );
 }

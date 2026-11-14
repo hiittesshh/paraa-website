@@ -112,3 +112,11 @@
 @keyframes ms-s-float { from { transform: translateY(0); } to { transform: translateY(-16px); } }
 @keyframes ms-s-shadow { from { transform: scaleX(1); opacity: .5; } to { transform: scaleX(.86); opacity: .32; } }
 @keyframes ms-s-bob { from { transform: translateY(0); } to { transform: translateY(-12px); } }
+
+/* Refined simple scenes. */
+@media (prefers-reduced-motion: no-preference) {
+  .ms-s-drip { stroke-dasharray: 200; animation: ms-s-drip 6s ease-in-out infinite; }
+  .ms-s-pool { transform-origin: 50% 50%; animation: ms-s-pool 6s ease-in-out infinite; }
+}
+@keyframes ms-s-drip { 0% { stroke-dashoffset: 200; } 55%, 100% { stroke-dashoffset: 0; } }
+@keyframes ms-s-pool { 0%, 40% { transform: scale(.6); opacity: .6; } 70%, 100% { transform: scale(1); opacity: 1; } }
