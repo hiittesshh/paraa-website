@@ -131,15 +131,13 @@ export function PinnedScroll({
     const schedule = () => {
       clearTimeout(timer);
       const g = geom();
-      if (!g.isPinned || autoRef.current === "paused" || g.at >= count - 1) {
-        if (g.at >= count - 1 && autoRef.current === "playing") setAuto("off");
-        return;
-      }
+      if (!g.isPinned || autoRef.current === "paused") return;
       setAuto("playing");
       setTickKey((k) => k + 1);
+      // Loops (owner, 14 Nov 2026): after the last market it goes back to the first.
       timer = window.setTimeout(() => {
         const now = geom();
-        if (now.isPinned && autoRef.current === "playing" && now.at < count - 1) go(now.at + 1);
+        if (now.isPinned && autoRef.current === "playing") go(now.at >= count - 1 ? 0 : now.at + 1);
       }, HOLD);
     };
     const onWheel = (e: WheelEvent) => {

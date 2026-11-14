@@ -32,7 +32,8 @@ function candidates(): HTMLElement[] {
     basketTail.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => all.add(el));
   }
   // Leaves only: an element that contains another candidate is left alone, so nothing moves twice.
-  const list = [...all].filter((el) => !el.closest("nav, form, [role='tablist'], .ms-pick, svg, [aria-hidden='true']"));
+  // Never inside the calculator (owner, 14 Nov 2026: "don't play entry animation inside calculator").
+  const list = [...all].filter((el) => !el.closest("nav, form, [role='tablist'], .ms-pick, svg, [aria-hidden='true'], #what-if") && !el.querySelector("#what-if"));
   return list.filter((el) => !list.some((other) => other !== el && el.contains(other)));
 }
 
@@ -50,7 +51,9 @@ export function SectionEntrance() {
       if (el.closest("[hidden], details:not([open]) > :not(summary)")) return false;
       return true;
     };
-    const els = candidates().filter((el) => shown(el) && el.getBoundingClientRect().top > innerHeight * 0.92);
+    // Everything below the hero, including what's on screen at load (a refresh mid-page restores the scroll position, and
+    // those cards should still land); the observer lands what's in view at once, the rest as it arrives.
+    const els = candidates().filter((el) => shown(el));
     els.forEach((el) => el.setAttribute("data-land", kind(el)));
     // A masked heading has no visible area, so the browser never reports it: watch its parent block for it instead.
     const watched = new Map<Element, HTMLElement[]>();
