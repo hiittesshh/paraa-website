@@ -391,6 +391,8 @@ export function ScenePicker() {
   const oil = useChoice("oil", "pumpjack");
   const [show, setShow] = useState(false);
   useEffect(() => {
+    // Live, the vault and the pumpjack are the scenes; the switcher shows only with ?scenes in the address.
+    if (!new URLSearchParams(location.search).has("scenes")) return;
     const el = document.getElementById("basket");
     if (!el) return;
     const io = new IntersectionObserver(([e]) => setShow(e.isIntersecting), { threshold: 0.05 });
