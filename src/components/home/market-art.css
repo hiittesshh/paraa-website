@@ -191,3 +191,20 @@
 .m3-liquid-canvas[data-ready] { opacity: 1; }
 .m3-liquid-shade { position: absolute; inset: 0; pointer-events: none;
   background: radial-gradient(120% 95% at 50% 45%, transparent 55%, rgb(14 14 17 / .55)); }
+
+/* Gold and crude oil in the city's language (owner, 14 Nov 2026). */
+/* Gold: every column polished gold; accented columns brighter, white-hot tops. */
+.m3-city-gold .m3-col .m3-top { background: linear-gradient(135deg, #FFF3CC, #FDC037 55%, #E5A920); box-shadow: 0 0 1.6em rgb(253 192 55 / .55); }
+.m3-city-gold .m3-col :is(.m3-front, .m3-back) { background: linear-gradient(to bottom, rgb(140 102 18 / .15), #D79E27 70%, #FDC64B); }
+.m3-city-gold .m3-col :is(.m3-right, .m3-left) { background: linear-gradient(to right, rgb(95 68 12 / .2), #B57F17 75%, #E9AE30); }
+.m3-city-gold .m3-col.is-gold .m3-top { background: linear-gradient(135deg, #FFFFFF, #FFE7A0 45%, #FDC037); box-shadow: 0 0 2.4em rgb(255 230 160 / .9); }
+.m3-city-gold .m3-glow { background: radial-gradient(48% 42% at 50% 58%, rgb(253 192 55 / .34), transparent 70%), radial-gradient(90% 70% at 50% 110%, rgb(0 0 0 / .5), transparent 70%); }
+.m3-city-gold .m3-tick > span { color: #FDC037; }
+
+/* Crude oil: glossy black columns with amber rims and glowing amber tops; accented columns burn brighter. */
+.m3-city-oil .m3-col .m3-top { background: radial-gradient(circle at 30% 30%, #4A3212, #151517 70%); box-shadow: inset 0 0 0 .1em #FDC037, 0 0 1.2em rgb(253 192 55 / .35); }
+.m3-city-oil .m3-col :is(.m3-front, .m3-back) { background: linear-gradient(to bottom, rgb(5 5 6 / .2), #1F2027 60%, #3D3F47); box-shadow: inset 0 0 0 .06em rgb(253 192 55 / .45); }
+.m3-city-oil .m3-col :is(.m3-right, .m3-left) { background: linear-gradient(to right, rgb(5 5 6 / .2), #0B0B0D 60%, #272A33); box-shadow: inset 0 0 0 .06em rgb(253 192 55 / .3); }
+.m3-city-oil .m3-col.is-gold .m3-top { background: radial-gradient(circle at 35% 35%, #FFD764, #B97210 70%); box-shadow: 0 0 2em rgb(253 192 55 / .8); }
+.m3-city-oil .m3-glow { background: radial-gradient(48% 42% at 50% 58%, rgb(185 114 16 / .22), transparent 70%), radial-gradient(90% 70% at 50% 110%, rgb(0 0 0 / .55), transparent 70%); }
+.m3-city-oil .m3-floor { opacity: .7; }

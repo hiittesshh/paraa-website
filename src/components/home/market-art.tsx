@@ -8,7 +8,6 @@
 // no figures, no trend), with company signs and logos on top. Gold and crude oil: liquid metal (see below).
 import type { SleeveId } from "@/lib/basket";
 import { TICKER_MARKS } from "./ticker-marks";
-import { LiquidMetal, type MetalLook } from "./liquid-metal";
 import "./market-art.css";
 
 type Style = React.CSSProperties & Record<`--${string}`, string | number>;
@@ -84,7 +83,33 @@ function TickerMark({ ticker }: { ticker: string }) {
   );
 }
 
-function Stocks() {
+type Sign = { label: string; mark: "brand" | "bar" | "drop" | "index" };
+
+/** A small mark for the gold and oil signs: a gold bar, an oil drop. */
+function SignMark({ sign }: { sign: Sign }) {
+  if (sign.mark === "brand" || sign.mark === "index") return <TickerMark ticker={sign.label} />;
+  if (sign.mark === "bar")
+    return (
+      <svg viewBox="0 0 24 24" className="m3-mark" aria-hidden>
+        <path d="M6 8H18L22 18H2Z" fill="#E5A920" />
+        <path d="M6 8H18L19 10.5H5Z" fill="#FED987" />
+      </svg>
+    );
+  return (
+    <svg viewBox="0 0 24 24" className="m3-mark" aria-hidden>
+      <path d="M12 2C12 2 5 11 5 15.5C5 19.6 8.1 22 12 22C15.9 22 19 19.6 19 15.5C19 11 12 2 12 2Z" fill="#151517" stroke="#FDC037" strokeWidth="1.8" />
+      <path d="M9 15C9.3 12.8 10.3 11 11.3 9.6" stroke="#FFFFFF" strokeOpacity=".7" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+    </svg>
+  );
+}
+
+/**
+ * The market as a lit 3D city (owner, 14 Nov 2026: the US stocks city "is too good", so gold and crude oil use the same
+ * language). 25 columns on a glowing grid, each rising and falling on its own clock (both directions, no figures, no
+ * trend), signs on top. `variant` sets the materials: white and gold for US stocks, all gold for gold, glossy black with
+ * amber tops for crude oil. Illustrative only: the signs are not the basket's holdings or prices.
+ */
+function City({ variant, signs, accent }: { variant: "us" | "gold" | "oil"; signs: Record<number, Sign>; accent: (i: number) => boolean }) {
   const cols = Array.from({ length: 25 }, (_, i) => ({
     gx: i % 5,
     gy: Math.floor(i / 5),
@@ -92,10 +117,9 @@ function Stocks() {
     hi: 0.7 + ((i * 29) % 30) / 100,
     dur: 2.4 + ((i * 7) % 12) / 4,
     delay: -((i * 13) % 25) / 5,
-    gold: i % 6 === 2,
   }));
   return (
-    <div className="m3 m3-us" aria-hidden>
+    <div className={`m3 m3-us m3-city-${variant}`} aria-hidden>
       <span className="m3-glow" />
       <div className="m3-scene">
         <div className="m3-world m3-city">
@@ -103,17 +127,17 @@ function Stocks() {
           {cols.map((c, i) => (
             <span
               key={i}
-              className={`m3-col ${c.gold ? "is-gold" : ""}`}
+              className={`m3-col ${accent(i) ? "is-gold" : ""}`}
               style={{ "--gx": c.gx, "--gy": c.gy, "--lo": c.lo, "--hi": c.hi, "--dur": `${c.dur}s`, "--delay": `${c.delay}s` } as Style}
             >
               <span className="m3-col-in">
                 <Box w={3.2} d={3.2} h={11} />
               </span>
-              {TICKERS[i] && (
+              {signs[i] && (
                 <span className="m3-tick">
                   <span>
-                    <TickerMark ticker={TICKERS[i]} />
-                    {TICKERS[i]}
+                    <SignMark sign={signs[i]} />
+                    {signs[i].label}
                   </span>
                 </span>
               )}
@@ -121,36 +145,34 @@ function Stocks() {
           ))}
         </div>
       </div>
-      <Dust n={10} />
+      <Dust n={variant === "gold" ? 16 : 10} />
     </div>
   );
 }
 
-// Gold and crude oil as liquid metal (owner, 14 Nov 2026: "motion graphics types for gold and crude oil, not static
-// images"). A slow flowing surface on the GPU (liquid-metal.tsx): molten gold, and glossy black crude with amber light
-// rolling across it. Gold dust drifts over both. Under reduced motion or without WebGL the CSS gradient stays.
-const GOLD_LOOK: MetalLook = { base: "#FDC037", shadow: "#8C6612", shadowScale: 0.8, sheenL: 0.97, scale: 0.7, angle: 28, speed: 0.05 };
-const OIL_LOOK: MetalLook = { base: "#2A1D0B", shadow: "#050505", shadowScale: 0.6, sheenL: 0.74, scale: 0.75, angle: -22, speed: 0.07 };
+const US_SIGNS: Record<number, Sign> = Object.fromEntries(
+  Object.entries(TICKERS).map(([i, t]) => [i, { label: t, mark: t === "S&P 500" ? "index" : "brand" }]),
+);
+const GOLD_SIGNS: Record<number, Sign> = {
+  2: { label: "XAU", mark: "bar" },
+  8: { label: "LBMA", mark: "bar" },
+  10: { label: "999.9", mark: "bar" },
+  14: { label: "1 KG", mark: "bar" },
+  16: { label: "COMEX", mark: "bar" },
+  22: { label: "FINE GOLD", mark: "bar" },
+};
+const OIL_SIGNS: Record<number, Sign> = {
+  2: { label: "WTI", mark: "drop" },
+  8: { label: "BRENT", mark: "drop" },
+  10: { label: "OPEC", mark: "drop" },
+  14: { label: "DUBAI", mark: "drop" },
+  16: { label: "NYMEX", mark: "drop" },
+  22: { label: "CRUDE", mark: "drop" },
+};
 
-function Gold() {
-  return (
-    <div className="m3 m3-liquid m3-liquid-gold" aria-hidden>
-      <LiquidMetal look={GOLD_LOOK} className="m3-liquid-canvas" />
-      <span className="m3-liquid-shade" />
-      <Dust n={14} />
-    </div>
-  );
-}
-
-function Oil() {
-  return (
-    <div className="m3 m3-liquid m3-liquid-oil" aria-hidden>
-      <LiquidMetal look={OIL_LOOK} className="m3-liquid-canvas" />
-      <span className="m3-liquid-shade" />
-      <Dust n={6} />
-    </div>
-  );
-}
+const Stocks = () => <City variant="us" signs={US_SIGNS} accent={(i) => i % 6 === 2} />;
+const Gold = () => <City variant="gold" signs={GOLD_SIGNS} accent={(i) => i % 4 === 1} />;
+const Oil = () => <City variant="oil" signs={OIL_SIGNS} accent={(i) => i % 5 === 3} />;
 
 /** `u` keeps the oil scene's gradient ids unique: the page holds two of each scene (the live frame and the static
  * row, one of them hidden), and an id that resolves into a hidden copy draws nothing. */
