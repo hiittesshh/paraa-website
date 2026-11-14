@@ -144,3 +144,19 @@
 .mk-auto-bar i { position: absolute; inset: 0; background: #FDC037; transform-origin: left; animation: mk-auto 2.5s linear forwards; }
 .mk-auto-icon { font-size: 10px; letter-spacing: -1px; color: #FDC037; }
 @keyframes mk-auto { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Normal scroll (owner, 14 Nov 2026): each market a full row, alternating sides, the visual large. */
+@media (width >= 64rem) {
+  .mk:not([data-live]) .mk-steps { gap: 24px; margin-top: 48px; }
+  .mk:not([data-live]) .mk-step { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 80px; padding-block: 48px; }
+  .mk:not([data-live]) .mk-step[data-i="1"] > :not(.mk-inline) { grid-column: 2; }
+  .mk:not([data-live]) .mk-step[data-i="1"] > .mk-inline { grid-column: 1; }
+  .mk:not([data-live]) .mk-step[data-i="1"] { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .mk:not([data-live]) .mk-inline { border-radius: 20px; box-shadow: 0 40px 80px -30px rgb(0 0 0 / .6), 0 0 0 1px rgb(255 255 255 / .06); }
+  .mk:not([data-live]) .mk-inline .m3, .mk:not([data-live]) .mk-inline .ms, .mk:not([data-live]) .mk-inline .vx, .mk:not([data-live]) .mk-inline .px { aspect-ratio: 4 / 3; height: auto; }
+  .mk:not([data-live]) .mk-name { font-size: 2.5rem; line-height: 1.1; }
+  .mk:not([data-live]) .mk-pct { font-size: 3.5rem; }
+}
+/* the city fills its frame in the row layout */
+.mk:not([data-live]) .mk-inline .m3-us > * { font-size: min(3cqw, 2.6cqh); }
+.mk:not([data-live]) .mk-inline .m3-us .m3-world { top: 54%; }
