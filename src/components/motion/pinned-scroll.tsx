@@ -95,8 +95,8 @@ export function PinnedScroll({
   useEffect(() => {
     const tr = track.current;
     if (!live || !tr) return;
-    const GLIDE = 0.6;
-    const HOLD = 2500;
+    const GLIDE = 0.45;
+    const HOLD = 1500;
     let gliding = false;
     let pinned = false;
     let timer = 0;
