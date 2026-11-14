@@ -46,6 +46,17 @@ export function Box({ w, d, h, className }: { w: number; d: number; h: number; c
   );
 }
 
+// Owner, 14 Nov 2026: "show details like the stock name ... on the buildings". Familiar US names as signs on a few
+// buildings, so the city reads as the US market. Illustrative only: not the basket's holdings.
+const TICKERS: Record<number, string> = {
+  2: "NVDA",
+  8: "AAPL",
+  10: "MSFT",
+  14: "AMZN",
+  16: "TSLA",
+  22: "S&P 500",
+};
+
 function Stocks() {
   const cols = Array.from({ length: 25 }, (_, i) => ({
     gx: i % 5,
@@ -71,6 +82,11 @@ function Stocks() {
               <span className="m3-col-in">
                 <Box w={3.2} d={3.2} h={11} />
               </span>
+              {TICKERS[i] && (
+                <span className="m3-tick">
+                  <span>{TICKERS[i]}</span>
+                </span>
+              )}
             </span>
           ))}
         </div>
@@ -108,6 +124,38 @@ function Gold() {
   );
 }
 
+// Crude oil as barrels (owner, 14 Nov 2026: "make crude oil barrels there"): three steel drums stacked, "CRUDE OIL"
+// stencilled on each, light sliding across them, and oil dripping from the top drum's tap into a pool that ripples.
+function Barrel({ x, y, u, k }: { x: number; y: number; u: string; k: number }) {
+  const W = 132;
+  const H = 168;
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      {/* the body: a cylinder, lit from the left */}
+      <path d={`M0 14V${H - 14}A${W / 2} 14 0 0 0 ${W} ${H - 14}V14Z`} fill={`url(#m3-drum-${u})`} />
+      {/* the rolling hoops */}
+      {[0.33, 0.67].map((t) => (
+        <g key={t}>
+          <path d={`M0 ${H * t}A${W / 2} 14 0 0 0 ${W} ${H * t}`} fill="none" stroke="#0B0B0D" strokeWidth="7" />
+          <path d={`M0 ${H * t - 4}A${W / 2} 14 0 0 0 ${W} ${H * t - 4}`} fill="none" stroke="#7D7F85" strokeOpacity=".55" strokeWidth="1.5" />
+        </g>
+      ))}
+      {/* the stencil */}
+      <text x={W / 2} y={H * 0.53} textAnchor="middle" fontSize="15" fontWeight="800" letterSpacing="2" fill="#F2F2F2" fillOpacity=".8">
+        CRUDE OIL
+      </text>
+      {/* the lid, with its bung */}
+      <ellipse cx={W / 2} cy="14" rx={W / 2} ry="14" fill={`url(#m3-lid-${u})`} stroke="#0B0B0D" strokeWidth="2" />
+      <ellipse cx={W / 2} cy="14" rx={W / 2 - 8} ry="9" fill="none" stroke="#7D7F85" strokeOpacity=".5" />
+      <ellipse cx={W * 0.72} cy="12" rx="7" ry="3" fill="#0B0B0D" />
+      {/* light sliding across the drum */}
+      <g clipPath={`url(#m3-drum-clip-${u})`}>
+        <rect className="m3-drum-shine" x="-60" y="0" width="34" height={H} fill="#FFFFFF" fillOpacity=".16" style={{ animationDelay: `${k * 0.6}s` }} />
+      </g>
+    </g>
+  );
+}
+
 function Oil({ u }: { u: string }) {
   const id = (n: string) => `m3-${n}-${u}`;
   return (
@@ -115,67 +163,42 @@ function Oil({ u }: { u: string }) {
       <span className="m3-glow" />
       <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet" className="m3-svg">
         <defs>
-          <radialGradient id={id("drop")} cx="36%" cy="38%" r="72%">
-            <stop offset="0" stopColor="#5A5D66" />
-            <stop offset=".45" stopColor="#16171B" />
-            <stop offset="1" stopColor="#020203" />
-          </radialGradient>
+          <linearGradient id={id("drum")} x1="0" x2="1">
+            <stop offset="0" stopColor="#3D3F47" />
+            <stop offset=".22" stopColor="#686A70" />
+            <stop offset=".45" stopColor="#272A33" />
+            <stop offset="1" stopColor="#0B0B0D" />
+          </linearGradient>
+          <linearGradient id={id("lid")} x1="0" x2="1">
+            <stop offset="0" stopColor="#52555C" />
+            <stop offset="1" stopColor="#1F2027" />
+          </linearGradient>
+          <clipPath id={id("drum-clip")}>
+            <rect x="0" y="0" width="132" height="168" rx="14" />
+          </clipPath>
           <radialGradient id={id("pool")} cx="50%" cy="40%" r="60%">
             <stop offset="0" stopColor="#2B2D34" />
             <stop offset=".7" stopColor="#0B0B0D" />
             <stop offset="1" stopColor="#050506" />
           </radialGradient>
-          <linearGradient id={id("rim")} x1="0" x2="1">
-            <stop offset="0" stopColor="#FDC037" stopOpacity="0" />
-            <stop offset=".5" stopColor="#FDC037" stopOpacity=".9" />
-            <stop offset="1" stopColor="#FDC037" stopOpacity="0" />
-          </linearGradient>
         </defs>
-        {/* the pool: a dark lens with a gold horizon on its far edge */}
-        <ellipse cx="300" cy="430" rx="230" ry="46" fill={`url(#${id("pool")})`} />
-        <ellipse cx="300" cy="420" rx="200" ry="30" fill="none" stroke={`url(#${id("rim")})`} strokeWidth="2" opacity=".8" />
-        {[0, 1, 2].map((i) => (
-          <ellipse
-            key={i}
-            className="m3-ring"
-            cx="300"
-            cy="430"
-            rx="60"
-            ry="12"
-            fill="none"
-            stroke="#FDC037"
-            strokeWidth="2"
-            style={{ animationDelay: `${i * 0.18}s` }}
-          />
+        <ellipse cx="300" cy="512" rx="240" ry="22" fill="#000000" fillOpacity=".45" />
+        {/* the pool under the tap */}
+        <ellipse cx="480" cy="524" rx="62" ry="12" fill={`url(#${id("pool")})`} />
+        {[0, 1].map((i) => (
+          <ellipse key={i} className="m3-ring" cx="480" cy="524" rx="26" ry="6" fill="none" stroke="#A9AAAD" strokeWidth="1.5" style={{ animationDelay: `${i * 0.25}s` }} />
         ))}
-        {/* the splash: three droplets thrown up and falling back */}
-        {[-1, 0, 1].map((k) => (
-          <circle
-            key={k}
-            className="m3-spray"
-            cx="300"
-            cy="424"
-            r={k === 0 ? 7 : 5}
-            fill="#16171B"
-            stroke="#FDC037"
-            strokeOpacity=".5"
-            style={{ "--dx": `${k * 46}px`, "--dy": `${k === 0 ? -96 : -64}px` } as Style}
-          />
-        ))}
-        {/* the drop */}
+        {/* the stack: two drums on the floor, one on top */}
+        <Barrel x={160} y={330} u={u} k={0} />
+        <Barrel x={310} y={330} u={u} k={1} />
+        <Barrel x={235} y={176} u={u} k={2} />
+        {/* the tap on the bottom-right drum, and the drip into the pool */}
+        <path d="M440 452H498V464H486V474H474V464H440Z" fill="#3D3F47" stroke="#0B0B0D" strokeWidth="2" />
         <g className="m3-drop">
-          <path
-            d="M300 250C300 250 252 318 252 350C252 378 274 400 300 400C326 400 348 378 348 350C348 318 300 250 300 250Z"
-            fill={`url(#${id("drop")})`}
-            stroke="#FDC037"
-            strokeOpacity=".55"
-            strokeWidth="1.5"
-          />
-          <path d="M276 336C279 318 288 302 296 290" stroke="#FFFFFF" strokeOpacity=".55" strokeWidth="5" strokeLinecap="round" fill="none" />
-          <ellipse cx="282" cy="372" rx="6" ry="9" fill="#FFFFFF" fillOpacity=".1" />
+          <path d="M480 476C480 476 473 486 473 490C473 494 476 497 480 497C484 497 487 494 487 490C487 486 480 476 480 476Z" fill="#050506" stroke="#7D7F85" strokeOpacity=".6" />
         </g>
       </svg>
-      <Dust n={8} />
+      <Dust n={6} />
     </div>
   );
 }

@@ -112,3 +112,57 @@
 .m3-stack { top: 62%; transform: rotateX(64deg) rotateZ(-8deg); }
 .m3-shadow { left: -28em; top: -11em; width: 56em; height: 22em; }
 @keyframes m3-turn { from { transform: rotateX(64deg) rotateZ(-20deg); } to { transform: rotateX(60deg) rotateZ(6deg); } }
+
+/* Ticker signs on the city's buildings (owner, 14 Nov 2026). Each sign stands on its building's roof and faces the
+   viewer (it undoes the city's tilt), rising and falling with the building on the same clock. */
+.m3-city { animation: none !important; transform: rotateX(58deg) rotateZ(-40deg); }
+.m3-tick {
+  position: absolute; left: 1.6em; top: 1.6em; z-index: 2; transform-origin: 0 0;
+  transform: translate3d(0, 0, calc(var(--hi) * 11em + .6em)) rotateZ(40deg) rotateX(-58deg);
+}
+/* The sign itself: sized here, so its em never scales the lift above. */
+.m3-tick > span {
+  display: block; translate: -50% -100%; padding: .3em .6em; border-radius: .45em; white-space: nowrap;
+  font: 700 1em/1 var(--font-sans, system-ui), sans-serif; letter-spacing: .02em; color: #FFFFFF;
+  background: rgb(21 21 23 / .9); box-shadow: inset 0 0 0 .08em rgb(253 192 55 / .65), 0 0 1em rgb(253 192 55 / .25);
+}
+.m3-col.is-gold .m3-tick > span { color: #FDC037; }
+@media (prefers-reduced-motion: no-preference) {
+  .m3-tick { animation: m3-tick var(--dur) ease-in-out var(--delay) infinite alternate; }
+}
+@keyframes m3-tick {
+  from { transform: translate3d(0, 0, calc(var(--lo) * 11em + .6em)) rotateZ(40deg) rotateX(-58deg); }
+  to { transform: translate3d(0, 0, calc(var(--hi) * 11em + .6em)) rotateZ(40deg) rotateX(-58deg); }
+}
+
+/* Gold, more like gold (owner, 14 Nov 2026: "the gold is not feeling like gold"): polished, banded metal with a bright
+   specular sweep, a bevelled edge, and "FINE GOLD 999.9" stamped into each bar's top. */
+.is-metal .m3-top {
+  background: linear-gradient(160deg, #FFF6D5 0%, #FFD86B 16%, #F4B127 42%, #CF8D14 62%, #F9CF5C 82%, #FFF1C2 100%) !important;
+  box-shadow: inset 0 0 0 .3em rgb(255 244 205 / .6), inset 0 0 0 .55em rgb(140 92 12 / .55), inset 0 0 2.2em rgb(120 80 10 / .35), 0 0 2.5em rgb(253 192 55 / .35) !important;
+  display: grid; place-content: center;
+}
+.is-metal .m3-top::before {
+  content: "FINE GOLD\A 999.9"; white-space: pre; text-align: center;
+  font: 800 1.05em/1.25 var(--font-sans, system-ui), sans-serif; letter-spacing: .14em;
+  color: rgb(126 84 10 / .85); text-shadow: 0 .06em 0 rgb(255 248 220 / .7), 0 -.04em 0 rgb(90 58 6 / .4);
+}
+.is-metal :is(.m3-front, .m3-back) { background: linear-gradient(to bottom, #7A520B, #D9991E 45%, #FFD25A 85%, #FFE9A6) !important; }
+.is-metal .m3-right { background: linear-gradient(to right, #5A3D08, #B67C12 55%, #EDB238) !important; }
+.is-metal .m3-left { background: linear-gradient(to right, #6B490A, #C98E19 55%, #F6C24A) !important; }
+.m3-gold .m3-glow { background:
+  radial-gradient(45% 40% at 50% 58%, rgb(253 192 55 / .38), transparent 70%),
+  radial-gradient(90% 70% at 50% 110%, rgb(0 0 0 / .5), transparent 70%); }
+
+/* Crude oil barrels: the drip falls from the tap (x 402) to the pool (x 470 is the pool; the drop lands short and
+   the ripple sits under the tap), the light slides across each drum. */
+.m3-oil .m3-ring { transform-origin: 50% 50%; }
+.m3-oil .m3-glow { background: radial-gradient(50% 40% at 50% 62%, rgb(242 242 242 / .1), transparent 70%), radial-gradient(90% 70% at 50% 110%, rgb(0 0 0 / .5), transparent 70%); }
+@media (prefers-reduced-motion: no-preference) {
+  .m3-oil .m3-drop { animation: m3-drip 2.4s cubic-bezier(.55, 0, 1, .45) infinite; }
+  .m3-oil .m3-ring { animation: m3-ring2 2.4s ease-out infinite; }
+  .m3-drum-shine { animation: m3-drum-shine 4.5s ease-in-out infinite; }
+}
+@keyframes m3-drip { 0% { opacity: 0; transform: translateY(-6px) scale(.4); } 35% { opacity: 1; transform: translateY(0) scale(1); } 80% { opacity: 1; transform: translateY(26px); } 82%, 100% { opacity: 0; transform: translateY(30px) scale(1.4, .3); } }
+@keyframes m3-ring2 { 0%, 80% { opacity: 0; transform: scale(.4); } 83% { opacity: .9; } 100% { opacity: 0; transform: scale(2.2); } }
+@keyframes m3-drum-shine { 0% { transform: translateX(0); } 60%, 100% { transform: translateX(240px); } }

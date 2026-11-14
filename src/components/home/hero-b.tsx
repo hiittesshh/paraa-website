@@ -265,8 +265,8 @@ const FLOATS = [
 // (hero-b.css), so it can never stay stuck; the screens start cycling once it has gone. Skipped under reduced motion.
 const SPLASH_LOGO = getImageProps({ src: LOGO, alt: "", loading: "eager" }).props;
 const SPLASH = (
-  <div className="hb-splash">
-    {/* Holds the logo's place (the visible logo is FLY, below), so the line sits under it. */}
+  <div className="hb-splash" style={{ "--logo": `url(${SPLASH_LOGO.src})` } as React.CSSProperties}>
+    {/* The logo appears inside the phone's screen (owner, 14 Nov 2026), with a shine across it. */}
     <span className="hb-splash-mark" aria-hidden>
       {/* eslint-disable-next-line @next/next/no-img-element -- getImageProps() output, decorative */}
       <img {...SPLASH_LOGO} alt="" />

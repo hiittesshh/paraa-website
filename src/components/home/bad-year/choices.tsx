@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 import { AMOUNTS, OWN, type BadYear } from "./model";
 import { MoveControl, ScenarioRadio } from "./parts";
 
-export function Choices({ m, allowOwn = true, className }: { m: BadYear; allowOwn?: boolean; className?: string }) {
+export function Choices({ m, allowOwn = true, stacked = false, className }: { m: BadYear; allowOwn?: boolean; stacked?: boolean; className?: string }) {
   const options = [...m.presets.map((p) => ({ id: p.id, label: p.label })), ...(allowOwn ? [{ id: OWN, label: "Set your own" }] : [])];
   return (
     <div className={cn("grid gap-5", className)}>
-      <div className="grid gap-5 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start lg:gap-10">
+      <div className={cn("grid gap-5", !stacked && "lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start lg:gap-10")}>
         <ChoiceChips
           legend="If you invest"
           name="what-if-amount"
@@ -38,7 +38,7 @@ export function Choices({ m, allowOwn = true, className }: { m: BadYear; allowOw
         </fieldset>
       </div>
       {allowOwn && m.selected === OWN && (
-        <ul className="grid gap-2 rounded-xl bg-background-alt p-4 sm:grid-cols-2" aria-label="Your own moves">
+        <ul className={cn("grid gap-2 rounded-xl bg-background-alt p-4", !stacked && "sm:grid-cols-2")} aria-label="Your own moves">
           {m.parts.map((p) => (
             <li key={p.key} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
               <span className="text-body-md font-semibold">{p.label}</span>

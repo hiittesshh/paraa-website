@@ -74,122 +74,81 @@ export function Basket3DPrototype({ m }: { m: BadYear }) {
   }, [moves, m.amount]);
 
   return (
-    <div className="mt-6">
-      <Choices m={m} />
-
-      <div className="theme-ink mt-6 grid overflow-hidden rounded-2xl lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
-        {/* The basket. */}
-        <div className="relative">
-          <div className="px-5 pt-5 sm:px-6 sm:pt-6">
-            <p className="text-body-lg font-semibold">Your {formatINR(m.amount)}, split across three markets</p>
-            <p className="mt-1 text-body-md text-muted-foreground">
-              Each block is your money in one market. Pick what happens above, and watch each block shrink or grow.
-            </p>
+    // Owner, 14 Nov 2026: "the text seems bulky ... I want that 3D effect in a minimal manner ... right-left rather than
+    // top-bottom". The blocks on the left, carrying their own labels; the choices and the result on the right.
+    <div className="theme-ink mt-6 grid overflow-hidden rounded-2xl lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+      <div ref={scene} aria-hidden className="b3 h-[320px] sm:h-[380px] lg:h-auto lg:min-h-[520px]">
+        <span className="b3-glow" />
+        <div className="b3-scene">
+          <div className="b3-world">
+            <span className="b3-platform" />
+            {markets.map((p) => {
+              const b = BLOCK[p.key as keyof typeof BLOCK];
+              const s = Math.max(0.02, 1 + p.value / 100);
+              return (
+                <span key={p.key} className={cn("b3-block", `is-${p.key}`)} style={{ "--x": `${b.x}em`, "--s": s } as Style}>
+                  <Box w={b.w} d={DEPTH} h={HEIGHT} className="b3-ghost" />
+                  <span className="b3-grow">
+                    <Box w={b.w} d={DEPTH} h={HEIGHT} className="b3-solid" />
+                  </span>
+                </span>
+              );
+            })}
           </div>
-          <div ref={scene} aria-hidden className="b3 h-[300px] sm:h-[340px] lg:h-[380px]">
-            <span className="b3-glow" />
-            <div className="b3-scene">
-              <div className="b3-world">
-                <span className="b3-platform" />
-                {markets.map((p) => {
-                  const b = BLOCK[p.key as keyof typeof BLOCK];
-                  const s = Math.max(0.02, 1 + p.value / 100);
-                  return (
-                    <span key={p.key} className={cn("b3-block", `is-${p.key}`)} style={{ "--x": `${b.x}em`, "--s": s } as Style}>
-                      {/* the ghost: where it started */}
-                      <Box w={b.w} d={DEPTH} h={HEIGHT} className="b3-ghost" />
-                      {/* the block now */}
-                      <span className="b3-grow">
-                        <Box w={b.w} d={DEPTH} h={HEIGHT} className="b3-solid" />
-                      </span>
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-            {/* What each block is worth now, riding on top of it. */}
-            {markets.map((p) => (
-              <span key={p.key} data-label={p.key} className={cn("b3-tag num", p.amount > 0 && "is-up")}>
-                <span className="b3-tag-name">{p.label}</span>
-                {formatINR(now(p.key, p.value))}
-              </span>
-            ))}
-            {/* The key. */}
-            <span className="b3-key">
-              <span>
-                <i className="b3-key-solid" /> What you have now
-              </span>
-              <span>
-                <i className="b3-key-ghost" /> What you started with
-              </span>
+        </div>
+        {markets.map((p) => (
+          <span key={p.key} data-label={p.key} className={cn("b3-tag num", p.amount > 0 && "is-up")}>
+            <span className="b3-tag-name">
+              {p.label} · {Math.round(weight(p.key) * 100)}%
             </span>
-          </div>
-          {/* Each block's label. */}
-          <ul className="grid grid-cols-3 gap-2 border-t px-4 py-4 sm:px-6" style={{ borderColor: "rgb(255 255 255 / .1)" }}>
-            {markets.map((p) => (
-              <li key={p.key} className="min-w-0">
-                <p className="text-body-md font-semibold">{p.label}</p>
-                <p className="text-body-md text-muted-foreground">
-                  {Math.round(weight(p.key) * 100)}% of your money, {plain(p.key, p.value).toLowerCase()}
-                </p>
-                <p className="num mt-1 text-body-md">
-                  {formatINR(before(p.key))} → <span className="font-bold">{formatINR(now(p.key, p.value))}</span>
-                </p>
-                <p className={cn("num text-body-lg font-bold", p.amount > 0 ? "text-brand" : "text-copy")}>
-                  {p.amount === 0 ? "No change" : formatINR(p.amount, { signed: true })}
-                </p>
-              </li>
-            ))}
-          </ul>
+            {formatINR(now(p.key, p.value))}
+            <span className={cn("b3-tag-move", p.value < 0 && "is-down")}>{p.value === 0 ? "no change" : `${p.value > 0 ? "+" : "−"}${Math.abs(p.value)}%`}</span>
+          </span>
+        ))}
+        <span className="b3-key">
+          <span>
+            <i className="b3-key-solid" /> Now
+          </span>
+          <span>
+            <i className="b3-key-ghost" /> Where it started
+          </span>
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-6 border-t p-6 sm:p-7 lg:border-t-0 lg:border-l" style={{ borderColor: "rgb(255 255 255 / .1)" }}>
+        <Choices m={m} stacked />
+
+        <div className="mt-auto border-t pt-5" style={{ borderColor: "rgb(255 255 255 / .1)" }}>
+          <p className="text-body-md text-muted-foreground">After one year</p>
+          <p className="num mt-1 flex flex-wrap items-baseline gap-x-3 leading-none">
+            <span className="text-[3rem] font-bold tracking-[-0.04em] text-brand">{m.value}</span>
+            <span className="text-body-lg font-semibold text-muted-foreground line-through decoration-1">{formatINR(m.amount)}</span>
+          </p>
+          <p className="num mt-2 text-body-md font-semibold">
+            {diff === 0 ? "No change" : formatINR(diff, { signed: true })} <span className="text-muted-foreground">({m.change})</span>
+          </p>
         </div>
 
-        {/* The result and the rupee dial. */}
-        <div className="flex flex-col gap-6 border-t p-6 sm:p-7 lg:border-t-0 lg:border-l" style={{ borderColor: "rgb(255 255 255 / .1)" }}>
-          <div>
-            <p className="text-body-md text-muted-foreground">After the three markets and the rupee, you would have</p>
-            <p className="num mt-2 flex flex-wrap items-baseline gap-x-3 leading-none">
-              <span className="text-[1.5rem] font-semibold text-muted-foreground line-through decoration-1">{formatINR(m.amount)}</span>
-              <span className="text-[3rem] font-bold tracking-[-0.04em] text-brand sm:text-[3.5rem]">{m.value}</span>
-            </p>
-            <p className="num mt-3 text-body-lg font-semibold">
-              {diff === 0 ? "No change" : diff < 0 ? `${formatINR(-diff)} less than you put in` : `${formatINR(diff)} more than you put in`}{" "}
-              <span className="text-muted-foreground">({m.change})</span>
-            </p>
-          </div>
-
-          <div className="rounded-xl p-4" style={{ background: "rgb(255 255 255 / .05)", boxShadow: "inset 0 0 0 1px rgb(255 255 255 / .08)" }}>
-            <p className="text-body-md font-semibold">The rupee</p>
-            <p className="mt-1 text-body-md text-muted-foreground">
-              Your money is held in dollars. A stronger rupee means fewer rupees when you take it out; a weaker rupee
-              means more.
-            </p>
-            <svg viewBox="0 0 200 116" className="mx-auto mt-2 block w-full max-w-[260px]" aria-hidden>
-              <defs>
-                <linearGradient id="b3-dial" x1="0" x2="1">
-                  <stop offset="0" stopColor="#7D7F85" />
-                  <stop offset=".5" stopColor="#F2F2F2" stopOpacity=".5" />
-                  <stop offset="1" stopColor="#FDC037" />
-                </linearGradient>
-              </defs>
-              <path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="url(#b3-dial)" strokeWidth="10" strokeLinecap="round" />
-              {[-90, -45, 0, 45, 90].map((a) => (
-                <line key={a} x1="100" y1="30" x2="100" y2="38" stroke="#F2F2F2" strokeOpacity=".5" strokeWidth="2" transform={`rotate(${a} 100 100)`} />
-              ))}
-              <g className="b3-needle" style={{ transform: `rotate(${angle}deg)` }}>
-                <line x1="100" y1="100" x2="100" y2="34" stroke="#FDC037" strokeWidth="3.5" strokeLinecap="round" />
-              </g>
-              <circle cx="100" cy="100" r="8" fill="#FDC037" />
-              <text x="16" y="114" fontSize="11" fill="#A9AAAD">Stronger</text>
-              <text x="184" y="114" fontSize="11" fill="#A9AAAD" textAnchor="end">Weaker</text>
-            </svg>
-            <p className="mt-1 flex items-baseline justify-between gap-3 text-body-md">
-              <span className="text-muted-foreground">{plain("rupee", m.rupee)}</span>
-              <span className={cn("num font-bold", rupee.amount > 0 && "text-brand")}>
-                {rupee.amount === 0 ? "₹0" : formatINR(rupee.amount, { signed: true })}
-              </span>
-            </p>
-          </div>
-
+        <div className="flex items-center gap-4">
+          <svg viewBox="0 0 200 112" className="w-24 shrink-0" aria-hidden>
+            <defs>
+              <linearGradient id="b3-dial" x1="0" x2="1">
+                <stop offset="0" stopColor="#7D7F85" />
+                <stop offset="1" stopColor="#FDC037" />
+              </linearGradient>
+            </defs>
+            <path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="url(#b3-dial)" strokeWidth="14" strokeLinecap="round" />
+            <g className="b3-needle" style={{ transform: `rotate(${angle}deg)` }}>
+              <line x1="100" y1="100" x2="100" y2="34" stroke="#F2F2F2" strokeWidth="6" strokeLinecap="round" />
+            </g>
+            <circle cx="100" cy="100" r="11" fill="#F2F2F2" />
+          </svg>
+          <p className="min-w-0 text-body-md">
+            <span className="block font-semibold">Rupee: {plain("rupee", m.rupee).toLowerCase()}</span>
+            <span className={cn("num", rupee.amount > 0 ? "text-brand" : "text-muted-foreground")}>
+              {rupee.amount === 0 ? "No effect" : `${formatINR(rupee.amount, { signed: true })} on your money`}
+            </span>
+          </p>
         </div>
       </div>
     </div>

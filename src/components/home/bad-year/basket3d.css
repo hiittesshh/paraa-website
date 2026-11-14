@@ -54,3 +54,12 @@
 .b3-world { transform: rotateX(58deg) rotateZ(-10deg) !important; top: 68%; }
 .b3-platform { left: -22em; width: 44em; }
 @media (width < 40rem) { .b3-tag { padding: 4px 7px; font-size: 0.75rem; } .b3-tag-name { display: none; } .b3-key { flex-direction: row; font-size: 0.75rem; } }
+
+/* Minimal, side by side (owner, 14 Nov 2026). The tags carry name, share, value and move. */
+.b3 > :not(.b3-tag, .b3-key) { font-size: min(1.45cqw, 2cqh); }
+.b3-world { top: 64%; }
+.b3-tag { gap: 1px; }
+.b3-tag-name { font-size: 0.6875rem; font-weight: 600; letter-spacing: .02em; }
+.b3-tag-move { font-size: 0.75rem; font-weight: 700; color: #FDC037; }
+.b3-tag-move.is-down { color: #A9AAAD; }
+@media (width < 40rem) { .b3-tag-name, .b3-tag-move { display: none; } }
