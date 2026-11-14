@@ -21,7 +21,7 @@ export function SectionEntrance() {
           s.setAttribute("data-entrance", "in");
           io.unobserve(s);
           // Once landed, take the transforms off, so sticky stages and fixed children behave as if nothing happened.
-          setTimeout(() => s.removeAttribute("data-entrance"), 1400);
+          setTimeout(() => s.removeAttribute("data-entrance"), 2000);
         });
       },
       { rootMargin: "0px 0px -12% 0px", threshold: 0.02 },

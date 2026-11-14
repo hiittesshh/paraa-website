@@ -89,9 +89,9 @@ export function PinnedScroll({
   useEffect(() => {
     const tr = track.current;
     if (!live || !tr) return;
-    const IDLE = 2600; // ms without input before it moves
-    const HOLD = 3200; // ms on each chapter before the next glide
-    const GLIDE = 1.9; // s per glide
+    const IDLE = 900; // ms without input before it moves
+    const HOLD = 2000; // ms on each chapter before the next glide
+    const GLIDE = 1.4; // s per glide
     let lastInput = performance.now();
     let lastArrive = performance.now();
     let gliding = false;
