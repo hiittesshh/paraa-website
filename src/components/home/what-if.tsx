@@ -19,19 +19,22 @@ import {
   BAD_YEAR_PROTOTYPE,
   BAD_YEAR_PROTOTYPES,
   isBadYearPrototype,
+  VISIBLE_PROTOTYPES,
   type BadYearPrototype,
 } from "@/lib/bad-year-prototypes";
 import { CTA } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 import { AMOUNTS, useBadYear } from "./bad-year/model";
+import { Basket3DPrototype } from "./bad-year/basket3d";
 import { GuidedPrototype } from "./bad-year/guided";
+import { StoryPrototype } from "./bad-year/story";
 import { StepperPrototype } from "./bad-year/stepper";
 import { TilesPrototype } from "./bad-year/tiles";
 
 const noSubscribe = () => () => {};
 const readQuery = () => window.location.search;
 
-const PROTOTYPE = { tiles: TilesPrototype, stepper: StepperPrototype, guided: GuidedPrototype } as const;
+const PROTOTYPE = { tiles: TilesPrototype, stepper: StepperPrototype, guided: GuidedPrototype, story: StoryPrototype, basket: Basket3DPrototype } as const;
 
 /**
  * Review only: a small bar fixed to the bottom of the screen while the calculator is on it, so it never adds to
@@ -93,7 +96,8 @@ export function WhatIf() {
   const fromUrl = params.get("badyear");
   const [picked, setPicked] = useState<BadYearPrototype | null>(null);
   const prototype = picked ?? (isBadYearPrototype(fromUrl) ? fromUrl : BAD_YEAR_PROTOTYPE);
-  const showToggle = process.env.NODE_ENV !== "production" || params.has("prototypes") || params.has("badyear");
+  // The visible style switch replaced the review bar (owner, 14 Nov 2026); ?prototypes still shows every prototype.
+  const showToggle = params.has("prototypes");
   const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);
   const panel = useRef<HTMLDivElement>(null);
   const Body = PROTOTYPE[prototype];
@@ -120,8 +124,25 @@ export function WhatIf() {
           </h3>
           <Disclosure id="scenarios-v1" as="p" className="mt-1 max-w-[62ch] text-body-md text-muted-foreground" />
         </div>
-        {/* The guided prototype asks for the amount itself, as its step 1. */}
-        {prototype !== "guided" && (
+        {/* The owner's style switch (14 Nov 2026): Story, 3D basket or Guided; the pick is kept in ?badyear=. */}
+        <div role="group" aria-label="Calculator style" className="inline-flex shrink-0 self-start rounded-full bg-background-alt p-1">
+          {VISIBLE_PROTOTYPES.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              aria-pressed={prototype === p.id}
+              onClick={() => pick(p.id)}
+              className={cn(
+                "min-h-10 cursor-pointer rounded-full px-4 text-body-md font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                prototype === p.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+        {/* The newer prototypes ask for the amount themselves. */}
+        {!["guided", "story", "basket"].includes(prototype) && (
           <ChoiceChips
             className="shrink-0"
             legend="If you invest"

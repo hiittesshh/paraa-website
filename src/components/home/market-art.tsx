@@ -34,7 +34,7 @@ function Dust({ n = 14 }: { n?: number }) {
 }
 
 /** A box of lit faces in the scene: base `w` × `d`, height `h` (all em), its top and four sides. */
-function Box({ w, d, h, className }: { w: number; d: number; h: number; className?: string }) {
+export function Box({ w, d, h, className }: { w: number; d: number; h: number; className?: string }) {
   return (
     <span className={`m3-box ${className ?? ""}`} style={{ "--bw": `${w}em`, "--bd": `${d}em`, "--bh": `${h}em` } as Style}>
       <span className="m3-f m3-top" />

@@ -1,0 +1,38 @@
+/* The 3D basket (basket3d.tsx). Built on the market scenes' box faces (.m3-box, market-art.css). */
+.b3 { position: relative; overflow: hidden; container-type: size; background: #1F2027; isolation: isolate; }
+.b3 > * { font-size: min(1.55cqw, 2.2cqh); }
+.b3-glow { position: absolute; inset: 0; background:
+  radial-gradient(50% 45% at 50% 60%, rgb(253 192 55 / .2), transparent 70%),
+  radial-gradient(90% 70% at 50% 115%, rgb(0 0 0 / .55), transparent 70%); }
+.b3-scene { position: absolute; inset: 0; perspective: 90em; perspective-origin: 50% 20%; }
+.b3-world { position: absolute; left: 50%; top: 66%; width: 0; height: 0; transform-style: preserve-3d; transform: rotateX(60deg) rotateZ(-28deg); }
+@media (prefers-reduced-motion: no-preference) {
+  .b3-world { animation: b3-sway 16s ease-in-out infinite alternate; }
+}
+@keyframes b3-sway { from { transform: rotateX(60deg) rotateZ(-36deg); } to { transform: rotateX(58deg) rotateZ(-20deg); } }
+
+.b3-platform { position: absolute; left: -18em; top: -7em; width: 36em; height: 14em; transform: translateZ(-1px); border-radius: 1.2em;
+  background: radial-gradient(closest-side, rgb(253 192 55 / .16), rgb(255 255 255 / .03));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / .12), 0 0 4em rgb(253 192 55 / .12); }
+.b3-block { position: absolute; left: var(--x); top: -4em; transform-style: preserve-3d; }
+.b3-grow { position: absolute; left: 0; top: 0; transform-style: preserve-3d; transform-origin: 0 0 0; transform: scale3d(1, 1, var(--s));
+  transition: transform 900ms cubic-bezier(.22, .9, .26, 1); }
+@media (prefers-reduced-motion: reduce) { .b3-grow { transition: none; } }
+
+/* The ghost: thin dashed edges where the block began. */
+.b3-ghost .m3-f { border: 1px dashed rgb(242 242 242 / .35); background: transparent; }
+
+/* The solid blocks. */
+.is-us .b3-solid .m3-top { background: #F2F2F2; box-shadow: 0 0 1.4em rgb(255 255 255 / .35); }
+.is-us .b3-solid :is(.m3-front, .m3-back) { background: linear-gradient(to bottom, #6E7079, #D9DADC); }
+.is-us .b3-solid :is(.m3-right, .m3-left) { background: linear-gradient(to right, #4C4E57, #A9AAAD); }
+.is-gold .b3-solid .m3-top { background: linear-gradient(135deg, #FFF3CC, #FBD26A 35%, #E9AE30 70%, #B57F17); box-shadow: 0 0 1.8em rgb(253 192 55 / .6); }
+.is-gold .b3-solid :is(.m3-front, .m3-back) { background: linear-gradient(to bottom, #6E4D0D, #D79E27 70%, #F6C552); }
+.is-gold .b3-solid :is(.m3-right, .m3-left) { background: linear-gradient(to right, #4E380A, #B07A15 75%, #DDA233); }
+.is-oil .b3-solid .m3-top { background: radial-gradient(circle at 30% 30%, #5A5D66, #16171B 60%); box-shadow: inset 0 0 0 .12em #FDC037, 0 0 1.4em rgb(253 192 55 / .35); }
+.is-oil .b3-solid :is(.m3-front, .m3-back) { background: linear-gradient(to bottom, #050506, #2B2D34); box-shadow: inset 0 0 0 .08em rgb(253 192 55 / .5); }
+.is-oil .b3-solid :is(.m3-right, .m3-left) { background: linear-gradient(to right, #020203, #1F2027); box-shadow: inset 0 0 0 .08em rgb(253 192 55 / .35); }
+
+/* The rupee needle. */
+.b3-needle { transform-origin: 100px 100px; transition: transform 900ms cubic-bezier(.22, .9, .26, 1); }
+@media (prefers-reduced-motion: reduce) { .b3-needle { transition: none; } }

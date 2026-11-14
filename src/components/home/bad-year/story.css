@@ -1,0 +1,61 @@
+/* The scroll story (story.tsx). The track is as tall as the steps need; the stage sticks under the header. */
+.st-track { position: relative; height: calc(var(--st-n) * 55svh + 100svh - var(--header-h)); }
+.st-stage {
+  position: sticky; top: calc(var(--header-h) + 12px); height: calc(100svh - var(--header-h) - 24px); max-height: 760px;
+  display: grid; gap: 16px; padding: 20px; border-radius: 20px; overflow: hidden;
+  background: radial-gradient(70% 60% at 20% 70%, rgb(253 192 55 / .12), transparent 60%), var(--p-ink);
+}
+@media (width >= 64rem) { .st-stage { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; padding: 32px; } }
+
+/* The pile. */
+.st-pile-wrap { display: grid; align-content: end; justify-items: center; text-align: center; min-height: 0; }
+.st-pile { position: relative; width: 11rem; height: 12rem; margin-bottom: 18px; }
+@media (width >= 64rem) { .st-pile { width: 14rem; height: 22rem; } }
+.st-coin-disc {
+  --row: calc(var(--i) * 1);
+  position: absolute; left: 50%; bottom: calc(var(--i) * 0.55rem); width: 100%; height: 2.4rem; margin-left: -50%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 35%, #FFF3CC, #FDC037 45%, #B98818 75%);
+  box-shadow: 0 0.18rem 0 #8C6612, 0 0.3rem 0.6rem rgb(0 0 0 / .45), inset 0 0 0 1px rgb(255 255 255 / .35);
+  transition: transform 600ms cubic-bezier(.22, .9, .26, 1), opacity 450ms ease;
+  transition-delay: calc((30 - var(--i)) * 12ms);
+}
+@media (width >= 64rem) { .st-coin-disc { bottom: calc(var(--i) * 0.62rem); height: 3rem; } }
+.st-coin-disc.is-gone { opacity: 0; transform: translate(4rem, 2.5rem) rotate(28deg) scale(.7); }
+.st-coin-disc.is-new { background: radial-gradient(ellipse at 50% 35%, #FFFFFF, #FED987 45%, #FDC037 80%); box-shadow: 0 0.18rem 0 #B98818, 0 0 1rem rgb(253 192 55 / .8); }
+.st-amount { font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1; font-weight: 700; letter-spacing: -0.04em; transition: color 400ms ease; }
+.st-dots { display: flex; gap: 6px; margin-top: 16px; }
+.st-dots li { width: 22px; height: 4px; border-radius: 4px; background: rgb(255 255 255 / .15); transition: background-color 300ms ease; }
+.st-dots li[data-on] { background: var(--p-gold); }
+
+/* The event: the scene and its words. */
+.st-event { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 16px; min-height: 0; }
+.st-frame { position: relative; min-height: 0; border-radius: 16px; overflow: hidden; background: #1F2027; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .06); }
+.st-scene { position: absolute; inset: 0; opacity: 0; transform: scale(1.04); transition: opacity 500ms ease, transform 700ms cubic-bezier(.22, .9, .26, 1); }
+.st-scene[data-on] { opacity: 1; transform: none; }
+.st-scene:not([data-on]) .m3 * { animation-play-state: paused; }
+.st-text { display: grid; gap: 6px; }
+.st-title { font-size: clamp(1.375rem, 2.4vw, 1.875rem); line-height: 1.15; font-weight: 700; letter-spacing: -0.025em; }
+.st-effect { font-size: 1.25rem; font-weight: 700; }
+.st-hint { margin-top: 4px; color: var(--p-gold); font-weight: 600; font-size: 0.9375rem; }
+@media (prefers-reduced-motion: no-preference) { .st-hint { animation: st-nudge 1.6s ease-in-out infinite; } }
+@keyframes st-nudge { 50% { transform: translateY(4px); } }
+
+/* The start and end scenes: the mix, then the change, set large in gold. */
+.st-pot { display: grid; place-items: center; }
+.st-pot-mark { position: relative; font-size: min(9cqw, 18cqh); font-weight: 800; letter-spacing: -0.04em; color: var(--p-gold); text-shadow: 0 0 2rem rgb(253 192 55 / .45); }
+
+/* The rupee: a coin turning between ₹ and $; it settles leaning to the side the rupee moved. */
+.st-rupee { display: grid; place-items: center; perspective: 40em; }
+.st-coin { position: relative; width: min(38cqw, 60cqh); aspect-ratio: 1; transform-style: preserve-3d; transition: transform 900ms cubic-bezier(.22, .9, .26, 1); }
+@media (prefers-reduced-motion: no-preference) { .st-coin { animation: st-turn 6s ease-in-out infinite; } }
+.st-coin.is-strong { transform: rotateY(-25deg); }
+.st-coin.is-weak { transform: rotateY(25deg); }
+.st-coin-face { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; backface-visibility: hidden;
+  font-size: min(20cqw, 32cqh); font-weight: 800; color: #5F440C;
+  background: radial-gradient(circle at 35% 30%, #FFF3CC, #FDC037 50%, #B98818);
+  box-shadow: inset 0 0 0 .5rem rgb(255 255 255 / .25), 0 0 3rem rgb(253 192 55 / .35); }
+.st-coin-back { transform: rotateY(180deg); background: radial-gradient(circle at 35% 30%, #FFFFFF, #D9DADC 50%, #7D7F85); color: #272A33; }
+@keyframes st-turn { 0%, 30% { transform: rotateY(0deg); } 50%, 80% { transform: rotateY(180deg); } 100% { transform: rotateY(360deg); } }
+
+@media (prefers-reduced-motion: reduce) { .st-coin-disc, .st-scene { transition: none; } }
