@@ -36,3 +36,21 @@
 /* The rupee needle. */
 .b3-needle { transform-origin: 100px 100px; transition: transform 900ms cubic-bezier(.22, .9, .26, 1); }
 @media (prefers-reduced-motion: reduce) { .b3-needle { transition: none; } }
+
+/* Self-explanatory pass (owner, 14 Nov 2026): a steady angle, labels riding on the blocks, a key. */
+.b3-world { animation: none !important; transform: rotateX(60deg) rotateZ(-28deg); }
+.b3-tag { position: absolute; left: 0; top: 0; z-index: 2; display: grid; justify-items: center; padding: 6px 10px; border-radius: 10px;
+  background: rgb(21 21 23 / .82); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .14); color: #FFFFFF;
+  font-size: 0.9375rem; font-weight: 700; line-height: 1.2; white-space: nowrap; opacity: 0; pointer-events: none; }
+.b3-tag-name { font-size: 0.75rem; font-weight: 600; color: #A9AAAD; }
+.b3-tag.is-up { box-shadow: inset 0 0 0 1px rgb(253 192 55 / .6); color: #FDC037; }
+.b3-key { position: absolute; left: 16px; bottom: 12px; z-index: 2; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.8125rem; color: #A9AAAD; }
+.b3-key > span { display: inline-flex; align-items: center; gap: 6px; }
+.b3-key i { display: inline-block; width: 14px; height: 10px; border-radius: 2px; }
+.b3-key-solid { background: linear-gradient(135deg, #F2F2F2, #FDC037); }
+.b3-key-ghost { border: 1px dashed rgb(242 242 242 / .6); }
+
+/* Spread out and seen more from the front, so each block's label has its own room. */
+.b3-world { transform: rotateX(58deg) rotateZ(-10deg) !important; top: 68%; }
+.b3-platform { left: -22em; width: 44em; }
+@media (width < 40rem) { .b3-tag { padding: 4px 7px; font-size: 0.75rem; } .b3-tag-name { display: none; } .b3-key { flex-direction: row; font-size: 0.75rem; } }
