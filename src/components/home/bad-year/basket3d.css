@@ -71,3 +71,9 @@
 .b3-tag-from { font-size: 0.6875rem; font-weight: 600; color: #A9AAAD; }
 .b3-key-ghost { border-color: #FFFFFF; }
 @media (width < 40rem) { .b3-tag-from { display: block; } }
+
+/* A front-side view (owner, 14 Nov 2026: "change the top view to side or front view, in a 3D way"): the camera is
+   lowered, so the blocks stand up as towers seen from the front at an angle. */
+.b3-scene { perspective: 70em; perspective-origin: 50% 35%; }
+.b3-world { transform: rotateX(78deg) rotateZ(-26deg) !important; top: 74%; }
+.b3-world { left: 58%; top: 70%; }
