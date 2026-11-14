@@ -19,7 +19,6 @@ import {
   BAD_YEAR_PROTOTYPE,
   BAD_YEAR_PROTOTYPES,
   isBadYearPrototype,
-  VISIBLE_PROTOTYPES,
   type BadYearPrototype,
 } from "@/lib/bad-year-prototypes";
 import { CTA } from "@/lib/nav";
@@ -95,6 +94,7 @@ export function WhatIf() {
   const params = new URLSearchParams(query);
   const fromUrl = params.get("badyear");
   const [picked, setPicked] = useState<BadYearPrototype | null>(null);
+  // Owner, 14 Nov 2026: only the 3D basket is shown; ?badyear= still opens the others for review.
   const prototype = picked ?? (isBadYearPrototype(fromUrl) ? fromUrl : BAD_YEAR_PROTOTYPE);
   // The visible style switch replaced the review bar (owner, 14 Nov 2026); ?prototypes still shows every prototype.
   const showToggle = params.has("prototypes");
@@ -123,23 +123,6 @@ export function WhatIf() {
             What could a bad year do to your money?
           </h3>
           <Disclosure id="scenarios-v1" as="p" className="mt-1 max-w-[62ch] text-body-md text-muted-foreground" />
-        </div>
-        {/* The owner's style switch (14 Nov 2026): Story, 3D basket or Guided; the pick is kept in ?badyear=. */}
-        <div role="group" aria-label="Calculator style" className="inline-flex shrink-0 self-start rounded-full bg-background-alt p-1">
-          {VISIBLE_PROTOTYPES.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              aria-pressed={prototype === p.id}
-              onClick={() => pick(p.id)}
-              className={cn(
-                "min-h-10 cursor-pointer rounded-full px-4 text-body-md font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-                prototype === p.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {p.label}
-            </button>
-          ))}
         </div>
         {/* The newer prototypes ask for the amount themselves. */}
         {!["guided", "story", "basket"].includes(prototype) && (
