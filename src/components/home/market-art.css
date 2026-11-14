@@ -201,3 +201,14 @@
 /* Bigger signs on the front row's walls. */
 .m3-plate { left: .25em; width: 3.9em; height: 3.6em; font-size: .82em; gap: .3em; }
 .m3-plate .m3-mark { width: 1.5em; height: 1.5em; }
+
+/* The signs on the left edge's outer walls (the x = 0 wall of the first column). A signed building is deeper (4.4em)
+   so the plaque fits along its wall; the plaque faces -x. */
+.m3-col { left: calc((var(--gx) - 2) * 5em - 1.6em); top: calc((var(--gy) - 2) * 5em - var(--hd, 1.6em)); }
+.m3-plate { left: -.04em; top: .25em; transform: translateZ(4.3em) rotateZ(90deg) rotateX(-90deg); }
+
+/* The drums on their sides: the drip falls from the bung to the pool (its distance in --fall). */
+@media (prefers-reduced-motion: no-preference) {
+  .m3-oil .m3-drip2 { animation: m3-drip2 2.4s cubic-bezier(.55, 0, 1, .45) infinite; }
+}
+@keyframes m3-drip2 { 0% { opacity: 0; transform: translateY(-4px) scale(.4); } 30% { opacity: 1; transform: translateY(0) scale(1); } 80% { opacity: 1; transform: translateY(var(--fall)); } 82%, 100% { opacity: 0; transform: translateY(var(--fall)) scale(1.4, .3); } }
